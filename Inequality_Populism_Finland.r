@@ -76,6 +76,105 @@ dat <- dat[order(dat$City, dat$Year),]
 # Analyses
 ############
 
+# Descriptives
+p_load(ggplot2)
+
+# Share
+dat %>% 
+  ggplot(aes(x = Year, y = share.ps)) +
+  geom_jitter(width = 0.25, alpha = 1/5) +
+  geom_smooth(method = "loess", se = TRUE) +
+  labs(title = "Overtime Electoral Perfomance of the Populist Party in Finland") +
+  theme_bw() +
+  labs(y = "Share of Populist Party", x = "Year") + 
+  theme(axis.text.y = element_text(size=12), 
+        axis.text.x = element_text(size=12), 
+        axis.title.y = element_text(size=12), 
+        axis.title.x = element_text(size=12), 
+        legend.text=element_text(size=12), 
+        legend.title=element_text(size=12),
+        plot.title = element_text(size=12),
+        strip.text.x = element_text(size = 12),
+        legend.position = "none",
+        aspect.ratio=4/4)
+
+
+# Share
+dat %>% 
+  ggplot(aes(x = Year, y = Gini)) +
+  geom_jitter(width = 0.25, alpha = 1/5) +
+  geom_smooth(method = "loess", se = TRUE) +
+  labs(title = "Overtime Evolution of Gini Index in Finland") +
+  theme_bw() +
+  theme(axis.text.y = element_text(size=12), 
+        axis.text.x = element_text(size=12), 
+        axis.title.y = element_text(size=12), 
+        axis.title.x = element_text(size=12), 
+        legend.text=element_text(size=12), 
+        legend.title=element_text(size=12),
+        plot.title = element_text(size=12),
+        strip.text.x = element_text(size = 12),
+        legend.position = "none",
+        aspect.ratio=4/4)
+
+# Maps
+p_load(geofi,ggplot2,sf,paletteer) # do not install packages that need compilation when propmpted
+
+
+# Get Municipality Names
+municipalities.1995 <- get_municipalities(year = 2020, scale = 4500) 
+municipalities.2019 <- get_municipalities(year = 2020, scale = 4500)
+
+# Change Name of City
+p_load("dplyr")
+municipalities.1995 <- municipalities.1995 %>% rename("City" = "name")
+municipalities.2019 <- municipalities.2019 %>% rename("City" = "name")
+
+# City as Factor
+municipalities.1995$City = as.factor(municipalities.1995$City)
+municipalities.2019$City = as.factor(municipalities.2019$City)
+
+# Subset by year
+dat.1995 = dat[dat$Year==1995,]
+dat.2019 = dat[dat$Year==2019,]
+
+# Merge Gini
+municipalities.1995 = merge(x = municipalities.1995, y = dat.1995[ , c("City", "Gini")], by = "City", all.x=TRUE)
+municipalities.2019 = merge(x = municipalities.2019, y = dat.2019[ , c("City", "Gini")], by = "City", all.x=TRUE)
+
+
+ggplot(municipalities.1995) + 
+  geom_sf(aes(fill = Gini)) +
+  paletteer::scale_fill_paletteer_c("viridis::plasma") +
+  labs(title = "Gini (1995)") +
+  theme_bw() +
+  theme(axis.text.y = element_text(size=12), 
+        axis.text.x = element_text(size=12), 
+        axis.title.y = element_text(size=12), 
+        axis.title.x = element_text(size=12), 
+        legend.text=element_text(size=12), 
+        legend.title=element_text(size=12),
+        plot.title = element_text(size=12),
+        strip.text.x = element_text(size = 12))
+
+
+
+ggplot(municipalities.2019) + 
+  geom_sf(aes(fill = Gini)) +
+  paletteer::scale_fill_paletteer_c("viridis::plasma") +
+  labs(title = "Gini (2019)") +
+  theme_bw() +
+  theme(axis.text.y = element_text(size=12), 
+        axis.text.x = element_text(size=12), 
+        axis.title.y = element_text(size=12), 
+        axis.title.x = element_text(size=12), 
+        legend.text=element_text(size=12), 
+        legend.title=element_text(size=12),
+        plot.title = element_text(size=12),
+        strip.text.x = element_text(size = 12))
+
+
+
 # todo
 ## 1. map inequality differences and share of populist party in two separate maps
 ## 2. run correlation between share and share of populist party in two separate maps
