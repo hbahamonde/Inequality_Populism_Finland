@@ -120,34 +120,75 @@ dat %>%
 # Maps
 p_load(geofi,ggplot2,sf,paletteer) # do not install packages that need compilation when propmpted
 
-
 # Get Municipality Names
-municipalities.1995 <- get_municipalities(year = 2020, scale = 4500) 
-municipalities.2019 <- get_municipalities(year = 2020, scale = 4500)
+municipalities = get_municipalities(year = 2020, scale = 4500) 
 
 # Change Name of City
+municipalities <- municipalities %>% rename("City" = "name")
+
+# Merge Gini and Share PS
+municipalities = merge(x = municipalities, y = dat[ , c("City", "Gini", "share.ps", "Year")], by = "City", all.x=TRUE)
+
+# Keep 1995 and 2019 years
 p_load("dplyr")
-municipalities.1995 <- municipalities.1995 %>% rename("City" = "name")
-municipalities.2019 <- municipalities.2019 %>% rename("City" = "name")
-
-# City as Factor
-municipalities.1995$City = as.factor(municipalities.1995$City)
-municipalities.2019$City = as.factor(municipalities.2019$City)
-
-# Subset by year
-dat.1995 = dat[dat$Year==1995,]
-dat.2019 = dat[dat$Year==2019,]
-
-# Merge Gini
-municipalities.1995 = merge(x = municipalities.1995, y = dat.1995[ , c("City", "Gini")], by = "City", all.x=TRUE)
-municipalities.2019 = merge(x = municipalities.2019, y = dat.2019[ , c("City", "Gini")], by = "City", all.x=TRUE)
+municipalities = municipalities %>% filter(Year == 1995 | Year == 2019)
 
 
-ggplot(municipalities.1995) + 
+# Gini Plot
+p_load("ggplot2")
+ggplot(municipalities) + 
   geom_sf(aes(fill = Gini)) +
   paletteer::scale_fill_paletteer_c("viridis::plasma") +
-  labs(title = "Gini (1995)") +
+  labs(title = "Gini") +
+  facet_wrap(~Year) +
   theme_bw() +
+  theme(axis.text.y = element_text(size=12), 
+        axis.text.x = element_text(size=12), 
+        axis.title.y = element_text(size=12), 
+        axis.title.x = element_text(size=12), 
+        legend.text=element_text(size=12), 
+        legend.title=element_text(size=12),
+        plot.title = element_text(size=12),
+        strip.text.x = element_text(size = 12))
+
+# Populist Plot
+p_load("ggplot2")
+ggplot(municipalities) + 
+  geom_sf(aes(fill = share.ps)) +
+  paletteer::scale_fill_paletteer_c("viridis::plasma") +
+  labs(title = "Share of Populist Party") +
+  facet_wrap(~Year) +
+  theme_bw() +
+  theme(axis.text.y = element_text(size=12), 
+        axis.text.x = element_text(size=12), 
+        axis.title.y = element_text(size=12), 
+        axis.title.x = element_text(size=12), 
+        legend.text=element_text(size=12), 
+        legend.title=element_text(size=12),
+        plot.title = element_text(size=12),
+        strip.text.x = element_text(size = 12))
+
+# Plotting DV and IV
+p_load("ggplot2")
+
+# drop if Gini, Year, or share.ps are missing
+dat.plot = dat %>% drop_na(c("Gini", "Year", "share.ps"))
+
+ggplot(dat.plot, aes(x=Gini)) + geom_histogram() + facet_wrap(~Year, ncol = length(unique(dat$Year))) +
+  theme_bw() +
+  labs(y = "Count", x = "Year") + 
+  theme(axis.text.y = element_text(size=12), 
+        axis.text.x = element_text(size=12), 
+        axis.title.y = element_text(size=12), 
+        axis.title.x = element_text(size=12), 
+        legend.text=element_text(size=12), 
+        legend.title=element_text(size=12),
+        plot.title = element_text(size=12),
+        strip.text.x = element_text(size = 12))
+
+ggplot(dat.plot, aes(x=share.ps)) + geom_histogram() + facet_wrap(~Year, ncol = length(unique(dat$Year))) +
+  theme_bw() +
+  labs(y = "Count", x = "Year") + 
   theme(axis.text.y = element_text(size=12), 
         axis.text.x = element_text(size=12), 
         axis.title.y = element_text(size=12), 
@@ -159,86 +200,108 @@ ggplot(municipalities.1995) +
 
 
 
-ggplot(municipalities.2019) + 
-  geom_sf(aes(fill = Gini)) +
-  paletteer::scale_fill_paletteer_c("viridis::plasma") +
-  labs(title = "Gini (2019)") +
-  theme_bw() +
-  theme(axis.text.y = element_text(size=12), 
-        axis.text.x = element_text(size=12), 
-        axis.title.y = element_text(size=12), 
-        axis.title.x = element_text(size=12), 
-        legend.text=element_text(size=12), 
-        legend.title=element_text(size=12),
-        plot.title = element_text(size=12),
-        strip.text.x = element_text(size = 12))
-
-
-
-# todo
-## 1. map inequality differences and share of populist party in two separate maps
-## 2. run correlation between share and share of populist party in two separate maps
-
+############
 # Models
-m1 = lm(log(share.ps) ~ log(Gini)  + City, dat)
-m2 = lm(log(share.ps) ~ Gini.diff.1 + City, dat)
-m3 = lm(log(share.ps) ~ Gini.lag.1  + City, dat)
-m4 = lm(log(share.ps) ~ Gini.lag.2  + City, dat)
-
-# Fixed Effects using PLM
-# p_load(plm)
-# m5 = plm(log(share.ps) ~ Gini.diff.1, data=dat, index=c("City", "Year"), model="within") # Fixed Effects
-# m6 = plm(log(share.ps) ~ Gini.lag.1, data=dat, index=c("City","Year"), model="within") # Fixed Effects
-# m7 = plm(log(share.ps) ~ Gini.lag.2, data=dat, index=c("City", "Year"), model="within") # Fixed Effects
-
+############
 
 # Fixed Effects using lm
-m5.lm = lm(log(share.ps) ~ Gini.diff.1 + factor(City)-1, data=dat) # Fixed Effects
-m6.lm = lm(log(share.ps) ~ Gini.lag.1 + factor(City)-1, data=dat) # Fixed Effects
-m6.lm.2 = lm(share.ps ~ Gini.lag.1 + factor(City)-1, data=dat) # Fixed Effects
-m7.lm = lm(log(share.ps) ~ Gini.lag.2 + factor(City)-1, data=dat) # Fixed Effects
-
-
+m1 = lm(share.ps ~ Gini.diff.1 + factor(City)-1, data=dat) # Fixed Effects (city intercepts)
+m2 = lm(share.ps ~ Gini.lag.1 + factor(City)-1, data=dat) # Fixed Effects (city intercepts)
+m3 = lm(share.ps ~ Gini.lag.2 + factor(City)-1, data=dat) # Fixed Effects (city intercepts)
 
 # https://www.princeton.edu/~otorres/Panel101R.pdf
 # pFtest(plm(log(share.ps) ~ Gini.lag.1, data=dat, index=c("City", "Year"), model="within"), lm(log(share.ps) ~ Gini.lag.1, dat)) # If the p-value is < 0.05 then the fixed effects model is a better choice
 
 
-# Pooling
-m8 = lm(log(share.ps) ~ Gini.diff.1 + factor(City)-1, data=dat) # Fixed Effects
-m9 = lm(log(share.ps) ~ Gini.lag.1 + factor(City)-1, data=dat) # Fixed Effects
-m10 = lm(log(share.ps) ~ Gini.lag.2 + factor(City)-1, data=dat) # Fixed Effects
+# Pooling (no FE's and pooled std errors)
+m4 = lm(log(share.ps) ~ Gini.diff.1, data=dat) 
+m5 = lm(log(share.ps) ~ Gini.lag.1, data=dat) 
+m6 = lm(log(share.ps) ~ Gini.lag.2, data=dat)
 
 
-# plot
-predictions.d = data.frame(predict(m6.lm, 
-                                   se.fit = T, 
-                                   interval = "confidence",
-                                   level = 0.95, 
-                                   type = "response",
-                                   terms = "Gini.lag.1", 
-                                   na.action = na.pass))
+# Fixed Effects using lm LOG OF DV
+m7 = lm(log(share.ps) ~ Gini.diff.1 + factor(City)-1, data=dat) # Fixed Effects
+m8 = lm(log(share.ps) ~ Gini.lag.1 + factor(City)-1, data=dat) # Fixed Effects
+m9 = lm(log(share.ps) ~ Gini.lag.2 + factor(City)-1, data=dat) # Fixed Effects
 
-predictions.d$Gini = as.vector(m6$model$Gini.lag.1)
-predictions.d$Share.observed = as.vector(m6$model$`log(share.ps)`)
-predictions.d$residual = as.vector(m6$residuals)
+# Getting Clustered Std Errors by City: ALL MODELS (except for pooled models)
+p_load(multiwayvcov)
 
+
+# Var Covariance Matrix for Clustered Std Error Models
+options(scipen=999)
+# FE and clustered (no logged DV)
+vcov.year.city.m1 <- cluster.vcov(m1, cbind(dat$City))
+vcov.year.city.m2 <- cluster.vcov(m2, cbind(dat$City))
+vcov.year.city.m3 <- cluster.vcov(m3, cbind(dat$City))
+# FE and clustered (logged DV)
+vcov.year.city.m7 <- cluster.vcov(m7, cbind(dat$City))
+vcov.year.city.m8 <- cluster.vcov(m8, cbind(dat$City))
+vcov.year.city.m9 <- cluster.vcov(m9, cbind(dat$City))
+
+# Getting Values:  Std. Error
+# options(scipen=999)
+# FE and clustered (no logged DV)
+# coeftest(m1, vcov.year.city.m1)[1,2] # Std. Error m1
+# coeftest(m2, vcov.year.city.m2)[1,2] # Std. Error m2 
+# coeftest(m3, vcov.year.city.m3)[1,2] # Std. Error m3 
+## pooled
+# coeftest(m4)[1,2] # Std. Error m4 
+# coeftest(m5)[1,2] # Std. Error m5 
+# coeftest(m6)[1,2] # Std. Error m6 
+# FE and clustered (logged DV)
+# coeftest(m7, vcov.year.city.m7)[1,2] # Std. Error m7 
+# coeftest(m8, vcov.year.city.m8)[1,2] # Std. Error m8 
+# coeftest(m9, vcov.year.city.m9)[1,2] # Std. Error m9 
+
+# Getting Values:  P-values
+# options(scipen=999)
+# coeftest(m1, vcov.year.city.m1)[1,4] # pvalue m1
+# coeftest(m2, vcov.year.city.m2)[1,4] # pvalue m2 
+# coeftest(m3, vcov.year.city.m3)[1,4] # pvalue m3 
+## pooled
+# coeftest(m4, vcov.year.city.m4)[1,4] # pvalue m4 
+# coeftest(m5, vcov.year.city.m5)[1,4] # pvalue m5 
+# coeftest(m6, vcov.year.city.m6)[1,4] # pvalue m6 
+# FE and clustered (logged DV)
+# coeftest(m7, vcov.year.city.m7)[1,4] # pvalue m7 
+# coeftest(m8, vcov.year.city.m8)[1,4] # pvalue m8 
+# coeftest(m9, vcov.year.city.m9)[1,4] # pvalue m9 
+
+## All coefficients: Std Errors
+m1.clust.std.error = coeftest(m1, vcov.year.city.m1)[,2] # Std. Error m1
+m2.clust.std.error = coeftest(m2, vcov.year.city.m2)[,2] # Std. Error m2 
+m3.clust.std.error = coeftest(m3, vcov.year.city.m3)[,2] # Std. Error m3 
+m4.clust.std.error = coeftest(m4)[,2] # Std. Error m4 
+m5.clust.std.error = coeftest(m5)[,2] # Std. Error m5 
+m6.clust.std.error = coeftest(m6)[,2] # Std. Error m6 
+m7.clust.std.error = coeftest(m7, vcov.year.city.m7)[,2] # Std. Error m7 
+m8.clust.std.error = coeftest(m8, vcov.year.city.m8)[,2] # Std. Error m8 
+m9.clust.std.error = coeftest(m9, vcov.year.city.m9)[,2] # Std. Error m9 
+
+## All coefficients: P Values
+m1.clust.pvalue = coeftest(m1, vcov.year.city.m1)[,4] # pvalue m1
+m2.clust.pvalue = coeftest(m2, vcov.year.city.m2)[,4] # pvalue m2 
+m3.clust.pvalue = coeftest(m3, vcov.year.city.m3)[,4] # pvalue m3 
+m4.clust.pvalue = coeftest(m4)[,4] # pvalue m4 
+m5.clust.pvalue = coeftest(m5)[,4] # pvalue m5 
+m6.clust.pvalue = coeftest(m6)[,4] # pvalue m6 
+m7.clust.pvalue = coeftest(m7, vcov.year.city.m7)[,4] # pvalue m7 
+m8.clust.pvalue = coeftest(m8, vcov.year.city.m8)[,4] # pvalue m8 
+m9.clust.pvalue = coeftest(m9, vcov.year.city.m9)[,4] # pvalue m9 
 
 # plot
 ## https://cran.r-project.org/web/packages/margins/vignettes/Introduction.html
 p_load(margins)
-cplot(m6.lm, "Gini.lag.1", what = "prediction", main = "Title")
-
-#
-library(jtools)
-effect_plot(m6.lm.2, pred = Gini.lag.1, interval = TRUE)
-
+cplot(m2, "Gini.lag.1", what = "prediction", main = "Conditional Effect of Gini on the Electoral Share of the Populist Party in Finland")
 
 # Table
 p_load(texreg)
 
+# c(noquote(paste('m', 1:9, collapse = ", ", sep = "")))
+
 screenreg( # screenreg texreg
-  list(m5,m6,m7,m5.lm,m6.lm,m7.lm
+  list(m1, m2, m3, m4, m5, m6, m7, m8, m9
     #m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13
     ),
   #custom.header = list(
@@ -266,7 +329,7 @@ screenreg( # screenreg texreg
     # m4.m, m4.w
     #"Male", "Female"),
   #custom.coef.names = NULL,
-  omit.coef = "(City) |(Year) ",
+  omit.coef = "(City)",
   #custom.coef.names = c("Intercept",
                         #"Appearance-Occupation Congruence",
                         #"Middle Class",
@@ -280,6 +343,8 @@ screenreg( # screenreg texreg
   # custom.header = list( "Poisson" = 1),
   stars = c(0.001, 0.01, 0.05),
   include.adjrs = FALSE,
+  override.se = list(c(m1.clust.std.error), c(m2.clust.std.error), c(m3.clust.std.error), c(m4.clust.std.error), c(m5.clust.std.error), c(m6.clust.std.error), c(m7.clust.std.error), c(m8.clust.std.error), c(m9.clust.std.error)),
+  override.pvalues = list(c(m1.clust.pvalue), c(m2.clust.pvalue), c(m3.clust.pvalue), c(m4.clust.pvalue), c(m5.clust.pvalue), c(m6.clust.pvalue), c(m7.clust.pvalue), c(m8.clust.pvalue), c(m9.clust.pvalue)),
   #symbol = "\\\\cdot",
   label = "reg:t",
   caption = "Statistical Models",
