@@ -72,6 +72,11 @@ dat <- dat[!(dat$share.ps==0),]
 
 # sort again
 dat <- dat[order(dat$City, dat$Year),] 
+
+# export subsetted data to stata
+p_load(dyplr,foreign)
+dat.stata <- dat %>%  select(Year, City, share.ps, Gini, Gini.diff.1, Gini.lag.1, Gini.lag.2)
+write.dta(dat.stata, "dat.dta")
 ## ----
 
 
@@ -259,15 +264,34 @@ maps.plot.legend <- paste(
 # Models
 ############
 
+# justification for having both entity and time fixed effects:
+# eliminate bias from unobservables that *change over time* but *are constant over entities* and 
+# it controls for factors that *differ across entities* but *are constant over time*.
+# https://www.econometrics-with-r.org/10-4-regression-with-time-fixed-effects.html
+
+# https://www.princeton.edu/~otorres/Panel101R.pdf
+# pFtest(plm(log(share.ps) ~ Gini.lag.1, data=dat, index=c("City", "Year"), model="within"), lm(log(share.ps) ~ Gini.lag.1, dat)) # If the p-value is < 0.05 then the fixed effects model is a better choice
+
+
+# GMM
+# for Mac users: it NEEDS https://github.com/fxcoudert/gfortran-for-macOS/releases/download/10.2/gfortran-10.2-Catalina.dmg (CATALINA, no newer version)
+# install.packages("gmm")
+library(gmm)
+
+# Gmm in STATA
+# https://www.stata.com/manuals13/rgmm.pdf
+# https://www.eco.uc3m.es/~ricmora/mei/materials/Session_14_GMM_estimation.pdf (see "Linear Regression").
+# read Wawro again.
+# https://blog.stata.com/2016/10/04/estimating-covariate-effects-after-gmm/
+
+
+
+
 ## ---- models:d ----
 # Fixed Effects using lm
 m1 = lm(share.ps ~ Gini.diff.1 + factor(City)-1, data=dat) # Fixed Effects (city intercepts)
 m2 = lm(share.ps ~ Gini.lag.1 + factor(City)-1, data=dat) # Fixed Effects (city intercepts)
 m3 = lm(share.ps ~ Gini.lag.2 + factor(City)-1, data=dat) # Fixed Effects (city intercepts)
-
-# https://www.princeton.edu/~otorres/Panel101R.pdf
-# pFtest(plm(log(share.ps) ~ Gini.lag.1, data=dat, index=c("City", "Year"), model="within"), lm(log(share.ps) ~ Gini.lag.1, dat)) # If the p-value is < 0.05 then the fixed effects model is a better choice
-
 
 # Pooling (no FE's and pooled std errors)
 m4 = lm(log(share.ps) ~ Gini.diff.1, data=dat) 
