@@ -260,7 +260,6 @@ maps.plot.legend <- paste(
 ############
 
 ## ---- models:d ----
-
 # Fixed Effects using lm
 m1 = lm(share.ps ~ Gini.diff.1 + factor(City)-1, data=dat) # Fixed Effects (city intercepts)
 m2 = lm(share.ps ~ Gini.lag.1 + factor(City)-1, data=dat) # Fixed Effects (city intercepts)
@@ -353,13 +352,10 @@ m9.clust.pvalue = coeftest(m9, vcov.year.city.m9)[,4] # pvalue m9
 # plot
 ## https://cran.r-project.org/web/packages/margins/vignettes/Introduction.html
 p_load(margins)
-conditional.effects.plot.d = data.frame(cplot(m2, 
+conditional.effects.plot.d = as.data.frame(cplot(m2, 
                                  "Gini.lag.1", 
                                  what = "prediction", 
-                                 main = "Conditional Effect of Gini on the Electoral Share of the Populist Party in Finland",
-                                 xlab = "Gini (t-1)",
-                                 ylab = "Predicted Value",
-                                 rug = TRUE
+                                 draw = FALSE # omits plot
                                  ))
 
 conditional.effects.plot = ggplot(conditional.effects.plot.d, aes(xvals)) + 

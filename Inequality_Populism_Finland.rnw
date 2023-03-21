@@ -219,6 +219,18 @@ options(scipen = 99999999999)
 
 @
 
+<<models:d, echo=FALSE, comment=NA, warning=FALSE, message=FALSE, include = FALSE, cache=FALSE, eval=TRUE>>=
+
+@
+
+<<effects:plot:d, echo=FALSE, comment=NA, warning=FALSE, message=FALSE, include = FALSE, cache=FALSE, eval=TRUE>>=
+
+@
+
+<<table:d, echo=FALSE, comment=NA, warning=FALSE, message=FALSE, include = FALSE, cache=FALSE, eval=TRUE>>=
+
+@
+
 
 <<abstract, echo=FALSE, comment=NA, warning=FALSE, message=FALSE, include = FALSE, cache=FALSE, eval=TRUE>>=
 
@@ -288,7 +300,11 @@ Here.
 }
 
 % plot: conditional effects
+\afterpage{
+<<effects:plot, echo = FALSE, fig.pos='h', warning = FALSE, message = F, fig.cap=conditional.effects.plot.legend, fig.align='center', fig.width=4, fig.height=7,dpi=500,cache = FALSE>>=
 
+@
+}
 
 
 \newpage
