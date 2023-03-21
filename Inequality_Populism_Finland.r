@@ -6,8 +6,6 @@ setwd("/Users/hectorbahamonde/research/Inequality_Populism_Finland/")
 if (!require("pacman")) install.packages("pacman"); library(pacman) 
 
 ## ---- loadings:d ----
-
-
 # import inequality data
 p_load("readxl")
 inequality.d <- read_excel("/Users/hectorbahamonde/research/Inequality_Populism_Finland/data/inequality_data/Inequality_Data.xlsx")
@@ -83,7 +81,7 @@ dat <- dat[order(dat$City, dat$Year),]
 
 ## ---- plots:d ----
 # Descriptives
-p_load(ggplot2)
+p_load(ggplot2,dyplr)
 
 # Share
 share.plot = dat %>% 
@@ -188,8 +186,8 @@ p_load(ggpubr)
 theme_set(theme_pubr())
 
 maps.plot = ggarrange(gini.map.plot, populist.map.plot,
-                               labels = c("A", "B"),
-                               ncol = 1, nrow = 2)
+                      labels = c("A", "B"),
+                      ncol = 1, nrow = 2)
 
 
 # Plotting DV and IV
@@ -242,6 +240,9 @@ histogram.dep.var.plot.legend <- paste(
 ## ---- 
 
 
+
+
+
 ## ---- maps:plot ----
 maps.plot
 maps.plot.legend <- paste(
@@ -249,6 +250,7 @@ maps.plot.legend <- paste(
   "\\\\\\hspace{\\textwidth}", 
   "{\\bf Note}: Note here.",
   "\n")
+
 ## ---- 
 
 
@@ -450,7 +452,7 @@ screenreg( # screenreg texreg
   threeparttable = TRUE,
   scalebox = 0.4,
   custom.note = "\\item %stars. \\item Note Here")
-
+## ----
 
 
 ################
