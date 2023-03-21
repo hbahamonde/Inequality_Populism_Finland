@@ -5,6 +5,9 @@ setwd("/Users/hectorbahamonde/research/Inequality_Populism_Finland/")
 # Pacman
 if (!require("pacman")) install.packages("pacman"); library(pacman) 
 
+## ---- loadings:d ----
+
+
 # import inequality data
 p_load("readxl")
 inequality.d <- read_excel("/Users/hectorbahamonde/research/Inequality_Populism_Finland/data/inequality_data/Inequality_Data.xlsx")
@@ -71,20 +74,23 @@ dat <- dat[!(dat$share.ps==0),]
 
 # sort again
 dat <- dat[order(dat$City, dat$Year),] 
+## ----
+
 
 ############
 # Analyses
 ############
 
+## ---- plots:d ----
 # Descriptives
 p_load(ggplot2)
 
 # Share
-dat %>% 
+share.plot = dat %>% 
   ggplot(aes(x = Year, y = share.ps)) +
   geom_jitter(width = 0.25, alpha = 1/5) +
   geom_smooth(method = "loess", se = TRUE) +
-  labs(title = "Overtime Electoral Perfomance of the Populist Party in Finland") +
+  labs(title = "Overtime Electoral Perfomance of the\nPopulist Party in Finland") +
   theme_bw() +
   labs(y = "Share of Populist Party", x = "Year") + 
   theme(axis.text.y = element_text(size=12), 
@@ -99,12 +105,12 @@ dat %>%
         aspect.ratio=4/4)
 
 
-# Share
-dat %>% 
+# Gini
+gini.plot = dat %>% 
   ggplot(aes(x = Year, y = Gini)) +
   geom_jitter(width = 0.25, alpha = 1/5) +
   geom_smooth(method = "loess", se = TRUE) +
-  labs(title = "Overtime Evolution of Gini Index in Finland") +
+  labs(title = "Overtime Evolution of Gini Index\nin Finland") +
   theme_bw() +
   theme(axis.text.y = element_text(size=12), 
         axis.text.x = element_text(size=12), 
@@ -116,6 +122,14 @@ dat %>%
         strip.text.x = element_text(size = 12),
         legend.position = "none",
         aspect.ratio=4/4)
+
+# Combine both plots
+p_load(ggpubr)
+theme_set(theme_pubr())
+
+dependent.var.plot = ggarrange(share.plot, gini.plot,
+                               labels = c("A", "B"),
+                               ncol = 2, nrow = 1)
 
 # Maps
 p_load(geofi,ggplot2,sf,paletteer) # do not install packages that need compilation when propmpted
@@ -136,37 +150,47 @@ municipalities = municipalities %>% filter(Year == 1995 | Year == 2019)
 
 # Gini Plot
 p_load("ggplot2")
-ggplot(municipalities) + 
+
+gini.map.plot = ggplot(municipalities) + 
   geom_sf(aes(fill = Gini)) +
   paletteer::scale_fill_paletteer_c("viridis::plasma") +
-  labs(title = "Gini") +
+  labs(title = "Overtime Evolution of the Gini Coefficient in Finland") +
   facet_wrap(~Year) +
   theme_bw() +
-  theme(axis.text.y = element_text(size=12), 
-        axis.text.x = element_text(size=12), 
-        axis.title.y = element_text(size=12), 
-        axis.title.x = element_text(size=12), 
-        legend.text=element_text(size=12), 
-        legend.title=element_text(size=12),
-        plot.title = element_text(size=12),
-        strip.text.x = element_text(size = 12))
+  theme(axis.text.y = element_text(size=7), 
+        axis.text.x = element_text(size=7), 
+        axis.title.y = element_text(size=10), 
+        axis.title.x = element_text(size=10), 
+        legend.text=element_text(size=10), 
+        legend.title=element_text(size=10),
+        plot.title = element_text(size=10),
+        strip.text.x = element_text(size = 10))
 
 # Populist Plot
 p_load("ggplot2")
-ggplot(municipalities) + 
+populist.map.plot = ggplot(municipalities) + 
   geom_sf(aes(fill = share.ps)) +
   paletteer::scale_fill_paletteer_c("viridis::plasma") +
-  labs(title = "Share of Populist Party") +
+  labs(title = "Overtime Share of the Populist Party") +
   facet_wrap(~Year) +
   theme_bw() +
-  theme(axis.text.y = element_text(size=12), 
-        axis.text.x = element_text(size=12), 
-        axis.title.y = element_text(size=12), 
-        axis.title.x = element_text(size=12), 
-        legend.text=element_text(size=12), 
-        legend.title=element_text(size=12),
-        plot.title = element_text(size=12),
-        strip.text.x = element_text(size = 12))
+  theme(axis.text.y = element_text(size=7), 
+        axis.text.x = element_text(size=7), 
+        axis.title.y = element_text(size=10), 
+        axis.title.x = element_text(size=10), 
+        legend.text=element_text(size=10), 
+        legend.title=element_text(size=10),
+        plot.title = element_text(size=10),
+        strip.text.x = element_text(size = 10))
+
+# Combine both plots
+p_load(ggpubr)
+theme_set(theme_pubr())
+
+maps.plot = ggarrange(gini.map.plot, populist.map.plot,
+                               labels = c("A", "B"),
+                               ncol = 1, nrow = 2)
+
 
 # Plotting DV and IV
 p_load("ggplot2")
@@ -174,35 +198,66 @@ p_load("ggplot2")
 # drop if Gini, Year, or share.ps are missing
 dat.plot = dat %>% drop_na(c("Gini", "Year", "share.ps"))
 
-ggplot(dat.plot, aes(x=Gini)) + geom_histogram() + facet_wrap(~Year, ncol = length(unique(dat$Year))) +
+gini.dep.var.plot.histogram = ggplot(dat.plot, aes(x=Gini)) + geom_histogram() + facet_wrap(~Year, ncol = length(unique(dat$Year))) +
   theme_bw() +
-  labs(y = "Count", x = "Year") + 
-  theme(axis.text.y = element_text(size=12), 
-        axis.text.x = element_text(size=12), 
-        axis.title.y = element_text(size=12), 
-        axis.title.x = element_text(size=12), 
-        legend.text=element_text(size=12), 
-        legend.title=element_text(size=12),
-        plot.title = element_text(size=12),
-        strip.text.x = element_text(size = 12))
+  labs(y = "Count", x = "Year", title = "Overtime Evolution of the Gini Coefficient in Finland") + 
+  theme(axis.text.y = element_text(size=7), 
+        axis.text.x = element_text(size=7), 
+        axis.title.y = element_text(size=10), 
+        axis.title.x = element_text(size=10), 
+        legend.text=element_text(size=10), 
+        legend.title=element_text(size=10),
+        plot.title = element_text(size=10),
+        strip.text.x = element_text(size = 10))
 
-ggplot(dat.plot, aes(x=share.ps)) + geom_histogram() + facet_wrap(~Year, ncol = length(unique(dat$Year))) +
+share.dep.var.plot.histogram = ggplot(dat.plot, aes(x=share.ps)) + geom_histogram() + facet_wrap(~Year, ncol = length(unique(dat$Year))) +
   theme_bw() +
-  labs(y = "Count", x = "Year") + 
-  theme(axis.text.y = element_text(size=12), 
-        axis.text.x = element_text(size=12), 
-        axis.title.y = element_text(size=12), 
-        axis.title.x = element_text(size=12), 
-        legend.text=element_text(size=12), 
-        legend.title=element_text(size=12),
-        plot.title = element_text(size=12),
-        strip.text.x = element_text(size = 12))
+  labs(y = "Count", x = "Year", title = "Overtime Share of the Populist Party") + 
+  theme(axis.text.y = element_text(size=7), 
+        axis.text.x = element_text(size=7), 
+        axis.title.y = element_text(size=10), 
+        axis.title.x = element_text(size=10), 
+        legend.text=element_text(size=10), 
+        legend.title=element_text(size=10),
+        plot.title = element_text(size=10),
+        strip.text.x = element_text(size = 10))
+
+# Combine both plots
+p_load(ggpubr)
+theme_set(theme_pubr())
+
+histogram.dep.var.plot = ggarrange(gini.dep.var.plot.histogram, share.dep.var.plot.histogram,
+                      labels = c("A", "B"),
+                      ncol = 1, nrow = 2)
+## ----
+
+
+## ---- dep:var:plot ----
+histogram.dep.var.plot
+histogram.dep.var.plot.legend <- paste(
+  "{\\bf Evolution of TEST TEST TEST}.",
+  "\\\\\\hspace{\\textwidth}", 
+  "{\\bf Note}: Note here.",
+  "\n")
+## ---- 
+
+
+## ---- maps:plot ----
+maps.plot
+maps.plot.legend <- paste(
+  "{\\bf Evolution of TEST TEST TEST}.",
+  "\\\\\\hspace{\\textwidth}", 
+  "{\\bf Note}: Note here.",
+  "\n")
+## ---- 
 
 
 
 ############
 # Models
 ############
+
+## ---- models:d ----
 
 # Fixed Effects using lm
 m1 = lm(share.ps ~ Gini.diff.1 + factor(City)-1, data=dat) # Fixed Effects (city intercepts)
@@ -269,6 +324,7 @@ vcov.year.city.m9 <- cluster.vcov(m9, cbind(dat$City))
 # coeftest(m9, vcov.year.city.m9)[1,4] # pvalue m9 
 
 ## All coefficients: Std Errors
+p_load(lmtest)
 m1.clust.std.error = coeftest(m1, vcov.year.city.m1)[,2] # Std. Error m1
 m2.clust.std.error = coeftest(m2, vcov.year.city.m2)[,2] # Std. Error m2 
 m3.clust.std.error = coeftest(m3, vcov.year.city.m3)[,2] # Std. Error m3 
@@ -289,12 +345,51 @@ m6.clust.pvalue = coeftest(m6)[,4] # pvalue m6
 m7.clust.pvalue = coeftest(m7, vcov.year.city.m7)[,4] # pvalue m7 
 m8.clust.pvalue = coeftest(m8, vcov.year.city.m8)[,4] # pvalue m8 
 m9.clust.pvalue = coeftest(m9, vcov.year.city.m9)[,4] # pvalue m9 
+## ---- 
 
+## ---- effects:plot:d ----
 # plot
 ## https://cran.r-project.org/web/packages/margins/vignettes/Introduction.html
 p_load(margins)
-cplot(m2, "Gini.lag.1", what = "prediction", main = "Conditional Effect of Gini on the Electoral Share of the Populist Party in Finland")
+conditional.effects.plot.d = data.frame(cplot(m2, 
+                                 "Gini.lag.1", 
+                                 what = "prediction", 
+                                 main = "Conditional Effect of Gini on the Electoral Share of the Populist Party in Finland",
+                                 xlab = "Gini (t-1)",
+                                 ylab = "Predicted Value",
+                                 rug = TRUE
+                                 ))
 
+conditional.effects.plot = ggplot(conditional.effects.plot.d, aes(xvals)) + 
+  geom_line(aes(y=yvals), colour="blue") + 
+  geom_ribbon(aes(ymin=lower, ymax=upper), alpha=0.2) +
+  theme_bw() +
+  labs(y = "Predicted Value", x = "Gini (t-1)", title = "Conditional Effect of Gini on the Electoral Share\nof the Populist Party in Finland") + 
+  theme(axis.text.y = element_text(size=7), 
+        axis.text.x = element_text(size=7), 
+        axis.title.y = element_text(size=10), 
+        axis.title.x = element_text(size=10), 
+        legend.text=element_text(size=10), 
+        legend.title=element_text(size=10),
+        plot.title = element_text(size=10),
+        strip.text.x = element_text(size = 10),
+        aspect.ratio=4/4)
+## ---- 
+
+
+## ---- effects:plot ----
+conditional.effects.plot
+conditional.effects.plot.legend <- paste(
+  "{\\bf Evolution of TEST TEST TEST}.",
+  "\\\\\\hspace{\\textwidth}", 
+  "{\\bf Note}: Note here.",
+  "\n")
+## ---- 
+
+
+
+
+## ---- table:d ----
 # Table
 p_load(texreg)
 
@@ -355,3 +450,20 @@ screenreg( # screenreg texreg
   threeparttable = TRUE,
   scalebox = 0.4,
   custom.note = "\\item %stars. \\item Note Here")
+
+
+
+################
+#### ABSTRACT
+################
+
+## ---- abstract ----
+fileConn <- file ("abstract.txt")
+abstract.c = as.character(c("Abstract here"))
+writeLines(abstract.c, fileConn)
+close(fileConn)
+## ----
+
+## ---- abstract.length ----
+abstract.c.l = sapply(strsplit(abstract.c, " "), length)
+## ----

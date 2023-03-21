@@ -1,13 +1,14 @@
 \documentclass[onesided]{article}
 \usepackage[T1]{fontenc}
-\linespread{2} % Line spacing - Palatino needs more space between lines
+\linespread{1.5} % Line spacing - Palatino needs more space between lines
 \usepackage{microtype} % Slightly tweak font spacing for aesthetics
-
+\usepackage{threeparttable} % package to have long notes in reg tables in texreg. 
 \usepackage[hmarginratio=1:1,columnsep=20pt]{geometry} % Document margins
 %\usepackage{multicol} % Used for the two-column layout of the document
 \usepackage[hang, small,labelfont=bf,up,textfont=it,up]{caption} % Custom captions under/above floats in tables or figures
 \usepackage{booktabs} % Horizontal rules in tables
-\usepackage{float} % Required for tables and figures in the multi-column environment - they need to be placed in specific locations with the [H] (e.g. \begin{table}[H])
+\usepackage{float} % Required for tables and figures in the multi-column environment - they need to be placed in specific locations with the [H] (e.g., \begin{table}[H])
+
 
 \usepackage{lettrine} % The lettrine is the first enlarged letter at the beginning of the text
 \usepackage{paralist} % Used for the compactitem environment which makes bullet points with less space between them
@@ -28,10 +29,11 @@
 \usepackage{fancybox, fancyvrb, calc}
 \usepackage[svgnames]{xcolor}
 \usepackage{epigraph}
+
 \usepackage{longtable}
 \usepackage{pdflscape}
 \usepackage{graphics}
-\usepackage{pbox} % \pbox{20cm}{This is the first \\ cell}
+
 \usepackage{amsfonts}
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -40,7 +42,6 @@
 \usepackage{textcomp}
 \usepackage[export]{adjustbox}
 \usepackage{afterpage}
-\usepackage{filecontents}
 \usepackage{color}
 \usepackage{latexsym}
 \usepackage{lscape}       %\begin{landscape} and \end{landscape}
@@ -63,6 +64,26 @@
 
 
 
+
+% hypothesis / theorem package begin
+\usepackage{amsthm}
+\usepackage{thmtools}
+\declaretheoremstyle[
+spaceabove=6pt, spacebelow=6pt,
+headfont=\normalfont\bfseries,
+notefont=\mdseries, notebraces={(}{)},
+bodyfont=\normalfont,
+postheadspace=0.6em,
+headpunct=:
+]{mystyle}
+\declaretheorem[style=mystyle, name=Hypothesis, preheadhook={\renewcommand{\thehyp}{H\textsubscript{\arabic{hyp}}}}]{hyp}
+
+\usepackage{cleveref}
+\crefname{hyp}{hypothesis}{hypotheses}
+\Crefname{hyp}{Hypothesis}{Hypotheses}
+% hypothesis / theorem package end
+
+
 %----------------------------------------------------------------------------------------
 % Other ADDS-ON
 %----------------------------------------------------------------------------------------
@@ -70,6 +91,7 @@
 % independence symbol \independent
 \newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
 \def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+
 
 \hypersetup{
     bookmarks=true,         % show bookmarks bar?
@@ -109,11 +131,12 @@
 %%% bib begin
 \usepackage[american]{babel}
 \usepackage{csquotes}
-\usepackage[backend=biber,style=authoryear,dashed=false,doi=false,isbn=false,url=false,arxiv=false]{biblatex}
+\usepackage[backend=bibtex,style=authoryear,date=year,dashed=false,doi=false,isbn=false,url=false,arxiv=false]{biblatex} %authoryear
+\renewbibmacro{in:}{} % this should go immediately below calling biblatex package to avoid "In: <journal>" every time.
 %\DeclareLanguageMapping{american}{american-apa}
+%\addbibresource{Vote_Selling_Bahamonde_Canales.bib} 
 \addbibresource{/Users/hectorbahamonde/Bibliografia_PoliSci/library.bib} 
 \addbibresource{/Users/hectorbahamonde/Bibliografia_PoliSci/Bahamonde_BibTex2013.bib} 
-
 
 % USAGES
 %% use \textcite to cite normal
@@ -125,7 +148,9 @@
 
 % DOCUMENT ID
 
-
+% this below is to have endnotes at the end of the document.
+%\usepackage{endnotes}
+%\let\footnote=\endnote 
 
 % TITLE SECTION
 
@@ -144,19 +169,23 @@
 \textsc{Aki Koivula}
 \thanks{\href{mailto:akjeko@utu.fi}{akjeko@utu.fi}; 
 \href{https://www.utu.fi/fi/ihmiset/aki-koivula}{\texttt{https://www.utu.fi/fi/ihmiset/aki-koivula}}. \\
-Authors are listed in alphabetical order and both contributed equally to the paper. Aki's profile here...\todo{Pending.}. Hector Bahamonde is a Senior Researcher at the INVEST Research Flagship, University of Turku, Finland, and an Adjunct Researcher of the Millennium Institute, Foundational Research on Data, Chile (hibano@utu.fi, www.HectorBahamonde.com). This project was funded by Bahamonde's ANID Fondecyt Iniciación, number 11220303. We thank... The usual caveats apply. \todo{Pending.}}}
-
+Authors are listed in alphabetical order and both contributed equally to the paper. {\color{red}Aki's profile here}. Hector Bahamonde is a Senior Researcher at the INVEST Research Flagship, University of Turku, Finland, and an Adjunct Researcher of the Millennium Institute, Foundational Research on Data, Chile (hibano@utu.fi, www.HectorBahamonde.com). This project was funded by Bahamonde's ANID Fondecyt Iniciacion, number 11220303. We thank... The usual caveats apply.}}
 
 \affil[1]{Senior Researcher, University of Turku, Finland}
+
 \affil[2]{Senior Researcher, University of Turku, Finland}
 
 
 \date{\today}
 
+
 %----------------------------------------------------------------------------------------
 
 \begin{document}
+\pagenumbering{gobble} 
 
+
+\setcounter{hyp}{0} % sets hypothesis counter to 1
 
 \maketitle % Insert title
 
@@ -186,6 +215,18 @@ options(scipen = 99999999999)
 
 @
 
+<<plots:d, echo=FALSE, comment=NA, warning=FALSE, message=FALSE, include = FALSE, cache=FALSE, eval=TRUE>>=
+
+@
+
+<<models:d, echo=FALSE, comment=NA, warning=FALSE, message=FALSE, include = FALSE, cache=FALSE, eval=TRUE>>=
+
+@
+
+<<table:d, echo=FALSE, comment=NA, warning=FALSE, message=FALSE, include = FALSE, cache=FALSE, eval=TRUE>>=
+
+@
+
 <<abstract, echo=FALSE, comment=NA, warning=FALSE, message=FALSE, include = FALSE, cache=FALSE, eval=TRUE>>=
 
 @
@@ -199,7 +240,6 @@ options(scipen = 99999999999)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-
 \newpage
 \begin{abstract}
 \input{abstract.txt}\unskip
@@ -211,46 +251,72 @@ options(scipen = 99999999999)
 \vspace*{0.3cm}
 
 
-
-\centerline{\bf Please consider downloading the last version of the paper \href{https://github.com/hbahamonde/Exp_Vote_Selling/raw/main/Vote_Selling_Bahamonde_Canales_Paper_2.pdf}{\texttt{{\color{red}here}}}.}
+\vspace*{5cm}
+\centerline{\bf Please consider downloading the latest version of the paper \href{https://github.com/hbahamonde/Economic_Experiment_Vote_Selling/raw/master/Vote_Selling_Bahamonde_Canales_Paper.pdf}{\texttt{{\color{red}here}}}.}
 
 \vspace*{0.3cm}
-\centerline{\bf {\color{red}Rough draft PLEASE DO NOT CIRCULATE}.}
+\centerline{{\color{blue}\bf {\input{status.txt}\unskip}}.}
 
-
+\vspace*{3.5cm}
 \centerline{\providecommand{\keywords}[1]{\textbf{\textit{Keywords---}} #1} % keywords.  
 \keywords{{\input{keywords.txt}\unskip}}}
-
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % CONTENT (write the paper below)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 
-
-
-
 \clearpage
 \newpage
 \pagenumbering{arabic}
 \setcounter{page}{1}
 
-%\linespread{2}
+\newpage
 
+\section{Title Section}
 
-\section{Section Title}
-
-Test.
-
-
-% experimentalists
+% 
+Here.
 
 
 
- 
+
+% plot: dependent and independent variable
+\afterpage{
+<<dep:var:plot, echo = FALSE, fig.pos='h', warning = FALSE, message = F, fig.cap=histogram.dep.var.plot.legend, fig.align='center', fig.width=9, fig.height=4,dpi=500,cache = FALSE>>=
+
+@
+}
 
 
+% plot: maps
+\afterpage{
+<<maps:plot, echo = FALSE, fig.pos='h', warning = FALSE, message = F, fig.cap=maps.plot.legend, fig.align='center', fig.width=4–, fig.height=7,dpi=500,cache = FALSE>>=
+
+@
+}
+
+% plot: conditional effects
+
+
+
+\newpage
+
+\section{Statistical Appendix}
+
+\pagenumbering{roman}
+\setcounter{page}{1}
+%% reset tables and figures counter
+\setcounter{table}{0}
+\renewcommand{\thetable}{A\arabic{table}}
+\setcounter{figure}{0}
+\renewcommand{\thefigure}{A\arabic{figure}}
+\setcounter{subsection}{0}
+\renewcommand{\thesubsection}{A\arabic{subsection}}
+
+Statistical Appendix
+
+% normal bibliography
 \clearpage
 \newpage
 \pagenumbering{roman}
@@ -259,7 +325,9 @@ Test.
 \clearpage
 \newpage
 
-
+% EndNotes
+%\newpage
+%\theendnotes
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % WORD COUNT
@@ -312,20 +380,8 @@ count <- comma(as.numeric(count)) # add comma
 
 
 
-%% reset tables and figures counter
-\setcounter{table}{0}
-\renewcommand{\thetable}{A\arabic{table}}
-\setcounter{figure}{0}
-\renewcommand{\thefigure}{A\arabic{figure}}
 
-
-
-\section{Appendix}
-\pagenumbering{roman}
-\setcounter{page}{1}
-%\newpage
-
-Appendix
 
 \end{document}
+
 
