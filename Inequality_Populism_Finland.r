@@ -397,30 +397,24 @@ texreg( # screenreg texreg
   list(m1, m2, m3, m4, m5, m6, m7, m8, m9
     #m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13
     ),
-  #custom.header = list(
-    #"1" = 1,
-    #"2" = 2,
-    #"3" = 3, 
-    #"4" = 4,  
-    #"5" = 5, 
-    #"6" = 6, 
-    #"7" = 7,
-    #"8" = 8,
-    #"9" = 9, 
-    #"10" = 10, 
-    #"11" = 11, 
-    #"12" = 12),
-  #custom.model.names = c(
-    # m0, m1.m, m1.w
-    #"Full", "Male", "Female", 
-    # m2, m3, m4 
-    #"Full","Full","Full",  
-    # m2.m, m2.w,
-    #"Male", "Female", 
-    # m3.m, m3.w
-    #"Male", "Female", 
-    # m4.m, m4.w
-    #"Male", "Female"),
+  custom.header = list(
+    "1" = 1,
+    "2" = 2,
+    "3" = 3, 
+    "4" = 4,  
+    "5" = 5, 
+    "6" = 6, 
+    "7" = 7,
+    "8" = 8,
+    "9" = 9),
+  custom.model.names = c(
+    #m1, m2, m3
+    "FE", "FE", "FE", 
+    # m4, m5, m6
+    "Pooled","Pooled","Pooled",  
+    # m7, m8, m9
+    "FE+Log", "FE+Log","FE+Log"
+    ),
   #custom.coef.names = NULL,
   omit.coef = "(City)",
   #custom.coef.names = c("Intercept",
@@ -440,14 +434,14 @@ texreg( # screenreg texreg
   override.pvalues = list(c(m1.clust.pvalue), c(m2.clust.pvalue), c(m3.clust.pvalue), c(m4.clust.pvalue), c(m5.clust.pvalue), c(m6.clust.pvalue), c(m7.clust.pvalue), c(m8.clust.pvalue), c(m9.clust.pvalue)),
   #symbol = "\\\\cdot",
   label = "reg:t",
-  caption = "Statistical Models",
+  caption = "Dynamic Panel-Data Models: The Effect of Inequality on the Share of The Populist Party.",
   caption.above = T,
   center = T,
   float.pos="H",
   use.packages = FALSE,
   threeparttable = TRUE,
   scalebox = 0.8,
-  custom.note = "\\item %stars. \\item Note Here")
+  custom.note = "\\item %stars. \\item All models have panel-corrected standard errors (at the city level). Dependent variable is the share of the populist party. First three models have city fixed effects. Second set of models do not have city fixed effects. Third set of models have city fixed effects, and the dependent variable is logged.")
 ## ----
 
 
