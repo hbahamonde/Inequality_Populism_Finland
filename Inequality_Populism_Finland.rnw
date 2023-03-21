@@ -227,11 +227,6 @@ options(scipen = 99999999999)
 
 @
 
-<<table:d, echo=FALSE, comment=NA, warning=FALSE, message=FALSE, include = FALSE, cache=FALSE, eval=TRUE>>=
-
-@
-
-
 <<abstract, echo=FALSE, comment=NA, warning=FALSE, message=FALSE, include = FALSE, cache=FALSE, eval=TRUE>>=
 
 @
@@ -257,7 +252,7 @@ options(scipen = 99999999999)
 
 
 \vspace*{5cm}
-\centerline{\bf Please consider downloading the latest version of the paper \href{https://github.com/hbahamonde/Economic_Experiment_Vote_Selling/raw/master/Vote_Selling_Bahamonde_Canales_Paper.pdf}{\texttt{{\color{red}here}}}.}
+\centerline{\bf Please consider downloading the latest version of the paper \href{https://github.com/hbahamonde/Inequality_Populism_Finland/raw/main/Inequality_Populism_Finland.pdf}{\texttt{{\color{red}here}}}.}
 
 \vspace*{0.3cm}
 \centerline{{\color{blue}\bf {\input{status.txt}\unskip}}.}
@@ -321,7 +316,13 @@ Here.
 \setcounter{subsection}{0}
 \renewcommand{\thesubsection}{A\arabic{subsection}}
 
-Statistical Appendix
+
+
+<<table, echo = FALSE, warning = FALSE, message = F, cache = FALSE, results='asis'>>=
+
+
+@
+
 
 % normal bibliography
 \clearpage

@@ -387,13 +387,13 @@ conditional.effects.plot.legend <- paste(
 
 
 
-## ---- table:d ----
+## ---- table ----
 # Table
 p_load(texreg)
 
 # c(noquote(paste('m', 1:9, collapse = ", ", sep = "")))
 
-screenreg( # screenreg texreg
+texreg( # screenreg texreg
   list(m1, m2, m3, m4, m5, m6, m7, m8, m9
     #m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13
     ),
@@ -446,9 +446,10 @@ screenreg( # screenreg texreg
   float.pos="H",
   use.packages = FALSE,
   threeparttable = TRUE,
-  scalebox = 0.4,
+  scalebox = 0.8,
   custom.note = "\\item %stars. \\item Note Here")
 ## ----
+
 
 
 ################
