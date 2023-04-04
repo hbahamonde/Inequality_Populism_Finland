@@ -58,8 +58,10 @@ dat$City = as.factor(dat$City)
 p_load(lubridate); 
 dat$Year = year(as.Date(as.character(dat$Year), format = "%Y"))
 
-
+# Save a dataset with city, year, and Gini for structural break tests in Stata
 p_load(tidyverse,foreign)
+Gini.structural.break.stata.d = dat %>%  select(Year, City, Gini) %>% drop_na()
+write.dta(Gini.structural.break.stata.d, "gini.dta")
 
 # Drop
 ## Drop observations for which there were no elections.
