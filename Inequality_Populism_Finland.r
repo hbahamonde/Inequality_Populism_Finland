@@ -59,6 +59,7 @@ p_load(lubridate);
 dat$Year = year(as.Date(as.character(dat$Year), format = "%Y"))
 
 
+p_load(tidyverse,foreign)
 
 # Drop
 ## Drop observations for which there were no elections.
@@ -74,7 +75,7 @@ dat <- dat[!(dat$share.ps==0),]
 dat <- dat[order(dat$City, dat$Year),] 
 
 # export subsetted data to stata
-p_load(dyplr,foreign)
+p_load(tidyverse,foreign)
 dat.stata <- dat %>%  select(Year, City, share.ps, Gini, Gini.diff.1, Gini.lag.1, Gini.lag.2)
 write.dta(dat.stata, "dat.dta")
 ## ----
@@ -86,7 +87,7 @@ write.dta(dat.stata, "dat.dta")
 
 ## ---- plots:d ----
 # Descriptives
-p_load(ggplot2,dyplr)
+p_load(ggplot2,tidyverse)
 
 # Share
 share.plot = dat %>% 
