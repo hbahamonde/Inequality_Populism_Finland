@@ -159,7 +159,7 @@ p_load("ggplot2")
 
 gini.map.plot = ggplot(municipalities) + 
   geom_sf(aes(fill = Gini)) +
-  paletteer::scale_fill_paletteer_c("viridis::plasma") +
+  scale_fill_gradient(low="blue", high="red") +
   labs(title = "Overtime Evolution of the Gini Coefficient in Finland") +
   facet_wrap(~Year) +
   theme_bw() +
@@ -176,7 +176,7 @@ gini.map.plot = ggplot(municipalities) +
 p_load("ggplot2")
 populist.map.plot = ggplot(municipalities) + 
   geom_sf(aes(fill = share.ps)) +
-  paletteer::scale_fill_paletteer_c("viridis::plasma") +
+  scale_fill_gradient(low="blue", high="red") +
   labs(title = "Overtime Share of the Populist Party") +
   facet_wrap(~Year) +
   theme_bw() +
