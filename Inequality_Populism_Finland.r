@@ -94,19 +94,19 @@ p_load(ggplot2,tidyverse)
 # Share
 share.plot = dat %>% 
   ggplot(aes(x = Year, y = share.ps)) +
-  geom_jitter(width = 0.25, alpha = 1/5) +
+  #geom_jitter(width = 0.25, alpha = 1/5) +
   geom_smooth(method = "loess", se = TRUE) +
-  labs(title = "Overtime Electoral Perfomance of the\nPopulist Party in Finland") +
+  labs(title = "Overtime Electoral Perfomance of the Finns Party") +
   theme_bw() +
-  labs(y = "Share of Populist Party", x = "Year") + 
-  theme(axis.text.y = element_text(size=12), 
-        axis.text.x = element_text(size=12), 
-        axis.title.y = element_text(size=12), 
-        axis.title.x = element_text(size=12), 
-        legend.text=element_text(size=12), 
-        legend.title=element_text(size=12),
-        plot.title = element_text(size=12),
-        strip.text.x = element_text(size = 12),
+  labs(y = "Share of Finns Party", x = "Year") + 
+  theme(axis.text.y = element_text(size=7), 
+        axis.text.x = element_text(size=7), 
+        axis.title.y = element_text(size=10), 
+        axis.title.x = element_text(size=10), 
+        legend.text=element_text(size=10), 
+        legend.title=element_text(size=10),
+        plot.title = element_text(size=10),
+        strip.text.x = element_text(size = 10),
         legend.position = "none",
         aspect.ratio=4/4)
 
@@ -114,18 +114,19 @@ share.plot = dat %>%
 # Gini
 gini.plot = dat %>% 
   ggplot(aes(x = Year, y = Gini)) +
-  geom_jitter(width = 0.25, alpha = 1/5) +
+  #geom_jitter(width = 0.25, alpha = 1/5) +
   geom_smooth(method = "loess", se = TRUE) +
-  labs(title = "Overtime Evolution of Gini Index\nin Finland") +
+  labs(title = "Overtime Evolution of Gini Index in Finland") +
   theme_bw() +
-  theme(axis.text.y = element_text(size=12), 
-        axis.text.x = element_text(size=12), 
-        axis.title.y = element_text(size=12), 
-        axis.title.x = element_text(size=12), 
-        legend.text=element_text(size=12), 
-        legend.title=element_text(size=12),
-        plot.title = element_text(size=12),
-        strip.text.x = element_text(size = 12),
+  labs(y = "Gini Index", x = "Year") + 
+  theme(axis.text.y = element_text(size=7), 
+        axis.text.x = element_text(size=7), 
+        axis.title.y = element_text(size=10), 
+        axis.title.x = element_text(size=10), 
+        legend.text=element_text(size=10), 
+        legend.title=element_text(size=10),
+        plot.title = element_text(size=10),
+        strip.text.x = element_text(size = 10),
         legend.position = "none",
         aspect.ratio=4/4)
 
@@ -133,11 +134,26 @@ gini.plot = dat %>%
 p_load(ggpubr)
 theme_set(theme_pubr())
 
-dependent.var.plot = ggarrange(share.plot, gini.plot,
-                               labels = c("A", "B"),
+dependent.var.plot = ggarrange(share.plot, gini.plot, 
+                               #labels = c("A", "B"),
                                ncol = 2, nrow = 1)
 
+ggsave(
+  "gini_finns_historical.jpeg",
+  device = "jepg",
+  plot = dependent.var.plot,
+  scale = 1,
+  width = NA,
+  height = NA,
+  units = c("cm"),
+  dpi = 300,
+  limitsize = TRUE)
+
+
+# # # # # # # # # # # #
 # Maps
+# # # # # # # # # # # #
+
 p_load(geofi,ggplot2,sf,paletteer) # do not install packages that need compilation when propmpted
 
 # Get Municipality Names

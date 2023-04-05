@@ -58,3 +58,16 @@ tsset City Year /* unbalanced panel probably because some cities were added and 
 ** findit xtbunitroot
 xtbunitroot Gini, normal unknown(2) csd /* Estimated break date(s): 1996 */ /* World Crisis began in 2008 (Milner 2021, CPS) */
 
+
+* Plot of Gini Coefficient (Average over all cities)
+collapse Gini, by(Year)
+tsset  Year
+tsline Gini, xlabel(,grid) xtitle("Year") ytitle("Gini Coefficient") ///
+note("Source: Statistics Finland. Higher scores mean more income inequality.") ///
+title("Finland: Evolution of the Gini Coefficient")
+
+
+
+
+
+
