@@ -134,19 +134,19 @@ gini.plot = dat %>%
 p_load(ggpubr)
 theme_set(theme_pubr())
 
-dependent.var.plot = ggarrange(share.plot, gini.plot, 
+dependent.var.plot = ggarrange(gini.plot, share.plot, 
                                #labels = c("A", "B"),
                                ncol = 2, nrow = 1)
 
 ggsave(
   "gini_finns_historical.jpeg",
-  device = "jepg",
+  device = "jpeg",
   plot = dependent.var.plot,
   scale = 1,
-  width = NA,
-  height = NA,
-  units = c("cm"),
-  dpi = 300,
+  width = 10, 
+  height = 5, 
+  units = "in",
+  dpi = 600,
   limitsize = TRUE)
 
 
@@ -181,37 +181,52 @@ gini.map.plot = ggplot(municipalities) +
   theme_bw() +
   theme(axis.text.y = element_text(size=7), 
         axis.text.x = element_text(size=7), 
-        axis.title.y = element_text(size=10), 
-        axis.title.x = element_text(size=10), 
-        legend.text=element_text(size=10), 
-        legend.title=element_text(size=10),
-        plot.title = element_text(size=10),
-        strip.text.x = element_text(size = 10))
+        axis.title.y = element_text(size=7), 
+        axis.title.x = element_text(size=7), 
+        legend.text=element_text(size=7), 
+        legend.title=element_text(size=7),
+        plot.title = element_text(size=7),
+        strip.text.x = element_text(size = 7),
+        legend.position="bottom")
 
 # Populist Plot
 p_load("ggplot2")
 populist.map.plot = ggplot(municipalities) + 
   geom_sf(aes(fill = share.ps)) +
   scale_fill_gradient(low="blue", high="red") +
-  labs(title = "Overtime Share of the Populist Party") +
+  labs(title = "Overtime Electoral Share of the Finns Party") +
+  guides(fill=guide_legend(title="Electoral Share of\nthe Finns Party")) +
   facet_wrap(~Year) +
   theme_bw() +
   theme(axis.text.y = element_text(size=7), 
         axis.text.x = element_text(size=7), 
-        axis.title.y = element_text(size=10), 
-        axis.title.x = element_text(size=10), 
-        legend.text=element_text(size=10), 
-        legend.title=element_text(size=10),
-        plot.title = element_text(size=10),
-        strip.text.x = element_text(size = 10))
+        axis.title.y = element_text(size=7), 
+        axis.title.x = element_text(size=7), 
+        legend.text=element_text(size=7), 
+        legend.title=element_text(size=7),
+        plot.title = element_text(size=7),
+        strip.text.x = element_text(size = 7),
+        legend.position="bottom")
 
 # Combine both plots
 p_load(ggpubr)
 theme_set(theme_pubr())
 
 maps.plot = ggarrange(gini.map.plot, populist.map.plot,
-                      labels = c("A", "B"),
+                      #labels = c("A", "B"),
                       ncol = 1, nrow = 2)
+
+ggsave(
+  "maps_plot.jpeg",
+  device = "jpeg",
+  plot = maps.plot,
+  scale = 1,
+  width = 5, 
+  height = 8, 
+  units = "in",
+  dpi = 400,
+  limitsize = TRUE)
+
 
 
 # Plotting DV and IV
