@@ -214,15 +214,15 @@ theme_set(theme_pubr())
 
 maps.plot = ggarrange(gini.map.plot, populist.map.plot,
                       #labels = c("A", "B"),
-                      ncol = 1, nrow = 2)
+                      ncol = 2, nrow = 1)
 
 ggsave(
   "maps_plot.jpeg",
   device = "jpeg",
   plot = maps.plot,
   scale = 1,
-  width = 5, 
-  height = 8, 
+  width = 7, 
+  height = 4, 
   units = "in",
   dpi = 400,
   limitsize = TRUE)
