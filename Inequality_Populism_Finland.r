@@ -118,7 +118,6 @@ write.dta(dat.stata, "dat.dta")
 # Descriptives
 p_load(ggplot2,tidyverse)
 
-# HERE maybe try a bar plot
 # Share
 share.plot = voting.d %>% 
   group_by(Year) %>% 
@@ -127,7 +126,8 @@ share.plot = voting.d %>%
   geom_smooth(method = "loess", se = TRUE) +
   labs(title = "Overtime Electoral Perfomance of the Finns Party") +
   theme_bw() +
-  labs(y = "Share of Finns Party", x = "Year") + 
+  scale_x_continuous(breaks = seq(1983, 2023, by = 4))  +
+  labs(y = "Share of Finns Party (%)", x = "Year") + 
   theme(axis.text.y = element_text(size=7), 
         axis.text.x = element_text(size=7), 
         axis.title.y = element_text(size=10), 
@@ -198,6 +198,12 @@ municipalities = merge(x = municipalities, y = dat[ , c("City", "Gini", "share.p
 p_load("dplyr")
 municipalities = municipalities %>% filter(Year == 1995 | Year == 2019)
 
+# Adds 2023 elections
+municipalities.2023 = get_municipalities(year = 2020, scale = 4500)
+municipalities.2023 <- municipalities.2023 %>% rename("City" = "name")
+municipalities.2023 = merge(x = municipalities.2023, y = voting.d[ , c("City", "PS", "Year")], by = "City", all.x=TRUE)
+p_load("dplyr")
+municipalities.2023 = municipalities.2023 %>% filter(Year == 1995 | Year == 2019 | Year == 2023)
 
 # Gini Plot
 p_load("ggplot2")
@@ -218,6 +224,11 @@ gini.map.plot = ggplot(municipalities) +
         strip.text.x = element_text(size = 7),
         legend.position="bottom")
 
+annotate_figure(gini.map.plot,
+                bottom = text_grob("Note: Figure shows average over all cities", size = 10)
+)
+
+
 # Populist Plot
 p_load("ggplot2")
 populist.map.plot = ggplot(municipalities) + 
@@ -237,23 +248,45 @@ populist.map.plot = ggplot(municipalities) +
         strip.text.x = element_text(size = 7),
         legend.position="bottom")
 
+
+# Populist Plot 2023
+p_load("ggplot2")
+populist.map.plot.2023 = ggplot(municipalities.2023) + 
+  geom_sf(aes(fill = PS)) +
+  scale_fill_gradient(low="blue", high="red") +
+  labs(title = "Overtime Electoral Share of the Finns Party (%)") +
+  guides(fill=guide_legend(title="Electoral Share of the Finns Party (%)", nrow = 1)) +
+  facet_wrap(~Year) +
+  theme_bw() +
+  theme(axis.text.y = element_text(size=7), 
+        axis.text.x = element_text(size=7), 
+        axis.title.y = element_text(size=7), 
+        axis.title.x = element_text(size=7), 
+        legend.text=element_text(size=7), 
+        legend.title=element_text(size=7),
+        plot.title = element_text(size=7),
+        strip.text.x = element_text(size = 7),
+        legend.position="bottom")
+
 # Combine both plots
 p_load(ggpubr)
 theme_set(theme_pubr())
 
-maps.plot = ggarrange(gini.map.plot, populist.map.plot,
+maps.plot = ggarrange(gini.map.plot, populist.map.plot.2023,
+                      align = "h",
                       #labels = c("A", "B"),
                       ncol = 2, nrow = 1)
+
 
 ggsave(
   "maps_plot.jpeg",
   device = "jpeg",
   plot = maps.plot,
   scale = 1,
-  width = 7, 
+  width = 10.4, 
   height = 4, 
   units = "in",
-  dpi = 400,
+  dpi = 600,
   limitsize = TRUE)
 
 
