@@ -123,7 +123,7 @@ share.plot = voting.d %>%
   group_by(Year) %>% 
   ggplot(aes(x = Year, y = PS)) +
   #geom_jitter(width = 0.25, alpha = 1/5) +
-  geom_smooth(method = "loess", se = TRUE) +
+  stat_smooth(method = "loess", se = TRUE, fullrange = F, span=1) +
   labs(title = "Overtime Electoral Perfomance of the Finns Party") +
   theme_bw() +
   scale_x_continuous(breaks = seq(1983, 2023, by = 4))  +
@@ -225,7 +225,7 @@ gini.map.plot = ggplot(municipalities) +
         legend.position="bottom")
 
 annotate_figure(gini.map.plot,
-                bottom = text_grob("Note: Figure shows average over all cities", size = 10)
+                bottom = text_grob("Note: Figure shows average over all cities", color = "black", size = 10)
 )
 
 
