@@ -31,6 +31,10 @@ voting.d <- read_excel("/Users/hectorbahamonde/research/Inequality_Populism_Finl
 p_load(zoo)
 voting.d$Year <- na.locf(voting.d$Year, na.rm = F)
 
+# format year
+voting.d$Year = suppressWarnings(as.numeric(voting.d$Year))
+
+
 # Delete numbers from City names (districts?)
 voting.d$City = gsub('[-]', '', voting.d$City)
 voting.d$City = gsub('[0-9]+', '', voting.d$City)
@@ -40,6 +44,9 @@ voting.d$City = trimws(voting.d$City)
 
 # Merge both datasets
 dat = merge(voting.d, inequality.d, by = c("City", "Year"), all = TRUE)
+
+# Drop "Whole Country"
+dat = dat[!grepl("Whole country", dat$City),]
 
 # Drop NAs
 # dat = dat[complete.cases(dat), ]
@@ -71,9 +78,12 @@ dat <- dat %>%
 dat$City = as.factor(dat$City)
 
 # Format year
-dat$Year = as.numeric(dat$Year)
+dat$Year = suppressWarnings(as.numeric(dat$Year))
 p_load(lubridate); 
 dat$Year = year(as.Date(as.character(dat$Year), format = "%Y", tz = "GMT"))
+
+# rename PS for share.ps
+dat <- dat %>% rename("share.ps"= "PS")
 
 # Save a dataset with city, year, and Gini for structural break tests in Stata
 p_load(tidyverse,foreign)
@@ -108,9 +118,11 @@ write.dta(dat.stata, "dat.dta")
 # Descriptives
 p_load(ggplot2,tidyverse)
 
+# HERE maybe try a bar plot
 # Share
-share.plot = dat %>% 
-  ggplot(aes(x = Year, y = share.ps)) +
+share.plot = voting.d %>% 
+  group_by(Year) %>% 
+  ggplot(aes(x = Year, y = PS)) +
   #geom_jitter(width = 0.25, alpha = 1/5) +
   geom_smooth(method = "loess", se = TRUE) +
   labs(title = "Overtime Electoral Perfomance of the Finns Party") +
