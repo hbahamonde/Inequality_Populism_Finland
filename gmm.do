@@ -14,6 +14,7 @@ tsfill, full
 ** GMM
 *******
 
+
 * main model
 gmm (share_ps-{xb:L1.Gini}-{b0}), instruments(L2.Gini) twostep vce(cluster City)
 ** https://blog.stata.com/2016/10/04/estimating-covariate-effects-after-gmm/

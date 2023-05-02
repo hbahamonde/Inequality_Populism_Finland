@@ -6,6 +6,14 @@ setwd("/Users/hectorbahamonde/research/Inequality_Populism_Finland/")
 if (!require("pacman")) install.packages("pacman"); library(pacman) 
 
 ## ---- loadings:d ----
+cat("\014")
+rm(list=ls())
+setwd("/Users/hectorbahamonde/research/Inequality_Populism_Finland/")
+
+# Pacman
+if (!require("pacman")) install.packages("pacman"); library(pacman) 
+
+## ---- loadings:d ----
 # import inequality data
 p_load("readxl")
 inequality.d <- read_excel("/Users/hectorbahamonde/research/Inequality_Populism_Finland/data/inequality_data/Inequality_Data.xlsx")
@@ -14,43 +22,30 @@ inequality.d <- read_excel("/Users/hectorbahamonde/research/Inequality_Populism_
 p_load(dplyr,tidyr)
 inequality.d = inequality.d %>%  fill(Year) 
 
-# drop if NA
-inequality.d = inequality.d[complete.cases(inequality.d), ]
-
-# format
-inequality.d$Year = as.numeric(inequality.d$Year)
-
 # import voting data
+## Statistics Finland Data: https://pxdata.stat.fi/PxWeb/pxweb/en/StatFin/StatFin__evaa/statfin_evaa_pxt_13sw.px/
 ## We're using parties that have won at least a seat in Parliament: https://en.wikipedia.org/wiki/List_of_political_parties_in_Finland
 ## Statistics Finland Data: https://pxdata.stat.fi/PxWeb/pxweb/en/StatFin/StatFin__evaa/statfin_evaa_pxt_13sw.px/
+
 
 p_load(readxl)
 voting.d <- read_excel("/Users/hectorbahamonde/research/Inequality_Populism_Finland/data/voting_data/Voting_Data.xlsx")
 
 # Repeat year
-p_load(zoo)
-voting.d$Year <- na.locf(voting.d$Year, na.rm = F)
-
-# format year
-voting.d$Year = suppressWarnings(as.numeric(voting.d$Year))
-
+p_load(dplyr,tidyr)
+voting.d = voting.d %>%  fill(City) 
 
 # Delete numbers from City names (districts?)
-voting.d$City = gsub('[-]', '', voting.d$City)
 voting.d$City = gsub('[0-9]+', '', voting.d$City)
 
-# Deleting numbers leaves a white space in the city name. Delete that shit.
+# Deleting numbers leaves a whitespace in the city name. Delet that.
 voting.d$City = trimws(voting.d$City)
 
 # Merge both datasets
-dat = merge(voting.d, inequality.d, by = c("City", "Year"), all = TRUE)
+dat = merge(voting.d, inequality.d, by.x = c("City", "Year"), all = TRUE)
 
 # Drop "Whole Country"
 dat = dat[!grepl("Whole country", dat$City),]
-
-# Drop NAs
-# dat = dat[complete.cases(dat), ]
-
 
 # Calculate differenced inequality
 
@@ -74,16 +69,10 @@ dat <- dat %>%
   group_by(City) %>%
   mutate(Gini.lag.2 = dplyr::lag(Gini, n = 2, default = NA))
 
-# Format city
-dat$City = as.factor(dat$City)
-
 # Format year
-dat$Year = suppressWarnings(as.numeric(dat$Year))
+dat$City = as.factor(dat$City)
 p_load(lubridate); 
-dat$Year = year(as.Date(as.character(dat$Year), format = "%Y", tz = "GMT"))
-
-# rename PS for share.ps
-dat <- dat %>% rename("share.ps"= "PS")
+dat$Year = year(as.Date(as.character(dat$Year), format = "%Y"))
 
 # Save a dataset with city, year, and Gini for structural break tests in Stata
 p_load(tidyverse,foreign)
