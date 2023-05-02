@@ -18,8 +18,9 @@ tsfill, full
 * main model
 gmm (share_ps-{xb:L1.Gini}-{b0}), instruments(L2.Gini) twostep vce(cluster City)
 ** https://blog.stata.com/2016/10/04/estimating-covariate-effects-after-gmm/
-margins, at(L1.Gini = (5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100))  expression(normal(xb())) vce(unconditional)
-marginsplot
+margins, at(L1.Gini = (10 20 30 40 50 60 70 80 90 100))  expression(normal(xb())) vce(unconditional)
+marginsplot, scheme(s1color) aspectratio(1) xtitle("Gini (lagged)") ytitle("Predicted Vote Share of the Finns Party") title("")
+graph export "/Users/hectorbahamonde/research/Inequality_Populism_Finland/gmm_finns_gini.tif", replace width(2208) height(1606)
 
 * with logged dependent variable
 gen ln_share_ps = log(share_ps)
