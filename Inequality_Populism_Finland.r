@@ -81,13 +81,13 @@ write.dta(Gini.structural.break.stata.d, "gini.dta")
 
 # Drop
 ## Drop observations for which there were no elections.
-dat <- dat[!(dat$Year==1996 | dat$Year==1997 | dat$Year==1998 | dat$Year==2000 | dat$Year==2001 | dat$Year==2002 | dat$Year==2004 | dat$Year==2005 | dat$Year==2006 | dat$Year==2008 | dat$Year==2009 | dat$Year==2010 | dat$Year==2012 | dat$Year==2013 | dat$Year==2014 | dat$Year==2016 | dat$Year==2017 | dat$Year==2018 | dat$Year==2020 | dat$Year==2021),]
+dat <- dat[!(dat$Year==1996 | dat$Year==1997 | dat$Year==1998 | dat$Year==2000 | dat$Year==2001 | dat$Year==2002 | dat$Year==2004 | dat$Year==2005 | dat$Year==2006 | dat$Year==2008 | dat$Year==2009 | dat$Year==2010 | dat$Year==2012 | dat$Year==2013 | dat$Year==2014 | dat$Year==2016 | dat$Year==2017 | dat$Year==2018 | dat$Year==2020),]
 ## Drop observations for which there were no Gini coefs
 dat <- dat[!(dat$Year==1983 | dat$Year==1987 | dat$Year==1991),]
 ## Drop obs for which GINIs are missing
 dat <- dat[!is.na(dat$Gini),]
 ## Drop obs for which the share of populist party is zero
-dat <- dat[!(dat$share.ps==0),]
+# dat <- dat[!(dat$share.ps==0),] # HERE
 
 # sort again
 dat <- dat[order(dat$City, dat$Year),] 
@@ -185,14 +185,14 @@ municipalities = merge(x = municipalities, y = dat[ , c("City", "Gini", "share.p
 
 # Keep 1995 and 2019 years
 p_load("dplyr")
-municipalities = municipalities %>% filter(Year == 1995 | Year == 2019)
+municipalities = municipalities %>% filter(Year == 1995 | Year == 2019 | Year == 2021)
 
 # Adds 2023 elections
 municipalities.2023 = get_municipalities(year = 2020, scale = 4500)
 municipalities.2023 <- municipalities.2023 %>% rename("City" = "name")
 municipalities.2023 = merge(x = municipalities.2023, y = voting.d[ , c("City", "PS", "Year")], by = "City", all.x=TRUE)
 p_load("dplyr")
-municipalities.2023 = municipalities.2023 %>% filter(Year == 1995 | Year == 2019 | Year == 2023)
+municipalities.2023 = municipalities.2023 %>% filter(Year == 1995 | Year == 2019 | Year == 2021)
 
 # Gini Plot
 p_load("ggplot2")
