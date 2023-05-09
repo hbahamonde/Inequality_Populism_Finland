@@ -172,7 +172,7 @@ ggsave(
 # Maps
 # # # # # # # # # # # #
 
-p_load(geofi,ggplot2,sf,paletteer) # do not install packages that need compilation when propmpted
+p_load(geofi,ggplot2,sf,paletteer) # do not install packages that need compilation when prompted
 
 # Get Municipality Names
 municipalities = get_municipalities(year = 2020, scale = 4500) 
