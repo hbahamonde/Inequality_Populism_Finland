@@ -1,10 +1,3 @@
-cat("\014")
-rm(list=ls())
-setwd("/Users/hectorbahamonde/research/Inequality_Populism_Finland/")
-
-# Pacman
-if (!require("pacman")) install.packages("pacman"); library(pacman) 
-
 ## ---- loadings:d ----
 cat("\014")
 rm(list=ls())
@@ -13,7 +6,6 @@ setwd("/Users/hectorbahamonde/research/Inequality_Populism_Finland/")
 # Pacman
 if (!require("pacman")) install.packages("pacman"); library(pacman) 
 
-## ---- loadings:d ----
 # import inequality data
 p_load("readxl")
 inequality.d <- read_excel("/Users/hectorbahamonde/research/Inequality_Populism_Finland/data/inequality_data/Inequality_Data.xlsx")
@@ -112,10 +104,10 @@ share.plot = voting.d %>%
   group_by(Year) %>% 
   ggplot(aes(x = Year, y = PS)) +
   #geom_jitter(width = 0.25, alpha = 1/5) +
-  stat_smooth(method = "loess", se = TRUE, fullrange = F, span=1) +
+  geom_smooth(method = "loess", se = TRUE, fullrange = F, span=1) +
   labs(title = "Overtime Electoral Perfomance of the Finns Party") +
   theme_bw() +
-  scale_x_continuous(breaks = seq(1983, 2023, by = 4))  +
+  scale_x_discrete(breaks = seq(1983, 2023, by = 4))  +
   labs(y = "Share of Finns Party (%)", x = "Year") + 
   theme(axis.text.y = element_text(size=7), 
         axis.text.x = element_text(size=7), 
