@@ -79,16 +79,7 @@ dat <- dat[!(dat$Year==1983 | dat$Year==1987 | dat$Year==1991),]
 ## Drop obs for which GINIs are missing
 dat <- dat[!is.na(dat$Gini),]
 ## Drop obs for which the share of populist party is zero
-# dat <- dat[!(dat$share.ps==0),] # HERE
-
-# sort again
-dat <- dat[order(dat$City, dat$Year),] 
-
-# export subsetted data to stata
-p_load(tidyverse,foreign)
-dat.stata <- dat %>%  select(Year, City, share.ps, Gini, Gini.diff.1, Gini.lag.1, Gini.lag.2)
-write.dta(dat.stata, "dat.dta")
-## ----
+# dat <- dat[!(dat$share.ps==0),]
 
 
 ############
@@ -104,6 +95,7 @@ religion.d$muslim = ifelse(religion.d$pop.religion == religion.d$religionByCount
 # be adviced: original data contains estimations. Thus, small islands or the Vatican, for ex., 
 # have 5k for each, showing that there's a majority of Muslims. I will exclude these 
 # entries later during merging process.
+religion.d = data.frame(Country=religion.d$Country, muslim=religion.d$muslim) # filter out columns
 
 
 ############
@@ -117,18 +109,20 @@ immigration.d1 = as.data.frame(immigration.d1, header = FALSE)
 immigration.d2 = immigration.d1 # copy df
 immigration.d1.max.year = max(as.numeric(colnames(immigration.d1)), na.rm = T)
 immigration.d1 <- immigration.d1[ ,-c(1) ]
-
 immigration.d1 = c(as.numeric(c(t(immigration.d1[1,]))))
 
-# immigration tot value
-immigration.d = data.frame(
+
+# immigration tot df
+#####################
+
+immigration.tot.d = data.frame(
   Year = c(1990:immigration.d1.max.year),
   immigration.tot = immigration.d1
   )
 
-# Melt immigration data
-immigration.d2
-immigration.d2 <- immigration.d2[ -c(1:2), ]
+# Melt immigration df
+#######################
+immigration.d2 <- immigration.d2[ -c(1:2), ] # excludes Tot and Finland
 p_load(data.table)
 immigration.d2 <- melt(setDT(immigration.d2), id.vars = c("Country"), variable.name = "year")
 immigration.d2 = immigration.d2[order(immigration.d2$Country, immigration.d2$year),]
@@ -140,6 +134,119 @@ immigration.d2 <- immigration.d2 %>% rename("immigration" = "value")
 ############
 # Population Data: Population
 ############
+
+# import population data
+p_load("readxl")
+population.d1 <- read_excel("/Users/hectorbahamonde/research/Inequality_Populism_Finland/data/Statistics_Finland/Population/Statistics_Finland_Population_TS.xlsx")
+population.d1 = as.data.frame(population.d1, header = FALSE)
+population.d2 = population.d1 # copy df
+population.d1.max.year = max(as.numeric(colnames(population.d1)), na.rm = T)
+population.d1 <- population.d1[ ,-c(1) ]
+population.d1 = c(as.numeric(c(t(population.d1[1,]))))
+
+# tot immigrant population df
+#############################
+
+population.tot.d = data.frame(
+  Year = c(1990:population.d1.max.year),
+  imm.pop.tot = population.d1
+  )
+
+# merge two tot immigration/population df's
+immigration.tot.d = merge(population.tot.d, immigration.tot.d, by = "Year")
+
+# Melt imm population df
+#######################
+population.d2 <- population.d2[ -c(1:2), ] # excludes Tot and Finland
+p_load(data.table)
+population.d2 <- melt(setDT(population.d2), id.vars = c("Country"), variable.name = "year")
+population.d2 = population.d2[order(population.d2$Country, population.d2$year),]
+rownames(population.d2) <- NULL
+p_load("dplyr")
+population.d2 <- population.d2 %>% rename("imm.pop" = "value")
+
+# Merge imm population df and immigration df
+############################################
+imm.pop.d = merge(immigration.d2, population.d2, by = c("Country","year"))
+imm.pop.d = merge(imm.pop.d, religion.d, by = c("Country"), all.y = T,all.x = T, incomparables = NA)
+
+
+# cleaning
+imm.pop.d = imm.pop.d[complete.cases(imm.pop.d$year), ] # exclude cases without a year
+imm.pop.d = imm.pop.d[imm.pop.d$Country!="Former Soviet Union", ] # Excludes USSR.
+
+p_load("dplyr")
+imm.minor.country <- imm.pop.d %>% # excludes countries that did not have immigration nor population of foreign background
+  group_by(Country) %>%
+  summarize(imm.minor.country.2 = sum(immigration, na.rm = TRUE))
+imm.minor.country = as.data.frame(imm.minor.country)
+imm.minor.country$imm.minor.country = ifelse(imm.minor.country$imm.minor.country.2 == 0, 1, 0)
+
+imm.pop.minor.country <- imm.pop.d %>% # excludes countries that did not have immigration nor population of foreign background
+  group_by(Country) %>%
+  summarize(imm.pop.minor.country.2 = sum(imm.pop, na.rm = TRUE))
+imm.pop.minor.country = as.data.frame(imm.pop.minor.country)
+imm.pop.minor.country$imm.pop.minor.country = ifelse(imm.pop.minor.country$imm.pop.minor.country.2 == 0, 1, 0)
+
+# merge
+imm.pop.minor.country.d = merge(imm.pop.minor.country,imm.minor.country, by = "Country")
+imm.pop.minor.country.d$unimportant.immigration = ifelse(imm.pop.minor.country.d$imm.pop.minor.country & imm.pop.minor.country.d$imm.minor.country == 0, 1,0)
+p_load(tidyverse)
+imm.pop.minor.country.d = imm.pop.minor.country.d %>%  select(Country, unimportant.immigration)
+
+# exclude countries where immigration is not important (Like Vatican, and other small islands)
+imm.pop.d = merge(imm.pop.d,imm.pop.minor.country.d, by = "Country")
+
+# Delete countries that did not have nor immigration nor population of foreign origin during this time period
+p_load(dplyr)
+imm.pop.d <- imm.pop.d %>% filter(unimportant.immigration != 1)
+imm.pop.d = subset(imm.pop.d, select = -c(unimportant.immigration) )
+
+# Compute yearly "Muslim Immigration"
+muslim.immigration.d <- imm.pop.d %>% # 
+  filter(muslim == 1) %>%
+  group_by(year) %>%
+  summarize(muslim.immigration = sum(immigration, na.rm = TRUE))
+
+muslim.immigration.d = data.frame(muslim.immigration.d)
+# plot(muslim.immigration.d)
+
+# Compute yearly "Muslim Population"
+muslim.population.d <- imm.pop.d %>% # 
+  filter(muslim == 1) %>%
+  group_by(year) %>%
+  summarize(muslim.population = sum(imm.pop, na.rm = TRUE))
+
+muslim.population.d = data.frame(muslim.population.d)
+# plot(muslim.population.d)
+
+# merge both df's
+muslim.pop.imm.d = merge(muslim.population.d, muslim.immigration.d, by = "year")
+p_load(dplyr)
+muslim.pop.imm.d <- muslim.pop.imm.d %>% rename("Year" = "year")
+
+# HERE
+
+# Now include whether countries are developed or not.
+
+
+
+# merge immigration/(foreign)population df with big dataset
+dat = merge(dat, immigration.tot.d, by = "Year", all=T) # merges with yearly immigration tot
+dat = merge(dat, muslim.pop.imm.d, by = "Year", all=T) # merges with yearly muslim immigration tot 
+
+dat <- dat[complete.cases(dat$Year), ] # cleaning
+dat <- dat[complete.cases(dat$City), ] # cleaning
+
+
+# sort again
+dat <- dat[order(dat$City, dat$Year),] 
+
+# export subsetted data to stata
+p_load(tidyverse,foreign)
+dat.stata <- dat %>%  select(Year, City, share.ps, Gini, Gini.diff.1, Gini.lag.1, Gini.lag.2)
+write.dta(dat.stata, "dat.dta")
+## ----
 
 
 
