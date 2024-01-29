@@ -92,6 +92,58 @@ write.dta(dat.stata, "dat.dta")
 
 
 ############
+# Religion Data
+############
+
+# import religion data
+religion.d <- read.csv("/Users/hectorbahamonde/research/Inequality_Populism_Finland/data/World_Pop_Review/religion.csv")
+
+# gen muslim variable
+religion.d$pop.religion = apply(religion.d[, 3:ncol(religion.d)], 1, max)
+religion.d$muslim = ifelse(religion.d$pop.religion == religion.d$religionByCountry_muslims, 1, 0)
+# be adviced: original data contains estimations. Thus, small islands or the Vatican, for ex., 
+# have 5k for each, showing that there's a majority of Muslims. I will exclude these 
+# entries later during merging process.
+
+
+############
+# Population Data: Immigration
+############
+
+# import immigration data
+p_load("readxl")
+immigration.d1 <- read_excel("/Users/hectorbahamonde/research/Inequality_Populism_Finland/data/Statistics_Finland/Population/Statistics_Finland_Immigration_TS.xlsx")
+immigration.d1 = as.data.frame(immigration.d1, header = FALSE)
+immigration.d2 = immigration.d1 # copy df
+immigration.d1.max.year = max(as.numeric(colnames(immigration.d1)), na.rm = T)
+immigration.d1 <- immigration.d1[ ,-c(1) ]
+
+immigration.d1 = c(as.numeric(c(t(immigration.d1[1,]))))
+
+# immigration tot value
+immigration.d = data.frame(
+  Year = c(1990:immigration.d1.max.year),
+  immigration.tot = immigration.d1
+  )
+
+# Melt immigration data
+immigration.d2
+immigration.d2 <- immigration.d2[ -c(1:2), ]
+p_load(data.table)
+immigration.d2 <- melt(setDT(immigration.d2), id.vars = c("Country"), variable.name = "year")
+immigration.d2 = immigration.d2[order(immigration.d2$Country, immigration.d2$year),]
+rownames(immigration.d2) <- NULL
+p_load("dplyr")
+immigration.d2 <- immigration.d2 %>% rename("immigration" = "value")
+
+
+############
+# Population Data: Population
+############
+
+
+
+############
 # Analyses
 ############
 
