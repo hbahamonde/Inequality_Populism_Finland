@@ -117,7 +117,7 @@ immigration.d1 = c(as.numeric(c(t(immigration.d1[1,]))))
 
 immigration.tot.d = data.frame(
   Year = c(1990:immigration.d1.max.year),
-  immigration.tot = immigration.d1
+  immigration.yearly = immigration.d1
   )
 
 # Melt immigration df
@@ -149,7 +149,7 @@ population.d1 = c(as.numeric(c(t(population.d1[1,]))))
 
 population.tot.d = data.frame(
   Year = c(1990:population.d1.max.year),
-  imm.pop.tot = population.d1
+  imm.pop.cum = population.d1
   )
 
 # merge two tot immigration/population df's
@@ -206,7 +206,7 @@ imm.pop.d = subset(imm.pop.d, select = -c(unimportant.immigration) )
 muslim.immigration.d <- imm.pop.d %>% # 
   filter(muslim == 1) %>%
   group_by(year) %>%
-  summarize(muslim.immigration = sum(immigration, na.rm = TRUE))
+  summarize(muslim.imm.yearly = sum(immigration, na.rm = TRUE))
 
 muslim.immigration.d = data.frame(muslim.immigration.d)
 # plot(muslim.immigration.d)
@@ -215,7 +215,7 @@ muslim.immigration.d = data.frame(muslim.immigration.d)
 muslim.population.d <- imm.pop.d %>% # 
   filter(muslim == 1) %>%
   group_by(year) %>%
-  summarize(muslim.population = sum(imm.pop, na.rm = TRUE))
+  summarize(muslim.pop.cum = sum(imm.pop, na.rm = TRUE))
 
 muslim.population.d = data.frame(muslim.population.d)
 # plot(muslim.population.d)
@@ -228,6 +228,44 @@ muslim.pop.imm.d <- muslim.pop.imm.d %>% rename("Year" = "year")
 # HERE
 
 # Now include whether countries are developed or not.
+# merge it with "imm.pop.d"
+
+# import econ development data
+econ.development.d <- read.csv("/Users/hectorbahamonde/research/Inequality_Populism_Finland/data/World_Bank/World_Bank_Income_Classification.csv", 
+                                             sep = ";" , 
+                                             check.names = FALSE)
+econ.development.d = econ.development.d[,2:38] # dropping useless columns
+econ.development.d = melt(setDT(econ.development.d), id.vars = c("Country.name"), variable.name = "Year")
+econ.development.d$Year = as.numeric(as.character(econ.development.d$Year))
+econ.development.d$value = as.factor(econ.development.d$value)
+p_load("dplyr")
+econ.development.d = econ.development.d %>% filter(Year >= min(dat$Year))
+econ.development.d <- econ.development.d %>% rename("Econ.Dev" = "value")
+
+
+# merge immigration/(foreign)population df with econ.development.d
+p_load(dplyr)
+imm.pop.d <- imm.pop.d %>% rename("Year" = "year")
+econ.development.d <- econ.development.d %>% rename("Country" = "Country.name")
+
+imm.pop.d$Year = as.numeric(as.character(imm.pop.d$Year))
+imm.pop.d = merge(econ.development.d, imm.pop.d, by = c("Year", "Country"), all=T) # merges with yearly immigration tot
+
+# compute L% and LM% (combined) of immigration per year (use econ.development.d df)
+econ.development.d
+
+
+
+p_load(dplyr)
+econ.development.d %>%
+  group_by(Econ.Dev, Year) %>%
+  mutate(countT= sum(count)) %>%
+  group_by(type, add=TRUE) %>%
+  mutate(per=paste0(round(100*count/countT,2),'%'))
+
+
+
+
 
 
 
@@ -237,6 +275,10 @@ dat = merge(dat, muslim.pop.imm.d, by = "Year", all=T) # merges with yearly musl
 
 dat <- dat[complete.cases(dat$Year), ] # cleaning
 dat <- dat[complete.cases(dat$City), ] # cleaning
+
+# reordering
+# dat <- dat %>% select(everything(), imm.pop.cum, ) 
+
 
 
 # sort again
