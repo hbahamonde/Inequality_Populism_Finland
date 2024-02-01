@@ -340,7 +340,7 @@ dat <- dat[order(dat$City, dat$Year),]
 
 # export subsetted data to stata
 p_load(tidyverse,foreign)
-dat.stata <- dat %>%  select(Year, City, share.ps, Gini, Gini.diff.1, Gini.lag.1, Gini.lag.2)
+dat.stata <- dat %>%  select(Year, City, share.ps, Gini, Gini.diff.1, Gini.lag.1, Gini.lag.2, imm.pop.cum, immigration.yearly, muslim.pop.cum, muslim.imm.yearly, Difference)
 write.dta(dat.stata, "dat.dta")
 ## ----
 
