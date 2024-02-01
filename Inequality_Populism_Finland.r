@@ -251,19 +251,34 @@ econ.development.d <- econ.development.d %>% rename("Country" = "Country.name")
 imm.pop.d$Year = as.numeric(as.character(imm.pop.d$Year))
 imm.pop.d = merge(econ.development.d, imm.pop.d, by = c("Year", "Country"), all=T) # merges with yearly immigration tot
 
-# compute L% and LM% (combined) of immigration per year (use econ.development.d df)
-econ.development.d
-
-
-
+# compute L% and LM% (combined) immigration per year (use econ.development.d df)
 p_load(dplyr)
-econ.development.d %>%
-  group_by(Econ.Dev, Year) %>%
-  mutate(countT= sum(count)) %>%
-  group_by(type, add=TRUE) %>%
-  mutate(per=paste0(round(100*count/countT,2),'%'))
+cat.econ.development.d = na.omit(econ.development.d)
+cat.econ.development.d = cat.econ.development.d[!cat.econ.development.d$Econ.Dev == "" | cat.econ.development.d$Econ.Dev == "LM*", ]
+cat.econ.development.d = droplevels(cat.econ.development.d)
+
+cat.econ.development.d = cat.econ.development.d %>%
+  group_by(Year, Econ.Dev) %>%
+  summarise(n = n()) %>%
+  mutate(freq = n / sum(n)*100)
 
 
+cat.econ.development.d$Low.Econ.Dev = recode_factor(cat.econ.development.d$Econ.Dev, 
+                                                    "H"="High", 
+                                                    "L" = "Low",
+                                                    "LM" = "Low",
+                                                    "UM" = "High")
+
+
+cat.econ.development.d = cat.econ.development.d[cat.econ.development.d$Econ.Dev == "L" | cat.econ.development.d$Econ.Dev == "LM", ]
+
+p_load(car)
+par(pty="s")
+scatterplot(freq~Year|Econ.Dev, smooth=TRUE, data=cat.econ.development.d, 
+            main="Low and Middle Low Immigration in Finland", 
+            xlab="Year", 
+            ylab="%",
+            legend=list(coords="bottomleft"))
 
 
 
