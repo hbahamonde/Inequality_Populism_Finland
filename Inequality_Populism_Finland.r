@@ -262,23 +262,70 @@ cat.econ.development.d = cat.econ.development.d %>%
   summarise(n = n()) %>%
   mutate(freq = n / sum(n)*100)
 
+# plot multiple categories
+pdf(file = "/Users/hectorbahamonde/research/Inequality_Populism_Finland/Imm_Econ_Dev.pdf",   # The directory you want to save the file in
+    width = 7, # The width of the plot in inches
+    height = 7) # The height of the plot in inches
+p_load(car)
+par(pty="s")
 
+scatterplot(freq~Year|Econ.Dev, smooth=F, regLine=T, data=cat.econ.development.d, 
+            main="Immigration in Finland by Level\nof Economic Development of Country of Origin", 
+            xlab="Year", 
+            ylab="%",
+            legend=list(coords="bottomleft"))
+
+dev.off();dev.off()
+
+# plot binary (recoded development)
 cat.econ.development.d$Low.Econ.Dev = recode_factor(cat.econ.development.d$Econ.Dev, 
                                                     "H"="High", 
                                                     "L" = "Low",
                                                     "LM" = "Low",
                                                     "UM" = "High")
 
+cat.econ.development.d = cat.econ.development.d %>% 
+  group_by(Year, Low.Econ.Dev) %>%
+  summarise(Perc.Imm.High.Low = sum(freq)) 
 
-cat.econ.development.d = cat.econ.development.d[cat.econ.development.d$Econ.Dev == "L" | cat.econ.development.d$Econ.Dev == "LM", ]
 
+pdf(file = "/Users/hectorbahamonde/research/Inequality_Populism_Finland/Imm_Econ_Dev_Binary.pdf",   # The directory you want to save the file in
+    width = 7, # The width of the plot in inches
+    height = 7) # The height of the plot in inches
 p_load(car)
 par(pty="s")
-scatterplot(freq~Year|Econ.Dev, smooth=TRUE, data=cat.econ.development.d, 
-            main="Low and Middle Low Immigration in Finland", 
+
+scatterplot(Perc.Imm.High.Low~Year|Low.Econ.Dev, smooth=F, regLine=T, data=cat.econ.development.d, 
+            main="Immigration in Finland by Level\nof Economic Development of Country of Origin", 
             xlab="Year", 
             ylab="%",
             legend=list(coords="bottomleft"))
+
+dev.off();dev.off()
+
+# plot difference HIGH - LOW
+diff.econ.development.d = cat.econ.development.d %>%
+  spread(key = Low.Econ.Dev, value = Perc.Imm.High.Low) %>%
+  mutate(Difference = High - Low) %>%
+  select(Year, Difference)
+
+
+pdf(file = "/Users/hectorbahamonde/research/Inequality_Populism_Finland/Imm_Econ_Dev_Diff.pdf",   # The directory you want to save the file in
+    width = 7, # The width of the plot in inches
+    height = 7) # The height of the plot in inches
+p_load(car)
+par(pty="s")
+
+scatterplot(Difference~Year, smooth=F, regLine=T, data=diff.econ.development.d, 
+            main="Proportion of High Dev. to Low Dev. Immigration in Finland", 
+            xlab="Year", 
+            ylab="%", 
+            boxplots = F,
+            legend=list(coords="bottomleft"))
+
+dev.off();dev.off()
+
+
 
 
 
@@ -287,6 +334,7 @@ scatterplot(freq~Year|Econ.Dev, smooth=TRUE, data=cat.econ.development.d,
 # merge immigration/(foreign)population df with big dataset
 dat = merge(dat, immigration.tot.d, by = "Year", all=T) # merges with yearly immigration tot
 dat = merge(dat, muslim.pop.imm.d, by = "Year", all=T) # merges with yearly muslim immigration tot 
+dat = merge(dat, diff.econ.development.d, by = "Year", all=T) # merges with difference between High-Low dev country immigration
 
 dat <- dat[complete.cases(dat$Year), ] # cleaning
 dat <- dat[complete.cases(dat$City), ] # cleaning
