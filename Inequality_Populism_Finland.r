@@ -225,8 +225,6 @@ muslim.pop.imm.d = merge(muslim.population.d, muslim.immigration.d, by = "year")
 p_load(dplyr)
 muslim.pop.imm.d <- muslim.pop.imm.d %>% rename("Year" = "year")
 
-# HERE
-
 # Now include whether countries are developed or not.
 # merge it with "imm.pop.d"
 
@@ -275,7 +273,7 @@ scatterplot(freq~Year|Econ.Dev, smooth=F, regLine=T, data=cat.econ.development.d
             ylab="%",
             legend=list(coords="bottomleft"))
 
-dev.off();dev.off()
+dev.off()
 
 # plot binary (recoded development)
 cat.econ.development.d$Low.Econ.Dev = recode_factor(cat.econ.development.d$Econ.Dev, 
@@ -301,7 +299,7 @@ scatterplot(Perc.Imm.High.Low~Year|Low.Econ.Dev, smooth=F, regLine=T, data=cat.e
             ylab="%",
             legend=list(coords="bottomleft"))
 
-dev.off();dev.off()
+dev.off()
 
 # plot difference HIGH - LOW
 diff.econ.development.d = cat.econ.development.d %>%
@@ -323,12 +321,7 @@ scatterplot(Difference~Year, smooth=F, regLine=T, data=diff.econ.development.d,
             boxplots = F,
             legend=list(coords="bottomleft"))
 
-dev.off();dev.off()
-
-
-
-
-
+dev.off()
 
 
 # merge immigration/(foreign)population df with big dataset
@@ -341,8 +334,6 @@ dat <- dat[complete.cases(dat$City), ] # cleaning
 
 # reordering
 # dat <- dat %>% select(everything(), imm.pop.cum, ) 
-
-
 
 # sort again
 dat <- dat[order(dat$City, dat$Year),] 
