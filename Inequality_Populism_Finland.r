@@ -155,6 +155,7 @@ population.tot.d = data.frame(
 # merge two tot immigration/population df's
 immigration.tot.d = merge(population.tot.d, immigration.tot.d, by = "Year")
 
+
 # Melt imm population df
 #######################
 population.d2 <- population.d2[ -c(1:2), ] # excludes Tot and Finland
@@ -224,6 +225,7 @@ muslim.population.d = data.frame(muslim.population.d)
 muslim.pop.imm.d = merge(muslim.population.d, muslim.immigration.d, by = "year")
 p_load(dplyr)
 muslim.pop.imm.d <- muslim.pop.imm.d %>% rename("Year" = "year")
+muslim.pop.imm.d$Year = as.numeric(as.character(muslim.pop.imm.d$Year))
 
 # Now include whether countries are developed or not.
 # merge it with "imm.pop.d"
@@ -311,15 +313,107 @@ diff.econ.development.d = cat.econ.development.d %>%
 pdf(file = "/Users/hectorbahamonde/research/Inequality_Populism_Finland/Imm_Econ_Dev_Diff.pdf",   # The directory you want to save the file in
     width = 7, # The width of the plot in inches
     height = 7) # The height of the plot in inches
+
 p_load(car)
 par(pty="s")
-
 scatterplot(Difference~Year, smooth=F, regLine=T, data=diff.econ.development.d, 
             main="Proportion of High Dev. to Low Dev. Immigration in Finland", 
             xlab="Year", 
             ylab="%", 
             boxplots = F,
             legend=list(coords="bottomleft"))
+
+dev.off()
+
+
+# 
+pdf(file = "/Users/hectorbahamonde/research/Inequality_Populism_Finland/Imm_Pop_Cum.pdf",   # The directory you want to save the file in
+    width = 7, # The width of the plot in inches
+    height = 7) # The height of the plot in inches
+
+p_load(car)
+options(scipen=999)
+par(pty="s")
+
+scatterplot(imm.pop.cum ~ Year, 
+            smooth=F, 
+            regLine=F, 
+            data=immigration.tot.d, 
+            main="Immigrant Population (cumulative) in Finland", 
+            xlab="Year", 
+            ylab="N", 
+            boxplots = F,
+            legend=list(coords="bottomleft"),
+            col="blue")
+
+dev.off()
+
+
+#
+pdf(file = "/Users/hectorbahamonde/research/Inequality_Populism_Finland/Imm_Pop_Yearly.pdf",   # The directory you want to save the file in
+    width = 7, # The width of the plot in inches
+    height = 7) # The height of the plot in inches
+
+p_load(car)
+options(scipen=999)
+par(pty="s", mfrow=c(1,2))
+
+
+scatterplot(immigration.yearly ~ Year, 
+            smooth=F, 
+            regLine=F, 
+            data=immigration.tot.d, 
+            main="Yearly Immigrant Population in Finland", 
+            xlab="Year", 
+            ylab="N", 
+            boxplots = F,
+            legend=list(coords="bottomleft"),
+            col="red")
+
+dev.off()
+
+#
+pdf(file = "/Users/hectorbahamonde/research/Inequality_Populism_Finland/Muslim_Imm_Pop_Cum.pdf",   # The directory you want to save the file in
+    width = 7, # The width of the plot in inches
+    height = 7) # The height of the plot in inches
+
+p_load(car)
+options(scipen=999)
+par(pty="s")
+
+
+scatterplot(muslim.pop.cum ~ Year, 
+            smooth=F, 
+            regLine=F, 
+            data=muslim.pop.imm.d, 
+            main="Muslim Population (cumulative) in Finland", 
+            xlab="Year", 
+            ylab="N", 
+            boxplots = F,
+            legend=list(coords="bottomleft"),
+            col="red")
+
+dev.off()
+
+#
+pdf(file = "/Users/hectorbahamonde/research/Inequality_Populism_Finland/Muslim_Imm_Pop_Yearly.pdf",   # The directory you want to save the file in
+    width = 7, # The width of the plot in inches
+    height = 7) # The height of the plot in inches
+
+p_load(car)
+options(scipen=999)
+par(pty="s")
+
+scatterplot(muslim.imm.yearly ~ Year, 
+            smooth=F, 
+            regLine=F, 
+            data=muslim.pop.imm.d, 
+            main="Yearly Muslim Population in Finland", 
+            xlab="Year", 
+            ylab="N", 
+            boxplots = F,
+            legend=list(coords="bottomleft"),
+            col="red")
 
 dev.off()
 
@@ -344,6 +438,34 @@ dat.stata <- dat %>%  select(Year, City, share.ps, Gini, Gini.diff.1, Gini.lag.1
 write.dta(dat.stata, "dat.dta")
 ## ----
 
+# plot High development immigration in finland
+ggplot(econ.development.d[econ.development.d$Econ.Dev=="H"], aes(x = Year, y = Country, color = Econ.Dev)) +
+  geom_tile() +
+  theme_minimal() +
+  labs(title = "Economic Development Status of Countries Over Time",
+       x = "Year",
+       y = "Country",
+       color = "Economic Development Status") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+        axis.text.y = element_text(size = 5, hjust = 1)) 
+
+# plot Low development immigration in finland
+ggplot(econ.development.d[econ.development.d$Econ.Dev=="L"], aes(x = Year, y = Country, color = Econ.Dev)) +
+  geom_tile() +
+  theme_minimal() +
+  labs(title = "Economic Development Status of Countries Over Time",
+       x = "Year",
+       y = "Country",
+       color = "Economic Development Status") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1),
+        axis.text.y = element_text(size = 5, hjust = 1)) 
+
+
+# https://www.alexcernat.com/estimating-multilevel-models-for-change-in-r/
+# estimate multilevel for time models
+
+# https://bookdown.org/content/4253/introducing-the-multilevel-model-for-change.html
+# bayesian version
 
 
 ############
