@@ -1,0 +1,92 @@
+---
+title: "Report"
+output: pdf_document
+date: "2024-02-02"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#cat("\014")
+#rm(list=ls())
+
+# Pacman
+if (!require("pacman")) install.packages("pacman"); library(pacman) 
+
+# load data
+load("/Users/hectorbahamonde/research/Inequality_Populism_Finland/dat.RData") # Load data
+```
+
+
+Let's take a look at the immigration patters in Finland. From the figure below, it is clear that immigration has risen.
+
+
+```{r chunk:1}
+p_load(car)
+scatterplot(immigration.yearly ~ Year, 
+            smooth=F, 
+            regLine=F, 
+            data=dat, 
+            main="Yearly Immigrant Population in Finland", 
+            xlab="Year", 
+            ylab="N", 
+            boxplots = F,
+            legend=list(coords="bottomleft"),
+            col="red")
+```
+
+And this is consistent with the literature: Populist far-right parties mobilize these grievances (i.e., higher immigration levels), gaining electoral support. However, what nobody seems to talk about is *"who"* are these immigrants, like, **where** do they come from... This is relevant as these grievances might be either *economic* or *cultural.* (1) Immigrants might be competing for the same (limited) jobs Finns perform, or maybe (2) people with different cultural backgrounds might ignite the so-called "cultural backlash." In any case, it is important to disentangle whether immigration might fuel either of these two grievances (economic, cultural) by analyzing the origin of immigrants. Concurrently, (1) do immigrants come from developed or underdeveloped countries? And also, (2) do immigrants come primarily from non-western "cultures"? Luckily, Finland has rich data on the origin of immigrant population.
+
+# Immigration by Country of Origin
+
+## Economic
+
+The plot below shows that, in fact, immigration primarily comes from developed countries ("H"), and that the percentage of immigrants coming from poor or mid-poor countries ("L" and/or "LM") has systematically decreased. Thus, it might be safe to assume that Finland primarily "imports" educated immigrants. This might or might not help answering the "economic immigration grievance" hypothesis: skilled immigrants might be "taking over" Finnish jobs because of their high skills that might be transferable to the Finnish labor markets. In any case, the average immigrant is not necessarily of the "refugee" type, where public resources of the welfare state are necessarily spent to assist them (as the Finns claim). 
+
+```{r chunk:2}
+# load data
+load("/Users/hectorbahamonde/research/Inequality_Populism_Finland/cat_econ_development_d.RData") # Load data
+
+# plot
+p_load(car)
+par(pty="s")
+scatterplot(freq~Year|Econ.Dev, smooth=F, regLine=T, data=cat.econ.development.d, 
+            main="Immigration in Finland by Level\nof Economic Development of Country of Origin", 
+            xlab="Year", 
+            ylab="%",
+            legend=list(coords="bottomleft"))
+```
+
+
+## Cultural
+
+Now, one way to think about possible "cultural incompatibilities" is to look at the religion of immigrants. Coding the country of origin (Statistics Finland) with the primary religion of that country (World Bank datasets) helps us in doing so. The figure shows that the number of Muslim immigrants has grown quite a big deal. 
+
+```{r chunk:3}
+# load data
+load("/Users/hectorbahamonde/research/Inequality_Populism_Finland/muslim_pop_imm_d.RData") # Load data
+
+p_load(car)
+options(scipen=999)
+par(pty="s")
+
+scatterplot(muslim.imm.yearly ~ Year, 
+            smooth=F, 
+            regLine=F, 
+            data=muslim.pop.imm.d, 
+            main="Yearly Muslim Population in Finland", 
+            xlab="Year", 
+            ylab="N", 
+            boxplots = F,
+            legend=list(coords="bottomleft"),
+            col="red")
+```
+
+
+# Comments
+
+I think conceptualizing the type of immigrant should help us in disentangling the kind of losses far-right populist parties claim during political campaigns. Importantly, one of our main theoretical contributions is a theory of losses (prospect theory). Thus, finding the "locus" of these losses is important to understand the rise of populism in Finland.
+
+
+- Testing: Now I need to test how these two contribute in explaining the rise of the Finns.
+- I will use a multi-level method (municipality levels) that accounts for national-level nesting (immigration levels). 
+- Ecological fallacy: we have voting levels (municipal level) that are nested in years; each year has its own (national) levels of immigration. We have to be careful in making the argument that while these two levels are different, and hence, results should be interpreted with caution. Substantively, this means that voters are not only influenced by their closest context, but also by the public (national) "mood" or public opinion, or more generally, the common perception that Finland is being "seized by immigrants"; the literature on opinion formation is consistent with this. 

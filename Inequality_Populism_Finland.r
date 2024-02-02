@@ -227,6 +227,9 @@ p_load(dplyr)
 muslim.pop.imm.d <- muslim.pop.imm.d %>% rename("Year" = "year")
 muslim.pop.imm.d$Year = as.numeric(as.character(muslim.pop.imm.d$Year))
 
+# Save rdata
+save(muslim.pop.imm.d, file = "muslim_pop_imm_d.RData")
+
 # Now include whether countries are developed or not.
 # merge it with "imm.pop.d"
 
@@ -261,6 +264,10 @@ cat.econ.development.d = cat.econ.development.d %>%
   group_by(Year, Econ.Dev) %>%
   summarise(n = n()) %>%
   mutate(freq = n / sum(n)*100)
+
+# Save rdata
+save(cat.econ.development.d, file = "cat_econ_development_d.RData")
+
 
 # plot multiple categories
 pdf(file = "/Users/hectorbahamonde/research/Inequality_Populism_Finland/Imm_Econ_Dev.pdf",   # The directory you want to save the file in
@@ -431,6 +438,9 @@ dat <- dat[complete.cases(dat$City), ] # cleaning
 
 # sort again
 dat <- dat[order(dat$City, dat$Year),] 
+
+# Save rdata
+save(dat, file = "dat.RData")
 
 # export subsetted data to stata
 p_load(tidyverse,foreign)
