@@ -479,19 +479,44 @@ ggarrange(panel.finns.p, panel.gini.p,
 
 
 
+library("brms")
+#p_load(brms)
 
-p_load(brms)
+# with our 0 + Intercept solution, we told brm() to suppress the default intercept and replace it with our smartly-named Intercept parameter. This is our fixed effect for the population intercept and, importantly, brms() will assign default priors to it based on the data themselves without assumptions about centering.
+# https://bookdown.org/content/4253/introducing-the-multilevel-model-for-change.html#examining-estimated-fixed-effects
 
 fit3.2 <-
   brm(data = dat,
       family = gaussian,
-      formula = share.ps ~ 0 + Intercept + Gini + (1 + immigration.yearly + muslim.imm.yearly | City),
-      iter = 2000, warmup = 1000, chains = 4, cores = 4,
-      control = list(adapt_delta = .99),
-      seed = 3,
-      file = "data/fits/m2")
+#       formula = share.ps ~ 0 + Intercept + Gini + (1 + immigration.yearly + muslim.imm.yearly + Year | City),
+#       formula = share.ps ~  Gini + muslim.imm.yearly + (1 + muslim.imm.yearly + Year | City), # (working hyp)
+       formula = share.ps ~  Gini + immigration.yearly + (1 + immigration.yearly + Year | City),
+iter = 2000, warmup = 400, chains = 1, 
+#cores = 4, # allow you to sample from all four chains simultaneously
+      control = list(adapt_delta = 0.95),
+      seed = 3
+      )
+
+#print(fit3.2)
+
+plot(conditional_effects(fit3.2), ask = T)
+
+draws <- as_draws_df(fit3.2)
+
+draws[, 1:10] %>%
+  glimpse()
 
 
+draws <- as_draws_df(fit3.2)
+
+draws %>% 
+  pivot_longer(starts_with("b_")) %>% 
+  
+  ggplot(aes(x = value)) +
+  geom_density(color = "transparent", fill = "grey25") +
+  scale_y_continuous(NULL, breaks = NULL) +
+  theme(panel.grid = element_blank()) +
+  facet_wrap(~ name, scales = "free")
 
 
 
@@ -524,6 +549,8 @@ ggplot(econ.development.d[econ.development.d$Econ.Dev=="L"], aes(x = Year, y = C
 
 # https://bookdown.org/content/4253/introducing-the-multilevel-model-for-change.html
 # bayesian version
+
+# https://www.andrewheiss.com/blog/2021/12/01/multilevel-models-panel-data-guide/
 
 
 ############
