@@ -448,6 +448,54 @@ dat.stata <- dat %>%  select(Year, City, share.ps, Gini, Gini.diff.1, Gini.lag.1
 write.dta(dat.stata, "dat.dta")
 ## ----
 
+# plot municipal trajectories of Finns vote share
+# notice these plots are fitting blue regression lines. Thus, they're estimations.
+# They DO NOT reflect actual values (but, again, estimations). 
+# It looks like there are two (same) towns that have divergent trajectories in 1995 and 2020 regarding
+# their Gini and Finns levels. However, they're NOT the same towns. 
+
+p_load(ggplot2,ggpubr)
+
+panel.finns.p = dat %>% 
+  ggplot(aes(x = Year, y = share.ps)) +
+  stat_smooth(aes(group = City),
+              method = "lm", se = F, size = 0.09) +  
+  stat_smooth(method = "lm", se = F, size = 1, color = "red") +  
+  theme_light() + 
+  labs(y="Share of Finns Party (%)", x="Year") + 
+  theme(legend.position = "none", aspect.ratio=1)
+
+panel.gini.p = dat %>% 
+  ggplot(aes(x = Year, y = Gini)) +
+  stat_smooth(aes(group = City),
+              method = "lm", se = F, size = 0.09) +  
+  stat_smooth(method = "lm", se = F, size = 1, color = "red") +  
+  theme(panel.grid = element_blank()) +
+  theme_light() + labs(y="Gini Index", x="Year") + theme(legend.position = "none", aspect.ratio=1)
+
+ggarrange(panel.finns.p, panel.gini.p, 
+          labels = c("A", "B"),
+          ncol = 2, nrow = 1)
+
+
+
+
+p_load(brms)
+
+fit3.2 <-
+  brm(data = dat,
+      family = gaussian,
+      formula = share.ps ~ 0 + Intercept + Gini + (1 + immigration.yearly + muslim.imm.yearly | City),
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
+      control = list(adapt_delta = .99),
+      seed = 3,
+      file = "data/fits/m2")
+
+
+
+
+
+
 # plot High development immigration in finland
 ggplot(econ.development.d[econ.development.d$Econ.Dev=="H"], aes(x = Year, y = Country, color = Econ.Dev)) +
   geom_tile() +
