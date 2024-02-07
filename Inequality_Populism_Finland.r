@@ -439,6 +439,10 @@ dat <- dat[complete.cases(dat$City), ] # cleaning
 # sort again
 dat <- dat[order(dat$City, dat$Year),] 
 
+# drop if share.ps is NA
+dat <- dat[!is.na(dat$share.ps),]
+
+
 # Save rdata
 save(dat, file = "dat.RData")
 
