@@ -448,6 +448,12 @@ dat.stata <- dat %>%  select(Year, City, share.ps, Gini, Gini.diff.1, Gini.lag.1
 write.dta(dat.stata, "dat.dta")
 ## ----
 
+# Pacman
+if (!require("pacman")) install.packages("pacman"); library(pacman) 
+
+load("/Users/hectorbahamonde/research/Inequality_Populism_Finland/dat.RData")
+
+
 # plot municipal trajectories of Finns vote share
 # notice these plots are fitting blue regression lines. Thus, they're estimations.
 # They DO NOT reflect actual values (but, again, estimations). 
@@ -478,9 +484,13 @@ ggarrange(panel.finns.p, panel.gini.p,
           ncol = 2, nrow = 1)
 
 
+if (!requireNamespace("remotes")) {
+  install.packages("remotes")
+}
+remotes::install_github("paul-buerkner/brms")
+
 
 library("brms")
-#p_load(brms)
 
 # with our 0 + Intercept solution, we told brm() to suppress the default intercept and replace it with our smartly-named Intercept parameter. This is our fixed effect for the population intercept and, importantly, brms() will assign default priors to it based on the data themselves without assumptions about centering.
 # https://bookdown.org/content/4253/introducing-the-multilevel-model-for-change.html#examining-estimated-fixed-effects
