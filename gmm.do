@@ -37,7 +37,7 @@ gmm (ln_share_ps-{xb:L1.Gini}-{b0}), instruments(L2.Gini) twostep vce(cluster Ci
 *******
 ** GMM: with immigration specifications
 *******
-ivregress gmm ln_share_ps L1.Gini (imm_pop_cum = L1.imm_pop_cum), vce(cluster City)
+ivregress gmm share_ps L1.Gini (imm_pop_cum = L1.imm_pop_cum), vce(cluster City)
 
 
 
