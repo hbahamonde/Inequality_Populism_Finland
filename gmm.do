@@ -28,8 +28,10 @@ marginsplot, scheme(s1color) aspectratio(1) xtitle("Gini (lagged)") ytitle("Pred
 graph export "/Users/hectorbahamonde/research/Inequality_Populism_Finland/gmm_finns_gini.tif", replace width(2208) height(1606)
 
 * with logged dependent variable
-gen ln_share_ps = log(share_ps)
-gmm (ln_share_ps-{xb:L1.Gini}-{b0}), instruments(L2.Gini) twostep vce(cluster City)
+* gen ln_share_ps = log(share_ps)
+* ivregress gmm ln_share_ps (L1.Gini = L2.Gini), vce(cluster City)
+* margins, expression(exp(predict(xb))*exp((`e(rmse)'^2)/2)) at(L1.Gini = (10 20 30 40 50 60 70 80 90 100)) 
+* marginsplot, scheme(s1color) aspectratio(1) xtitle("Gini (lagged)") ytitle("Predicted Vote Share of the Finns Party") title("")
 * transform predictions in a way that it produces an unbiased transformation
 * https://www.stata.com/stata-news/news34-2/spotlight/
 
@@ -37,15 +39,13 @@ gmm (ln_share_ps-{xb:L1.Gini}-{b0}), instruments(L2.Gini) twostep vce(cluster Ci
 *******
 ** GMM: with immigration specifications
 *******
-ivregress gmm share_ps L1.Gini (imm_pop_cum = L1.imm_pop_cum), vce(cluster City)
+
+gmm (share_ps - {xb:L1.Gini L1.muslim_imm_yearly} - {b0}), instruments(L2.Gini L2.muslim_imm_yearly) twostep vce(cluster City)
 
 
 
-margins, expression(exp(predict(xb))*exp((`e(rmse)'^2)/2)) at(L1.Gini = (10 20 30 40 50 60 70 80 90 100)) 
+margins, at(L1.Gini = (10 20 30 40 50 60 70 80 90 100)) expression(normal(xb())) vce(unconditional)
 marginsplot, scheme(s1color) aspectratio(1) xtitle("Gini (lagged)") ytitle("Predicted Vote Share of the Finns Party") title("")
-
-*margins, at(L1.Gini = (10 20 30 40 50 60 70 80 90 100))  expression(normal(xb())) vce(unconditional)
-*marginsplot, scheme(s1color) aspectratio(1) xtitle("Gini (lagged)") ytitle("Predicted Vote Share of the Finns Party") title("")
 
 margins, at(L1.muslim_imm_yearly = (1000 1500 2000 2500 3000 3500 4000 4500))  expression(normal(xb())) vce(unconditional)
 marginsplot, scheme(s1color) aspectratio(1) xtitle("Muslim Imm. (lagged)") ytitle("Predicted Vote Share of the Finns Party") title("")

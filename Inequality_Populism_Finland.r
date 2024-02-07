@@ -443,6 +443,16 @@ dat <- dat[order(dat$City, dat$Year),]
 dat <- dat[!is.na(dat$share.ps),]
 
 
+# check for duplicates
+# p_load(dplyr)
+# dat = dat %>% group_by(City,Year) %>%
+#  mutate(duplicated = n() > 1)
+# table(dat$duplicated)
+  
+# deleting duplicates
+dat = dat[dat$share.ps != 0.0000000000, ] 
+
+
 # Save rdata
 save(dat, file = "dat.RData")
 
@@ -488,13 +498,15 @@ ggarrange(panel.finns.p, panel.gini.p,
           ncol = 2, nrow = 1)
 
 
-if (!requireNamespace("remotes")) {
-  install.packages("remotes")
-}
-remotes::install_github("paul-buerkner/brms")
 
+#### brms
+# if (!requireNamespace("remotes")) {
+#  install.packages("remotes")
+# }
+# remotes::install_github("paul-buerkner/brms")
+# library("brms")
 
-library("brms")
+p_load(brms)
 
 # with our 0 + Intercept solution, we told brm() to suppress the default intercept and replace it with our smartly-named Intercept parameter. This is our fixed effect for the population intercept and, importantly, brms() will assign default priors to it based on the data themselves without assumptions about centering.
 # https://bookdown.org/content/4253/introducing-the-multilevel-model-for-change.html#examining-estimated-fixed-effects
@@ -503,9 +515,10 @@ fit3.2 <-
   brm(data = dat,
       family = gaussian,
 #       formula = share.ps ~ 0 + Intercept + Gini + (1 + immigration.yearly + muslim.imm.yearly + Year | City),
-#       formula = share.ps ~  Gini + muslim.imm.yearly + (1 + muslim.imm.yearly + Year | City), # (working hyp)
-       formula = share.ps ~  Gini + immigration.yearly + (1 + immigration.yearly + Year | City),
-iter = 2000, warmup = 400, chains = 1, 
+      formula = share.ps ~  0 + Intercept + Gini.lag.1 + (1 + muslim.imm.yearly + Year | City), # (working hyp)
+#.      formula = share.ps ~  Gini + muslim.imm.yearly + (1 + muslim.imm.yearly + Year | City), # (working hyp)
+#       formula = share.ps ~  Gini + immigration.yearly + (1 + immigration.yearly + Year | City), # (working hyp)
+iter = 500, warmup = 100, chains = 1, 
 #cores = 4, # allow you to sample from all four chains simultaneously
       control = list(adapt_delta = 0.95),
       seed = 3
@@ -514,6 +527,13 @@ iter = 2000, warmup = 400, chains = 1,
 #print(fit3.2)
 
 plot(conditional_effects(fit3.2), ask = T)
+
+
+# how to use posterior predictions and interpret multilevel hyperparameters
+# https://rdrr.io/cran/brms/man/posterior_predict.brmsfit.html
+
+#install.packages("tidyverse")
+p_load(tidyverse)
 
 draws <- as_draws_df(fit3.2)
 
@@ -829,7 +849,7 @@ maps.plot.legend <- paste(
 # GMM
 # for Mac users: it NEEDS https://github.com/fxcoudert/gfortran-for-macOS/releases/download/10.2/gfortran-10.2-Catalina.dmg (CATALINA, no newer version)
 # install.packages("gmm")
-library(gmm)
+# library(gmm)
 
 # Gmm in STATA
 # https://www.stata.com/manuals13/rgmm.pdf
