@@ -511,22 +511,27 @@ p_load(brms)
 # with our 0 + Intercept solution, we told brm() to suppress the default intercept and replace it with our smartly-named Intercept parameter. This is our fixed effect for the population intercept and, importantly, brms() will assign default priors to it based on the data themselves without assumptions about centering.
 # https://bookdown.org/content/4253/introducing-the-multilevel-model-for-change.html#examining-estimated-fixed-effects
 
+
+#     formula = share.ps ~  0 + Intercept + Gini.lag.1 + (1 + muslim.imm.yearly + Year | City), # (working hyp)
+
+
 fit3.2 <-
   brm(data = dat,
       family = gaussian,
 #       formula = share.ps ~ 0 + Intercept + Gini + (1 + immigration.yearly + muslim.imm.yearly + Year | City),
-      formula = share.ps ~  0 + Intercept + Gini.lag.1 + (1 + muslim.imm.yearly + Year | City), # (working hyp)
-#.      formula = share.ps ~  Gini + muslim.imm.yearly + (1 + muslim.imm.yearly + Year | City), # (working hyp)
-#       formula = share.ps ~  Gini + immigration.yearly + (1 + immigration.yearly + Year | City), # (working hyp)
+#     formula = share.ps ~  0 + Intercept + Gini.lag.1 + (1 + muslim.imm.yearly + Year | City), # 
+#.      formula = share.ps ~  Gini + muslim.imm.yearly + (1 + muslim.imm.yearly + Year | City), # 
+      formula = share.ps ~  0 + Intercept + Gini + imm.pop.cum + muslim.pop.cum + (1 | City), #
 iter = 500, warmup = 100, chains = 1, 
-#cores = 4, # allow you to sample from all four chains simultaneously
+cores = 4, # allow you to sample from all four chains simultaneously
       control = list(adapt_delta = 0.95),
       seed = 3
       )
 
-#print(fit3.2)
+print(fit3.2)
 
 plot(conditional_effects(fit3.2), ask = T)
+plot(fit3.2, ask = T)
 
 
 # how to use posterior predictions and interpret multilevel hyperparameters
