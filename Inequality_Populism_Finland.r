@@ -230,6 +230,8 @@ muslim.pop.imm.d$Year = as.numeric(as.character(muslim.pop.imm.d$Year))
 # Save rdata
 save(muslim.pop.imm.d, file = "muslim_pop_imm_d.RData")
 
+
+# HERE
 # Now include whether countries are developed or not.
 # merge it with "imm.pop.d"
 
@@ -496,6 +498,39 @@ panel.gini.p = dat %>%
 ggarrange(panel.finns.p, panel.gini.p, 
           labels = c("A", "B"),
           ncol = 2, nrow = 1)
+
+
+
+
+# lme4
+# https://rpubs.com/rslbliss/r_mlm_ws
+p_load(lme4)
+
+#  To reverse your transformation y=log(x+0.001) you need x=exp(y)-0.001
+# https://stats.stackexchange.com/questions/282188/lmer-predict-with-random-effects-log-transformation
+# https://stackoverflow.com/questions/50740727/plot-predicted-values-from-lmer-longitudinal-analysis
+
+options(scipen=999)
+# model <- lmer(share.ps ~ Gini + imm.pop.cum + muslim.pop.cum + (1 | City) + (1 | Year), data = dat) # Intercept varying among City and Year
+# model <- lmer(share.ps ~ Gini + immigration.yearly + muslim.imm.yearly + (1 | City) + (1 | Year), data = dat) # Intercept varying among City and Year
+# model <- lmer(share.ps ~ Gini + immigration.yearly + muslim.imm.yearly + (1 | City), data = dat) # Intercept varying among City and Year
+model <- lmer(log(PS) ~ Gini +  muslim.imm.yearly + imm.pop.cum + (1 | City), data = dat);summary(model) # Intercept varying among City and Year
+# combined
+model <- lmer(log(PS) ~ Gini +  muslim.imm.yearly + immigration.yearly + (1 | City), data = dat);summary(model) # Intercept varying among City and Year
+model <- lmer(log(PS) ~ Gini +  muslim.pop.cum + imm.pop.cum + (1 | City), data = dat);summary(model) # Intercept varying among City and Year
+# singles (cum)
+model <- lmer(log(PS) ~ Gini +  muslim.pop.cum + (1 | City), data = dat);summary(model) # Intercept varying among City and Year
+model <- lmer(log(PS) ~ Gini +  imm.pop.cum + (1 | City), data = dat);summary(model) # Intercept varying among City and Year
+# singles (tot)
+model <- lmer(log(PS) ~ Gini +  muslim.imm.yearly + (1 | City), data = dat);summary(model) # Intercept varying among City and Year
+model <- lmer(log(PS) ~ Gini +  immigration.yearly + (1 | City), data = dat);summary(model) # Intercept varying among City and Year
+
+
+
+p_load(ggeffects, tidyverse)
+
+ggpredict(model) %>% plot()
+
 
 
 
