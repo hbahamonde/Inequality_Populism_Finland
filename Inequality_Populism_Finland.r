@@ -548,36 +548,34 @@ p_load(lme4,Matrix)
 # https://stackoverflow.com/questions/50740727/plot-predicted-values-from-lmer-longitudinal-analysis
 
 options(scipen=999)
-# model <- lmer(share.ps ~ Gini + imm.pop.cum + muslim.pop.cum + (1 | City) + (1 | Year), data = dat) # Intercept varying among City and Year
-# model <- lmer(share.ps ~ Gini + immigration.yearly + muslim.imm.yearly + (1 | City) + (1 | Year), data = dat) # Intercept varying among City and Year
-# model <- lmer(share.ps ~ Gini + immigration.yearly + muslim.imm.yearly + (1 | City), data = dat) # Intercept varying among City and Year
-model <- lmer(log(PS) ~ Gini +  muslim.imm.yearly + imm.pop.cum + (1 | City), data = dat);summary(model) # Intercept varying among City and Year
-# combined
-model <- lmer(log(PS) ~ Gini +  muslim.imm.yearly + immigration.yearly + (1 | City), data = dat);summary(model) # Intercept varying among City and Year
-model <- lmer(log(PS) ~ Gini +  muslim.pop.cum + imm.pop.cum + (1 | City), data = dat);summary(model) # Intercept varying among City and Year
-# singles (cum)
-model <- lmer(log(PS) ~ Gini +  muslim.pop.cum + (1 | City), data = dat);summary(model) # Intercept varying among City and Year
-model <- lmer(log(PS) ~ Gini +  imm.pop.cum + (1 | City), data = dat);summary(model) # Intercept varying among City and Year
-# singles (tot)
-model <- lmer(log(PS) ~ Gini +  muslim.imm.yearly + (1 | City), data = dat);summary(model) # Intercept varying among City and Year
-model <- lmer(log(PS) ~ Gini +  immigration.yearly + (1 | City), data = dat);summary(model) # Intercept varying among City and Year
 
-# testing
-p_load(ggeffects, tidyverse,report)
+# testing working hyp
+# p_load(ggeffects, tidyverse,report)
+# m.1 <- lmer(PS ~ Gini +  LLM.imm + (1 | City)+ (1 | Year), data = dat);summary(m.1);ggpredict(m.1) %>% plot();report(m.1) # working hyp
+# m.2 <- lmer(PS ~ Gini +  muslim.imm.yearly + (1 | City)+ (1 | Year), data = dat);summary(m.2);ggpredict(m.2) %>% plot();report(m.2) # working hyp
+# m.3 <- lmer(PS ~ Gini +  muslim.imm.yearly + immigration.yearly + (1 | City)+ (1 | Year), data = dat);summary(m.3);ggpredict(m.3) %>% plot();report(m.3) # working hyp
+# m.4 <- lmer(PS ~ Gini +  immigration.yearly.lag.1 + LLM.imm + (1 | City)+ (1 | Year), data = dat);summary(m.4);ggpredict(m.4) %>% plot();report(m.4) # working hyp
+# m.5 <- lmer(PS ~ Gini.lag.1 +  immigration.yearly.lag.1 + LLM.imm + (1 | City)+ (1 | Year), data = dat);summary(m.5);ggpredict(m.5) %>% plot();report(m.5) # working hyp
+# m.6 <- lmer(PS ~ Gini.lag.1 +  immigration.yearly.lag.1 + LLM.imm.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.6);ggpredict(m.6) %>% plot();report(m.6) # working hyp
+
+
+
+# 
 m.1 <- lmer(PS ~ Gini +  LLM.imm + (1 | City)+ (1 | Year), data = dat);summary(m.1);ggpredict(m.1) %>% plot();report(m.1) # working hyp
 m.2 <- lmer(PS ~ Gini +  muslim.imm.yearly + (1 | City)+ (1 | Year), data = dat);summary(m.2);ggpredict(m.2) %>% plot();report(m.2) # working hyp
-m.3 <- lmer(PS ~ Gini +  muslim.imm.yearly + immigration.yearly + (1 | City)+ (1 | Year), data = dat);summary(m.3);ggpredict(m.3) %>% plot();report(m.3) # working hyp
-m.4 <- lmer(PS ~ Gini +  immigration.yearly.lag.1 + LLM.imm + (1 | City)+ (1 | Year), data = dat);summary(m.4);ggpredict(m.4) %>% plot();report(m.4) # working hyp
-m.5 <- lmer(PS ~ Gini.lag.1 +  immigration.yearly.lag.1 + LLM.imm + (1 | City)+ (1 | Year), data = dat);summary(m.5);ggpredict(m.5) %>% plot();report(m.5) # working hyp
-m.6 <- lmer(PS ~ Gini.lag.1 +  immigration.yearly.lag.1 + LLM.imm.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.6);ggpredict(m.6) %>% plot();report(m.6) # working hyp
+m.3 <- lmer(PS ~ Gini +  immigration.yearly + (1 | City)+ (1 | Year), data = dat);summary(m.3);ggpredict(m.3) %>% plot();report(m.3) # working hyp
+m.4 <- lmer(PS ~ Gini +  muslim.imm.yearly + immigration.yearly + (1 | City)+ (1 | Year), data = dat);summary(m.4);ggpredict(m.4) %>% plot();report(m.4) # working hyp
+m.5 <- lmer(PS ~ Gini.lag.1 +  LLM.imm.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.5);ggpredict(m.5) %>% plot();report(m.5) # working hyp
+m.6 <- lmer(PS ~ Gini.lag.1 +  muslim.imm.yearly.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.6);ggpredict(m.6) %>% plot();report(m.6) # working hyp
+m.7 <- lmer(PS ~ Gini.lag.1 +  immigration.yearly.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.7);ggpredict(m.7) %>% plot();report(m.7) # working hyp
+m.8 <- lmer(PS ~ Gini.lag.1 +  muslim.imm.yearly.lag.1 + immigration.yearly.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.8);ggpredict(m.8) %>% plot();report(m.8) # working hyp
+
 
 # table
-
-
 p_load(texreg)
 
 screenreg( # use "screenreg" or "texreg" // BUT DO KEEP IT IN texreg FOR THE PAPER
-  list(m.1, m.2, m.3, m.4, m.5, m.6)#, # list all the saved models here
+  list(m.1, m.2, m.3, m.4, m.5, m.6, m.7,m.8)#, # list all the saved models here
   #omit.coef = "id"
 )
 
