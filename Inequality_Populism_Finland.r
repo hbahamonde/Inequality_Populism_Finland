@@ -569,13 +569,20 @@ m.5 <- lmer(PS ~ Gini.lag.1 +  HUM.imm.lag.1 + (1 | City)+ (1 | Year), data = da
 m.6 <- lmer(PS ~ Gini.lag.1 +  muslim.imm.yearly.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.6);ggpredict(m.6) %>% plot();report(m.6) # working hyp
 m.7 <- lmer(PS ~ Gini.lag.1 +  immigration.yearly.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.7);ggpredict(m.7) %>% plot();report(m.7) # working hyp
 m.8 <- lmer(PS ~ Gini.lag.1 +  muslim.imm.yearly.lag.1 + immigration.yearly.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.8);ggpredict(m.8) %>% plot();report(m.8) # working hyp
+m.9 <- lmer(PS ~ Gini *  HUM.imm + muslim.imm.yearly + (1 | City)+ (1 | Year), data = dat);summary(m.9);ggpredict(m.9) %>% plot();report(m.9) # working hyp
+m.10 <- lmer(PS ~ Gini *  HUM.imm + immigration.yearly + (1 | City)+ (1 | Year), data = dat);summary(m.10);ggpredict(m.10) %>% plot();report(m.10) # working hyp
+
+
+p_load(sjPlot,sjmisc,ggplot2)
+plot_model(m.9, type = "int")
+plot_model(m.10, type = "int")
 
 
 # table
 p_load(texreg)
 
 screenreg( # use "screenreg" or "texreg" // BUT DO KEEP IT IN texreg FOR THE PAPER
-  list(m.1, m.2, m.3, m.4, m.5, m.6, m.7,m.8)#, # list all the saved models here
+  list(m.1, m.2, m.3, m.4, m.5, m.6, m.7,m.8,m.9,m.10)#, # list all the saved models here
   #omit.coef = "id"
 )
 
