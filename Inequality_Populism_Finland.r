@@ -119,7 +119,7 @@ immigration.d1 = c(as.numeric(c(t(immigration.d1[1,]))))
 immigration.tot.d = data.frame(
   Year = c(1990:immigration.d1.max.year),
   immigration.yearly = immigration.d1
-  )
+)
 
 # Melt immigration df
 #######################
@@ -151,7 +151,7 @@ population.d1 = c(as.numeric(c(t(population.d1[1,]))))
 population.tot.d = data.frame(
   Year = c(1990:population.d1.max.year),
   imm.pop.cum = population.d1
-  )
+)
 
 # merge two tot immigration/population df's
 immigration.tot.d = merge(population.tot.d, immigration.tot.d, by = "Year")
@@ -236,8 +236,8 @@ save(muslim.pop.imm.d, file = "muslim_pop_imm_d.RData")
 
 # import econ development data
 econ.development.d <- read.csv("/Users/hectorbahamonde/research/Inequality_Populism_Finland/data/World_Bank/World_Bank_Income_Classification.csv", 
-                                             sep = ";" , 
-                                             check.names = FALSE)
+                               sep = ";" , 
+                               check.names = FALSE)
 econ.development.d = econ.development.d[,2:38] # dropping useless columns
 econ.development.d = melt(setDT(econ.development.d), id.vars = c("Country.name"), variable.name = "Year")
 econ.development.d$Year = as.numeric(as.character(econ.development.d$Year))
@@ -269,9 +269,9 @@ cat.econ.development.d = cat.econ.development.d %>% # 4 categories
 library(dplyr)
 
 cat.econ.development.LLM.d <- cat.econ.development.d %>% 
-  filter(Econ.Dev %in% c("L", "LM")) %>%
+  filter(Econ.Dev %in% c("H", "UM")) %>%
   group_by(Year) %>%
-  summarize(LLM.imm = sum(freq))
+  summarize(HUM.imm = sum(freq))
 
 # Save rdata
 save(cat.econ.development.d, file = "cat_econ_development_d.RData")
@@ -439,10 +439,10 @@ dat = merge(dat, muslim.pop.imm.d, by = "Year", all=T) # merges with yearly musl
 dat = merge(dat, cat.econ.development.LLM.d, by = "Year", all=T) # merges with difference between High-Low dev country immigration
 #dat = merge(dat, diff.econ.development.d, by = "Year", all=T) # merges with difference between High-Low dev country immigration
 
-# lagged LLM.imm
+# lagged HUM.imm
 dat <- dat %>%
   group_by(City) %>%
-  mutate(LLM.imm.lag.1 = dplyr::lag(LLM.imm, n = 1, default = NA))
+  mutate(HUM.imm.lag.1 = dplyr::lag(HUM.imm, n = 1, default = NA))
 
 dat <- dat[complete.cases(dat$Year), ] # cleaning
 dat <- dat[complete.cases(dat$City), ] # cleaning
@@ -462,7 +462,7 @@ dat <- dat[!is.na(dat$share.ps),]
 # dat = dat %>% group_by(City,Year) %>%
 #  mutate(duplicated = n() > 1)
 # table(dat$duplicated)
-  
+
 # deleting duplicates
 dat = dat[dat$share.ps != 0.0000000000, ] 
 
@@ -484,7 +484,7 @@ save(dat, file = "dat.RData")
 
 # export subsetted data to stata
 p_load(tidyverse,foreign)
-dat.stata <- dat %>%  select(Year, City, share.ps, Gini, Gini.diff.1, Gini.lag.1, Gini.lag.2, imm.pop.cum, immigration.yearly, muslim.pop.cum, muslim.imm.yearly, LLM.imm, LLM.imm.lag.1)
+dat.stata <- dat %>%  select(Year, City, share.ps, Gini, Gini.diff.1, Gini.lag.1, Gini.lag.2, imm.pop.cum, immigration.yearly, muslim.pop.cum, muslim.imm.yearly, HUM.imm, HUM.imm.lag.1)
 write.dta(dat.stata, "dat.dta")
 
 ## ----
@@ -551,21 +551,21 @@ options(scipen=999)
 
 # testing working hyp
 # p_load(ggeffects, tidyverse,report)
-# m.1 <- lmer(PS ~ Gini +  LLM.imm + (1 | City)+ (1 | Year), data = dat);summary(m.1);ggpredict(m.1) %>% plot();report(m.1) # working hyp
+# m.1 <- lmer(PS ~ Gini +  HUM.imm + (1 | City)+ (1 | Year), data = dat);summary(m.1);ggpredict(m.1) %>% plot();report(m.1) # working hyp
 # m.2 <- lmer(PS ~ Gini +  muslim.imm.yearly + (1 | City)+ (1 | Year), data = dat);summary(m.2);ggpredict(m.2) %>% plot();report(m.2) # working hyp
 # m.3 <- lmer(PS ~ Gini +  muslim.imm.yearly + immigration.yearly + (1 | City)+ (1 | Year), data = dat);summary(m.3);ggpredict(m.3) %>% plot();report(m.3) # working hyp
-# m.4 <- lmer(PS ~ Gini +  immigration.yearly.lag.1 + LLM.imm + (1 | City)+ (1 | Year), data = dat);summary(m.4);ggpredict(m.4) %>% plot();report(m.4) # working hyp
-# m.5 <- lmer(PS ~ Gini.lag.1 +  immigration.yearly.lag.1 + LLM.imm + (1 | City)+ (1 | Year), data = dat);summary(m.5);ggpredict(m.5) %>% plot();report(m.5) # working hyp
-# m.6 <- lmer(PS ~ Gini.lag.1 +  immigration.yearly.lag.1 + LLM.imm.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.6);ggpredict(m.6) %>% plot();report(m.6) # working hyp
+# m.4 <- lmer(PS ~ Gini +  immigration.yearly.lag.1 + HUM.imm + (1 | City)+ (1 | Year), data = dat);summary(m.4);ggpredict(m.4) %>% plot();report(m.4) # working hyp
+# m.5 <- lmer(PS ~ Gini.lag.1 +  immigration.yearly.lag.1 + HUM.imm + (1 | City)+ (1 | Year), data = dat);summary(m.5);ggpredict(m.5) %>% plot();report(m.5) # working hyp
+# m.6 <- lmer(PS ~ Gini.lag.1 +  immigration.yearly.lag.1 + HUM.imm.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.6);ggpredict(m.6) %>% plot();report(m.6) # working hyp
 
 
 
 # 
-m.1 <- lmer(PS ~ Gini +  LLM.imm + (1 | City)+ (1 | Year), data = dat);summary(m.1);ggpredict(m.1) %>% plot();report(m.1) # working hyp
+m.1 <- lmer(PS ~ Gini +  HUM.imm + (1 | City)+ (1 | Year), data = dat);summary(m.1);ggpredict(m.1) %>% plot();report(m.1) # working hyp
 m.2 <- lmer(PS ~ Gini +  muslim.imm.yearly + (1 | City)+ (1 | Year), data = dat);summary(m.2);ggpredict(m.2) %>% plot();report(m.2) # working hyp
 m.3 <- lmer(PS ~ Gini +  immigration.yearly + (1 | City)+ (1 | Year), data = dat);summary(m.3);ggpredict(m.3) %>% plot();report(m.3) # working hyp
 m.4 <- lmer(PS ~ Gini +  muslim.imm.yearly + immigration.yearly + (1 | City)+ (1 | Year), data = dat);summary(m.4);ggpredict(m.4) %>% plot();report(m.4) # working hyp
-m.5 <- lmer(PS ~ Gini.lag.1 +  LLM.imm.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.5);ggpredict(m.5) %>% plot();report(m.5) # working hyp
+m.5 <- lmer(PS ~ Gini.lag.1 +  HUM.imm.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.5);ggpredict(m.5) %>% plot();report(m.5) # working hyp
 m.6 <- lmer(PS ~ Gini.lag.1 +  muslim.imm.yearly.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.6);ggpredict(m.6) %>% plot();report(m.6) # working hyp
 m.7 <- lmer(PS ~ Gini.lag.1 +  immigration.yearly.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.7);ggpredict(m.7) %>% plot();report(m.7) # working hyp
 m.8 <- lmer(PS ~ Gini.lag.1 +  muslim.imm.yearly.lag.1 + immigration.yearly.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.8);ggpredict(m.8) %>% plot();report(m.8) # working hyp
@@ -600,15 +600,15 @@ p_load(brms)
 fit3.2 <-
   brm(data = dat,
       family = gaussian,
-#       formula = share.ps ~ 0 + Intercept + Gini + (1 + immigration.yearly + muslim.imm.yearly + Year | City),
-#     formula = share.ps ~  0 + Intercept + Gini.lag.1 + (1 + muslim.imm.yearly + Year | City), # 
-#.      formula = share.ps ~  Gini + muslim.imm.yearly + (1 + muslim.imm.yearly + Year | City), # 
+      #       formula = share.ps ~ 0 + Intercept + Gini + (1 + immigration.yearly + muslim.imm.yearly + Year | City),
+      #     formula = share.ps ~  0 + Intercept + Gini.lag.1 + (1 + muslim.imm.yearly + Year | City), # 
+      #.      formula = share.ps ~  Gini + muslim.imm.yearly + (1 + muslim.imm.yearly + Year | City), # 
       formula = share.ps ~  0 + Intercept + Gini + imm.pop.cum + muslim.pop.cum + (1 | City), #
-iter = 500, warmup = 100, chains = 1, 
-cores = 4, # allow you to sample from all four chains simultaneously
+      iter = 500, warmup = 100, chains = 1, 
+      cores = 4, # allow you to sample from all four chains simultaneously
       control = list(adapt_delta = 0.95),
       seed = 3
-      )
+  )
 
 print(fit3.2)
 
@@ -892,8 +892,8 @@ p_load(ggpubr)
 theme_set(theme_pubr())
 
 histogram.dep.var.plot = ggarrange(gini.dep.var.plot.histogram, share.dep.var.plot.histogram,
-                      labels = c("A", "B"),
-                      ncol = 1, nrow = 2)
+                                   labels = c("A", "B"),
+                                   ncol = 1, nrow = 2)
 ## ----
 
 
@@ -1039,10 +1039,10 @@ m9.clust.pvalue = coeftest(m9, vcov.year.city.m9)[,4] # pvalue m9
 ## https://cran.r-project.org/web/packages/margins/vignettes/Introduction.html
 p_load(margins)
 conditional.effects.plot.d = as.data.frame(cplot(m2, 
-                                 "Gini.lag.1", 
-                                 what = "prediction", 
-                                 draw = FALSE # omits plot
-                                 ))
+                                                 "Gini.lag.1", 
+                                                 what = "prediction", 
+                                                 draw = FALSE # omits plot
+))
 
 conditional.effects.plot = ggplot(conditional.effects.plot.d, aes(xvals)) + 
   geom_line(aes(y=yvals), colour="blue") + 
@@ -1081,8 +1081,8 @@ p_load(texreg)
 
 texreg( # screenreg texreg
   list(m1, m2, m3, m4, m5, m6, m7, m8, m9
-    #m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13
-    ),
+       #m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13
+  ),
   custom.header = list(
     "1" = 1,
     "2" = 2,
@@ -1100,19 +1100,19 @@ texreg( # screenreg texreg
     "Pooled","Pooled","Pooled",  
     # m7, m8, m9
     "FE+Log", "FE+Log","FE+Log"
-    ),
+  ),
   #custom.coef.names = NULL,
   omit.coef = "(City)",
   #custom.coef.names = c("Intercept",
-                        #"Appearance-Occupation Congruence",
-                        #"Middle Class",
-                        #"Working Class",
-                        #"Age",
-                        #"Appearance-Occupation Congruence X Middle Class",
-                        #"Appearance-Occupation Congruence X Working Class",
-                        #"Attractiveness",
-                        #"Masculinity",
-                        #"Femininity"),
+  #"Appearance-Occupation Congruence",
+  #"Middle Class",
+  #"Working Class",
+  #"Age",
+  #"Appearance-Occupation Congruence X Middle Class",
+  #"Appearance-Occupation Congruence X Working Class",
+  #"Attractiveness",
+  #"Masculinity",
+  #"Femininity"),
   # custom.header = list( "Poisson" = 1),
   stars = c(0.001, 0.01, 0.05),
   include.adjrs = FALSE,
