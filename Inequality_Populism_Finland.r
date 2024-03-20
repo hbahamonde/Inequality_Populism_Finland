@@ -47,6 +47,7 @@ dat <- dat[order(dat$City, dat$Year),]
 ## 1st Order Difference 
 dat = transform(dat, Gini.diff.1 = ave(Gini, City, FUN = function(x) c(NA, diff(x))))
 
+
 # lagged gini
 
 ## 1 # NOTICE THAT LAGGED VALUE IS WITH RESPECT TO LAST YEAR'S GINI, SO IT WON'T NECESSARILY REFLECT PRIOR *ELECTION* (WHICH IS THE INTERVAL I'M KEEPING)
@@ -230,8 +231,6 @@ muslim.pop.imm.d$Year = as.numeric(as.character(muslim.pop.imm.d$Year))
 # Save rdata
 save(muslim.pop.imm.d, file = "muslim_pop_imm_d.RData")
 
-
-# HERE
 # Now include whether countries are developed or not.
 # merge it with "imm.pop.d"
 
@@ -247,7 +246,6 @@ p_load("dplyr")
 econ.development.d = econ.development.d %>% filter(Year >= min(dat$Year))
 econ.development.d <- econ.development.d %>% rename("Econ.Dev" = "value")
 
-
 # merge immigration/(foreign)population df with econ.development.d
 p_load(dplyr)
 imm.pop.d <- imm.pop.d %>% rename("Year" = "year")
@@ -262,10 +260,18 @@ cat.econ.development.d = na.omit(econ.development.d)
 cat.econ.development.d = cat.econ.development.d[!cat.econ.development.d$Econ.Dev == "" | cat.econ.development.d$Econ.Dev == "LM*", ]
 cat.econ.development.d = droplevels(cat.econ.development.d)
 
-cat.econ.development.d = cat.econ.development.d %>%
+cat.econ.development.d = cat.econ.development.d %>% # 4 categories
   group_by(Year, Econ.Dev) %>%
   summarise(n = n()) %>%
   mutate(freq = n / sum(n)*100)
+
+# now combine L and ML into one (sum both %'s), so to have one L%+LM% value per year (to then merge these with the rest of the data)
+library(dplyr)
+
+cat.econ.development.LLM.d <- cat.econ.development.d %>% 
+  filter(Econ.Dev %in% c("L", "LM")) %>%
+  group_by(Year) %>%
+  summarize(LLM.imm = sum(freq))
 
 # Save rdata
 save(cat.econ.development.d, file = "cat_econ_development_d.RData")
@@ -430,7 +436,8 @@ dev.off()
 # merge immigration/(foreign)population df with big dataset
 dat = merge(dat, immigration.tot.d, by = "Year", all=T) # merges with yearly immigration tot
 dat = merge(dat, muslim.pop.imm.d, by = "Year", all=T) # merges with yearly muslim immigration tot 
-dat = merge(dat, diff.econ.development.d, by = "Year", all=T) # merges with difference between High-Low dev country immigration
+dat = merge(dat, cat.econ.development.LLM.d, by = "Year", all=T) # merges with difference between High-Low dev country immigration
+#dat = merge(dat, diff.econ.development.d, by = "Year", all=T) # merges with difference between High-Low dev country immigration
 
 dat <- dat[complete.cases(dat$Year), ] # cleaning
 dat <- dat[complete.cases(dat$City), ] # cleaning
@@ -455,14 +462,30 @@ dat <- dat[!is.na(dat$share.ps),]
 dat = dat[dat$share.ps != 0.0000000000, ] 
 
 
+# lagged immigration vars
+
+p_load(dplyr)
+dat <- dat %>%
+  group_by(City) %>%
+  mutate(immigration.yearly.lag.1 = dplyr::lag(immigration.yearly, n = 1, default = NA))
+
+dat <- dat %>%
+  group_by(City) %>%
+  mutate(muslim.imm.yearly.lag.1 = dplyr::lag(muslim.imm.yearly, n = 1, default = NA))
+
+
 # Save rdata
 save(dat, file = "dat.RData")
 
 # export subsetted data to stata
 p_load(tidyverse,foreign)
-dat.stata <- dat %>%  select(Year, City, share.ps, Gini, Gini.diff.1, Gini.lag.1, Gini.lag.2, imm.pop.cum, immigration.yearly, muslim.pop.cum, muslim.imm.yearly, Difference)
+dat.stata <- dat %>%  select(Year, City, share.ps, Gini, Gini.diff.1, Gini.lag.1, Gini.lag.2, imm.pop.cum, immigration.yearly, muslim.pop.cum, muslim.imm.yearly, LLM.imm)
 write.dta(dat.stata, "dat.dta")
 ## ----
+
+cat("\014")
+rm(list=ls())
+setwd("/Users/hectorbahamonde/research/Inequality_Populism_Finland/")
 
 # Pacman
 if (!require("pacman")) install.packages("pacman"); library(pacman) 
@@ -506,6 +529,13 @@ ggarrange(panel.finns.p, panel.gini.p,
 # https://rpubs.com/rslbliss/r_mlm_ws
 p_load(lme4)
 
+oo <- options(repos = "https://cran.r-project.org/")
+install.packages("Matrix")
+install.packages("lme4")
+options(oo)
+library("Matrix")
+library("lme4")
+
 #  To reverse your transformation y=log(x+0.001) you need x=exp(y)-0.001
 # https://stats.stackexchange.com/questions/282188/lmer-predict-with-random-effects-log-transformation
 # https://stackoverflow.com/questions/50740727/plot-predicted-values-from-lmer-longitudinal-analysis
@@ -525,11 +555,17 @@ model <- lmer(log(PS) ~ Gini +  imm.pop.cum + (1 | City), data = dat);summary(mo
 model <- lmer(log(PS) ~ Gini +  muslim.imm.yearly + (1 | City), data = dat);summary(model) # Intercept varying among City and Year
 model <- lmer(log(PS) ~ Gini +  immigration.yearly + (1 | City), data = dat);summary(model) # Intercept varying among City and Year
 
+# testing
+p_load(ggeffects, tidyverse,report)
+model <- lmer(PS ~ Gini +  LLM.imm + (1 | City), data = dat);summary(model);ggpredict(model) %>% plot();report(model) # working hyp
+model <- lmer(PS ~ Gini +  muslim.imm.yearly + (1 | City), data = dat);summary(model);ggpredict(model) %>% plot();report(model) # working hyp
+model <- lmer(PS ~ Gini +  muslim.imm.yearly + immigration.yearly + (1 | City), data = dat);summary(model);ggpredict(model) %>% plot();report(model) # working hyp
+model <- lmer(PS ~ Gini +  immigration.yearly.lag.1 + LLM.imm + (1 | City), data = dat);summary(model);ggpredict(model) %>% plot();report(model) # working hyp
+model <- lmer(PS ~ Gini.lag.1 +  immigration.yearly.lag.1 + LLM.imm + (1 | City), data = dat);summary(model);ggpredict(model) %>% plot();report(model) # working hyp
 
 
-p_load(ggeffects, tidyverse)
 
-ggpredict(model) %>% plot()
+
 
 
 
@@ -568,9 +604,11 @@ print(fit3.2)
 plot(conditional_effects(fit3.2), ask = T)
 plot(fit3.2, ask = T)
 
+conditional_effects(fit3.2)
+
 
 # how to use posterior predictions and interpret multilevel hyperparameters
-# https://rdrr.io/cran/brms/man/posterior_predict.brmsfit.html
+# https://www.andrewheiss.com/blog/2021/11/10/ame-bayes-re-guide/#continuous-effect-1
 
 #install.packages("tidyverse")
 p_load(tidyverse)
