@@ -439,6 +439,11 @@ dat = merge(dat, muslim.pop.imm.d, by = "Year", all=T) # merges with yearly musl
 dat = merge(dat, cat.econ.development.LLM.d, by = "Year", all=T) # merges with difference between High-Low dev country immigration
 #dat = merge(dat, diff.econ.development.d, by = "Year", all=T) # merges with difference between High-Low dev country immigration
 
+# lagged LLM.imm
+dat <- dat %>%
+  group_by(City) %>%
+  mutate(LLM.imm.lag.1 = dplyr::lag(LLM.imm, n = 1, default = NA))
+
 dat <- dat[complete.cases(dat$Year), ] # cleaning
 dat <- dat[complete.cases(dat$City), ] # cleaning
 
@@ -479,8 +484,9 @@ save(dat, file = "dat.RData")
 
 # export subsetted data to stata
 p_load(tidyverse,foreign)
-dat.stata <- dat %>%  select(Year, City, share.ps, Gini, Gini.diff.1, Gini.lag.1, Gini.lag.2, imm.pop.cum, immigration.yearly, muslim.pop.cum, muslim.imm.yearly, LLM.imm)
+dat.stata <- dat %>%  select(Year, City, share.ps, Gini, Gini.diff.1, Gini.lag.1, Gini.lag.2, imm.pop.cum, immigration.yearly, muslim.pop.cum, muslim.imm.yearly, LLM.imm, LLM.imm.lag.1)
 write.dta(dat.stata, "dat.dta")
+
 ## ----
 
 cat("\014")
@@ -523,18 +529,19 @@ ggarrange(panel.finns.p, panel.gini.p,
           ncol = 2, nrow = 1)
 
 
+# The packages below needed to be installed this way first.
+# Once installed, they can be recalled using p_load.
+# oo <- options(repos = "https://cran.r-project.org/")
+# install.packages("Matrix")
+# install.packages("lme4")
+# options(oo)
+# library("Matrix")
+# library("lme4")
 
 
 # lme4
 # https://rpubs.com/rslbliss/r_mlm_ws
-p_load(lme4)
-
-oo <- options(repos = "https://cran.r-project.org/")
-install.packages("Matrix")
-install.packages("lme4")
-options(oo)
-library("Matrix")
-library("lme4")
+p_load(lme4,Matrix)
 
 #  To reverse your transformation y=log(x+0.001) you need x=exp(y)-0.001
 # https://stats.stackexchange.com/questions/282188/lmer-predict-with-random-effects-log-transformation
@@ -557,16 +564,22 @@ model <- lmer(log(PS) ~ Gini +  immigration.yearly + (1 | City), data = dat);sum
 
 # testing
 p_load(ggeffects, tidyverse,report)
-model <- lmer(PS ~ Gini +  LLM.imm + (1 | City), data = dat);summary(model);ggpredict(model) %>% plot();report(model) # working hyp
-model <- lmer(PS ~ Gini +  muslim.imm.yearly + (1 | City), data = dat);summary(model);ggpredict(model) %>% plot();report(model) # working hyp
-model <- lmer(PS ~ Gini +  muslim.imm.yearly + immigration.yearly + (1 | City), data = dat);summary(model);ggpredict(model) %>% plot();report(model) # working hyp
-model <- lmer(PS ~ Gini +  immigration.yearly.lag.1 + LLM.imm + (1 | City), data = dat);summary(model);ggpredict(model) %>% plot();report(model) # working hyp
-model <- lmer(PS ~ Gini.lag.1 +  immigration.yearly.lag.1 + LLM.imm + (1 | City), data = dat);summary(model);ggpredict(model) %>% plot();report(model) # working hyp
+m.1 <- lmer(PS ~ Gini +  LLM.imm + (1 | City)+ (1 | Year), data = dat);summary(m.1);ggpredict(m.1) %>% plot();report(m.1) # working hyp
+m.2 <- lmer(PS ~ Gini +  muslim.imm.yearly + (1 | City)+ (1 | Year), data = dat);summary(m.2);ggpredict(m.2) %>% plot();report(m.2) # working hyp
+m.3 <- lmer(PS ~ Gini +  muslim.imm.yearly + immigration.yearly + (1 | City)+ (1 | Year), data = dat);summary(m.3);ggpredict(m.3) %>% plot();report(m.3) # working hyp
+m.4 <- lmer(PS ~ Gini +  immigration.yearly.lag.1 + LLM.imm + (1 | City)+ (1 | Year), data = dat);summary(m.4);ggpredict(m.4) %>% plot();report(m.4) # working hyp
+m.5 <- lmer(PS ~ Gini.lag.1 +  immigration.yearly.lag.1 + LLM.imm + (1 | City)+ (1 | Year), data = dat);summary(m.5);ggpredict(m.5) %>% plot();report(m.5) # working hyp
+m.6 <- lmer(PS ~ Gini.lag.1 +  immigration.yearly.lag.1 + LLM.imm.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.6);ggpredict(m.6) %>% plot();report(m.6) # working hyp
+
+# table
 
 
+p_load(texreg)
 
-
-
+screenreg( # use "screenreg" or "texreg" // BUT DO KEEP IT IN texreg FOR THE PAPER
+  list(m.1, m.2, m.3, m.4, m.5, m.6)#, # list all the saved models here
+  #omit.coef = "id"
+)
 
 
 
