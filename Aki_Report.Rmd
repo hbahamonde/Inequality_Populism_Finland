@@ -1,7 +1,7 @@
 ---
 title: "Report"
 output: pdf_document
-date: "2024-02-02"
+date: "2024-03-21"
 ---
 
 ```{r setup, include=FALSE}
@@ -84,3 +84,84 @@ scatterplot(muslim.imm.yearly ~ Year,
 
 # Models: What's driving support for the far-right?
 
+In the following tables I am estimating a bunch of models. All are multi-level models with city "fixed effects." Estimating models with city and time "fixed effects" give the same results. (For the paper we can have the without year FE in the Appendix). The DV is number of votes for the PS at the city level. The independent variables (in several combinations and groupings) are:
+
+1. Gini: Yearly gini coefficient at the city level.
+
+2. "HUM.imm": High and Upper-medium immigration. Yearly percentage of individuals who immigrate to Finland that come from High and Upper-medium economic development countries. 
+
+3. Muslim immigration: Yearly immigration (count) classified by whether the immigrant's country of origin is predominantly Muslim.
+
+4. Immigration yearly: Yearly total of immigration (count).
+
+5. Others: 
+
+- 1-year lag variables of each above.
+- Interaction between "Gini" and "HUM.imm."
+
+
+# Main Findings
+
+1. Gini has the largest explanatory power no matter what it is controlled for.
+
+2. Cultural hypothesis (i.e., Racism): Yes, total immigration increases PS votes, but only .1 points compared to *muslim* immigration, which is .4 points.
+
+3. Economic explanation (1): Contrary to what the common mantra of "immigrants come to Finland to abuse the welfare state" or "take on the working class occupations," I not only find that immigrants in Finland come primary from developed countries (see figure), but also I find in the models that increasing levels immigration where the immigrant comes from a developed country ("HUM.imm")  significantly increases PS voting. This is a relatively specialized immigrant, not (necessarily) of the refugee type.
+
+4. Economic explanation (2): Effects are just as large when inequality is interacted with skilled immigration (HUM.imm).
+
+```{r chunk:4}
+cat("\014")
+rm(list=ls())
+setwd("/Users/hectorbahamonde/research/Inequality_Populism_Finland/")
+
+# Pacman
+if (!require("pacman")) install.packages("pacman"); library(pacman) 
+
+load("/Users/hectorbahamonde/research/Inequality_Populism_Finland/dat.RData")
+
+# lme4
+# https://rpubs.com/rslbliss/r_mlm_ws
+p_load(lme4,Matrix, ggeffects, tidyverse,report)
+
+options(scipen=999)
+
+
+
+# 
+m.1 <- lmer(PS ~ Gini +  HUM.imm + (1 | City), data = dat);# summary(m.1);ggpredict(m.1) %>% plot();report(m.1) # working hyp
+m.2 <- lmer(PS ~ Gini +  muslim.imm.yearly + (1 | City), data = dat);# summary(m.2);ggpredict(m.2) %>% plot();report(m.2) # working hyp
+m.3 <- lmer(PS ~ Gini +  immigration.yearly + (1 | City), data = dat);# summary(m.3);ggpredict(m.3) %>% plot();report(m.3) # working hyp
+m.4 <- lmer(PS ~ Gini +  muslim.imm.yearly + immigration.yearly + (1 | City), data = dat);# summary(m.4);ggpredict(m.4) %>% plot();report(m.4) # working hyp
+m.5 <- lmer(PS ~ Gini.lag.1 +  HUM.imm.lag.1 + (1 | City), data = dat);# summary(m.5);ggpredict(m.5) %>% plot();report(m.5) # working hyp
+m.6 <- lmer(PS ~ Gini.lag.1 +  muslim.imm.yearly.lag.1 + (1 | City), data = dat);# summary(m.6);ggpredict(m.6) %>% plot();report(m.6) # working hyp
+m.7 <- lmer(PS ~ Gini.lag.1 +  immigration.yearly.lag.1 + (1 | City), data = dat);# summary(m.7);ggpredict(m.7) %>% plot();report(m.7) # working hyp
+m.8 <- lmer(PS ~ Gini.lag.1 +  muslim.imm.yearly.lag.1 + immigration.yearly.lag.1 + (1 | City), data = dat);# summary(m.8);ggpredict(m.8) %>% plot();report(m.8) # working hyp
+m.9 <- lmer(PS ~ Gini *  HUM.imm + muslim.imm.yearly + (1 | City), data = dat);# summary(m.9);ggpredict(m.9) %>% plot();report(m.9) # working hyp
+m.10 <- lmer(PS ~ Gini *  HUM.imm + immigration.yearly + (1 | City), data = dat);# summary(m.10);ggpredict(m.10) %>% plot();report(m.10) # working hyp
+
+
+
+p_load(sjPlot,sjmisc,ggplot2)
+plot_model(m.9, type = "int") + theme_bw() + theme(aspect.ratio=1)
+
+
+
+# table
+p_load(texreg)
+
+screenreg( # use "screenreg" or "texreg" // BUT DO KEEP IT IN texreg FOR THE PAPER
+  list(m.1, m.2, m.3, m.4)#, # list all the saved models here
+  #omit.coef = "id"
+)
+
+screenreg( # use "screenreg" or "texreg" // BUT DO KEEP IT IN texreg FOR THE PAPER
+  list(m.5, m.6, m.7,m.8)#, # list all the saved models here
+  #omit.coef = "id"
+)
+
+screenreg( # use "screenreg" or "texreg" // BUT DO KEEP IT IN texreg FOR THE PAPER
+  list(m.9,m.10)#, # list all the saved models here
+  #omit.coef = "id"
+)
+```

@@ -541,7 +541,7 @@ ggarrange(panel.finns.p, panel.gini.p,
 
 # lme4
 # https://rpubs.com/rslbliss/r_mlm_ws
-p_load(lme4,Matrix)
+p_load(lme4,Matrix, ggeffects, tidyverse,report)
 
 #  To reverse your transformation y=log(x+0.001) you need x=exp(y)-0.001
 # https://stats.stackexchange.com/questions/282188/lmer-predict-with-random-effects-log-transformation
@@ -559,23 +559,39 @@ options(scipen=999)
 # m.6 <- lmer(PS ~ Gini.lag.1 +  immigration.yearly.lag.1 + HUM.imm.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.6);ggpredict(m.6) %>% plot();report(m.6) # working hyp
 
 
+# In this framework, "fixed effects" refer to coefficients that "DO NOT vary by
+# group" (city) or "for group-level coefficients." In this case, immigration 
+# (measured at the country level) does not vary by city. In turn, Gini 
+# coefficients is at the 
+
+# Notes (1): I don't think I should include "Year" random effects because the 
+# immigration variables are also measured in a yearly basis. In any case,
+# including year random effects does not alter the results. We should include 
+# with/without in the reg table.
+
+# Notes (2): grouping in the model does "not" really matter. 
+# I mean, it does, but the point is that in the same formula
+# one can declare variables with different levels of aggregation. See post below. 
+# https://stats.stackexchange.com/questions/450225/linear-mixed-model-in-r-modelling-fixed-effects-with-multiple-levels-and-intera
+
 
 # 
-m.1 <- lmer(PS ~ Gini +  HUM.imm + (1 | City)+ (1 | Year), data = dat);summary(m.1);ggpredict(m.1) %>% plot();report(m.1) # working hyp
-m.2 <- lmer(PS ~ Gini +  muslim.imm.yearly + (1 | City)+ (1 | Year), data = dat);summary(m.2);ggpredict(m.2) %>% plot();report(m.2) # working hyp
-m.3 <- lmer(PS ~ Gini +  immigration.yearly + (1 | City)+ (1 | Year), data = dat);summary(m.3);ggpredict(m.3) %>% plot();report(m.3) # working hyp
-m.4 <- lmer(PS ~ Gini +  muslim.imm.yearly + immigration.yearly + (1 | City)+ (1 | Year), data = dat);summary(m.4);ggpredict(m.4) %>% plot();report(m.4) # working hyp
-m.5 <- lmer(PS ~ Gini.lag.1 +  HUM.imm.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.5);ggpredict(m.5) %>% plot();report(m.5) # working hyp
-m.6 <- lmer(PS ~ Gini.lag.1 +  muslim.imm.yearly.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.6);ggpredict(m.6) %>% plot();report(m.6) # working hyp
-m.7 <- lmer(PS ~ Gini.lag.1 +  immigration.yearly.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.7);ggpredict(m.7) %>% plot();report(m.7) # working hyp
-m.8 <- lmer(PS ~ Gini.lag.1 +  muslim.imm.yearly.lag.1 + immigration.yearly.lag.1 + (1 | City)+ (1 | Year), data = dat);summary(m.8);ggpredict(m.8) %>% plot();report(m.8) # working hyp
-m.9 <- lmer(PS ~ Gini *  HUM.imm + muslim.imm.yearly + (1 | City)+ (1 | Year), data = dat);summary(m.9);ggpredict(m.9) %>% plot();report(m.9) # working hyp
-m.10 <- lmer(PS ~ Gini *  HUM.imm + immigration.yearly + (1 | City)+ (1 | Year), data = dat);summary(m.10);ggpredict(m.10) %>% plot();report(m.10) # working hyp
+m.1 <- lmer(PS ~ Gini +  HUM.imm + (1 | City), data = dat);# summary(m.1);ggpredict(m.1) %>% plot();report(m.1) # working hyp
+m.2 <- lmer(PS ~ Gini +  muslim.imm.yearly + (1 | City), data = dat);# summary(m.2);ggpredict(m.2) %>% plot();report(m.2) # working hyp
+m.3 <- lmer(PS ~ Gini +  immigration.yearly + (1 | City), data = dat);# summary(m.3);ggpredict(m.3) %>% plot();report(m.3) # working hyp
+m.4 <- lmer(PS ~ Gini +  muslim.imm.yearly + immigration.yearly + (1 | City), data = dat);# summary(m.4);ggpredict(m.4) %>% plot();report(m.4) # working hyp
+m.5 <- lmer(PS ~ Gini.lag.1 +  HUM.imm.lag.1 + (1 | City), data = dat);# summary(m.5);ggpredict(m.5) %>% plot();report(m.5) # working hyp
+m.6 <- lmer(PS ~ Gini.lag.1 +  muslim.imm.yearly.lag.1 + (1 | City), data = dat);# summary(m.6);ggpredict(m.6) %>% plot();report(m.6) # working hyp
+m.7 <- lmer(PS ~ Gini.lag.1 +  immigration.yearly.lag.1 + (1 | City), data = dat);# summary(m.7);ggpredict(m.7) %>% plot();report(m.7) # working hyp
+m.8 <- lmer(PS ~ Gini.lag.1 +  muslim.imm.yearly.lag.1 + immigration.yearly.lag.1 + (1 | City), data = dat);# summary(m.8);ggpredict(m.8) %>% plot();report(m.8) # working hyp
+m.9 <- lmer(PS ~ Gini *  HUM.imm + muslim.imm.yearly + (1 | City), data = dat);# summary(m.9);ggpredict(m.9) %>% plot();report(m.9) # working hyp
+m.10 <- lmer(PS ~ Gini *  HUM.imm + immigration.yearly + (1 | City), data = dat);# summary(m.10);ggpredict(m.10) %>% plot();report(m.10) # working hyp
+
 
 
 p_load(sjPlot,sjmisc,ggplot2)
-plot_model(m.9, type = "int")
-plot_model(m.10, type = "int")
+plot_model(m.9, type = "int") + theme_bw() + theme(aspect.ratio=1)
+
 
 
 # table
