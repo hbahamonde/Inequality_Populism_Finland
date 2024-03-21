@@ -82,11 +82,5 @@ scatterplot(muslim.imm.yearly ~ Year,
 ```
 
 
-# Comments
+# Models: What's driving support for the far-right?
 
-I think conceptualizing the type of immigrant should help us in disentangling the kind of losses far-right populist parties claim during political campaigns. Importantly, one of our main theoretical contributions is a theory of losses (prospect theory). Thus, finding the "locus" of these losses is important to understand the rise of populism in Finland.
-
-
-- Testing: Now I need to test how these two contribute in explaining the rise of the Finns.
-- I will use a multi-level method (municipality levels) that accounts for national-level nesting (immigration levels). 
-- Ecological fallacy: we have voting levels (municipal level) that are nested in years; each year has its own (national) levels of immigration. We have to be careful in making the argument that while these two levels are different, and hence, results should be interpreted with caution. Substantively, this means that voters are not only influenced by their closest context, but also by the public (national) "mood" or public opinion, or more generally, the common perception that Finland is being "seized by immigrants"; the literature on opinion formation is consistent with this. 
