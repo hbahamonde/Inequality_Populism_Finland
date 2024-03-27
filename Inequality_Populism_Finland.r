@@ -1153,7 +1153,13 @@ texreg( # screenreg texreg
   custom.note = "\\item %stars. \\item All models have panel-corrected standard errors (at the city level). Dependent variable is the share of the populist party. First three models have city fixed effects. Second set of models do not have city fixed effects. Third set of models have city fixed effects, and the dependent variable is logged.")
 ## ----
 
+################
+#### NOTES
+################
 
+# 1. Map immigration per year.
+# 2. Inglehart and Pippa Norris: it's cultural.
+# 3. Party Politics, Political Behavior, West European Politics, European Journal of Political Research.
 
 ################
 #### ABSTRACT
