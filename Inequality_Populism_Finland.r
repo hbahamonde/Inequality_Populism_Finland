@@ -276,6 +276,75 @@ cat.econ.development.LLM.d <- cat.econ.development.d %>%
 # Save rdata
 save(cat.econ.development.d, file = "cat_econ_development_d.RData")
 
+p_load(ggplot2)
+
+muslim.yearly.p = ggplot(muslim.pop.imm.d, aes(x=Year, y=muslim.imm.yearly)) + 
+  geom_line(colour="blue", linewidth =1) + 
+  theme_bw() +
+  labs(y = "Muslim Immigration (N)", x = "Year") + 
+  theme(axis.text.y = element_text(size=7), 
+        axis.text.x = element_text(size=7), 
+        axis.title.y = element_text(size=12), 
+        axis.title.x = element_text(size=12), 
+        legend.text=element_text(size=12), 
+        legend.title=element_text(size=12),
+        plot.title = element_text(size=12),
+        strip.text.x = element_text(size = 12),
+        legend.position = "none",
+        aspect.ratio=4/4)
+
+immigration.yearly.p = ggplot(immigration.tot.d, aes(x=Year, y=immigration.yearly)) + 
+  geom_line(colour="blue", linewidth =1) + 
+  theme_bw() +
+  labs(y = "Immigration Yearly (N)", x = "Year") + 
+  theme(axis.text.y = element_text(size=7), 
+        axis.text.x = element_text(size=7), 
+        axis.title.y = element_text(size=12), 
+        axis.title.x = element_text(size=12), 
+        legend.text=element_text(size=12), 
+        legend.title=element_text(size=12),
+        plot.title = element_text(size=12),
+        strip.text.x = element_text(size = 12),
+        legend.position = "none",
+        aspect.ratio=4/4)
+
+cat.econ.development.p = ggplot(cat.econ.development.d, aes(x=Year, y=freq, group=Econ.Dev, color=Econ.Dev)) + 
+  geom_line(linewidth =1) + 
+  theme_bw() +
+  labs(y = "Immigration: Economic Development of Immigrant's Country (N)", x = "Year") + 
+  theme(axis.text.y = element_text(size=7), 
+        axis.text.x = element_text(size=7), 
+        axis.title.y = element_text(size=12), 
+        axis.title.x = element_text(size=12), 
+        legend.text=element_text(size=12), 
+        legend.title=element_text(size=12),
+        plot.title = element_text(size=12),
+        strip.text.x = element_text(size = 12),
+        legend.position = c(0.11, 0.2),
+        aspect.ratio=4/4) + labs(color="") 
+
+p_load(ggpubr) 
+Imm.Mus.EconDev.p = ggarrange(immigration.yearly.p,
+                              muslim.yearly.p,
+                              cat.econ.development.p,
+                              labels = c("A", "B", "C"),
+                              ncol = 3, align = "v")
+
+
+ggsave(
+  "Imm_Mus_EconDev_plot.jpeg",
+  device = "jpeg",
+  plot = Imm.Mus.EconDev.p,
+  scale = 1,
+  #width = 4, 
+  #height = 2, 
+  #units = "in",
+  dpi = 1200,
+  limitsize = TRUE)
+
+
+# HERE
+
 
 # plot multiple categories
 pdf(file = "/Users/hectorbahamonde/research/Inequality_Populism_Finland/Imm_Econ_Dev.pdf",   # The directory you want to save the file in
@@ -432,7 +501,6 @@ scatterplot(muslim.imm.yearly ~ Year,
 
 dev.off()
 
-
 # merge immigration/(foreign)population df with big dataset
 dat = merge(dat, immigration.tot.d, by = "Year", all=T) # merges with yearly immigration tot
 dat = merge(dat, muslim.pop.imm.d, by = "Year", all=T) # merges with yearly muslim immigration tot 
@@ -487,7 +555,14 @@ p_load(tidyverse,foreign)
 dat.stata <- dat %>%  select(Year, City, share.ps, Gini, Gini.diff.1, Gini.lag.1, Gini.lag.2, imm.pop.cum, immigration.yearly, muslim.pop.cum, muslim.imm.yearly, HUM.imm, HUM.imm.lag.1)
 write.dta(dat.stata, "dat.dta")
 
+
+
 ## ----
+
+
+
+
+
 
 cat("\014")
 rm(list=ls())
@@ -862,7 +937,7 @@ p_load(ggpubr)
 theme_set(theme_pubr())
 
 maps.plot = ggarrange(gini.map.plot, populist.map.plot.2023,
-                      align = "h",
+                      align = "v",
                       #labels = c("A", "B"),
                       ncol = 2, nrow = 1)
 
@@ -872,10 +947,10 @@ ggsave(
   device = "jpeg",
   plot = maps.plot,
   scale = 1,
-  width = 10.4, 
-  height = 4, 
-  units = "in",
-  dpi = 600,
+  #width = 10.4, 
+  #height = 4, 
+  #units = "in",
+  dpi = 1200,
   limitsize = TRUE)
 
 
