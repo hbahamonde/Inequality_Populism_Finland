@@ -7,37 +7,96 @@ setwd("/Users/hectorbahamonde/research/Inequality_Populism_Finland/")
 if (!require("pacman")) install.packages("pacman"); library(pacman) 
 
 # import inequality data
+# Query from Statistics Finland: https://pxdata.stat.fi:443/PxWeb/sq/8b8c8173-848a-4682-99d9-674cc2173e54
 p_load("readxl")
 inequality.d <- read_excel("/Users/hectorbahamonde/research/Inequality_Populism_Finland/data/inequality_data/Inequality_Data.xlsx")
+
+colnames(inequality.d) <- inequality.d[2,] # changes col names
+inequality.d <- inequality.d[-c(1,2), ] # deletes rows
+colnames(inequality.d)[2] <- "City"
+colnames(inequality.d)[1] <- "Year"
 
 # Repeat year
 p_load(dplyr,tidyr)
 inequality.d = inequality.d %>%  fill(Year) 
 
+inequality.d = inequality.d[c(1:8680), ] # delete last rows that contain garbage
+
+colnames(inequality.d)
+
+# Gini Coefficient, Factor Income: This measures the distribution of income before any government taxes or transfers. It primarily includes incomes from labor and capital. This index can help you understand the basic inequalities that exist in the market-generated incomes of a society.
+# Gini Coefficient, Gross Income: This includes all pre-tax incomes but before social security and other deductions. It gives a picture of income inequality that includes certain forms of pensions and social incomes but excludes the effects of taxes and most transfers.
+# Gini Coefficient, Disposable Cash Income: This reflects income after taxes and transfers. It provides a view of the income distribution after government policies have been applied, such as social security benefits and income taxes. This measure is most relevant when assessing the final impact of governmental policies on reducing income inequality.
+
+# If you are interested in evaluating the raw economic inequality without the influence of government policies, use the Gini Coefficient for Factor Income. 
+# If you're more interested in the effects of taxation and governmental redistribution on inequality, the Gini Coefficient for Disposable Cash Income would be more appropriate. 
+# For a middle ground that considers some forms of income but not the impact of taxation or most transfers, the Gini Coefficient for Gross Income would be suitable.
+
+# for this project we will use "gross income"
+colnames(inequality.d)[colnames(inequality.d)=="Gini coefficient, gross income"] <- "Gini"
+
+# change PS to numeric
+p_load(readr)
+inequality.d$Gini = parse_number(inequality.d$Gini) # numbers had commas. delete that shit.
+inequality.d$Gini = as.numeric(inequality.d$Gini)
+
+
 # import voting data
-## Statistics Finland Data: https://pxdata.stat.fi/PxWeb/pxweb/en/StatFin/StatFin__evaa/statfin_evaa_pxt_13sw.px/
+## Statistics Finland Data: https://pxdata.stat.fi:443/PxWeb/sq/5817233d-8494-4155-8e27-fb893cd408a0
 ## We're using parties that have won at least a seat in Parliament: https://en.wikipedia.org/wiki/List_of_political_parties_in_Finland
 ## Statistics Finland Data: https://pxdata.stat.fi/PxWeb/pxweb/en/StatFin/StatFin__evaa/statfin_evaa_pxt_13sw.px/
 
 
 p_load(readxl)
-voting.d <- read_excel("/Users/hectorbahamonde/research/Inequality_Populism_Finland/data/voting_data/Voting_Data.xlsx")
+voting.d <- read_excel("/Users/hectorbahamonde/research/Inequality_Populism_Finland/data/voting_data/Voting_Data.xlsx") # imports
 
-# Repeat year
+voting.d <- voting.d[-c(1,2), ] # deletes rows
+voting.d <- voting.d[ , -c(2,3)] # drops columns
+colnames(voting.d)[1] <- "Year"
+colnames(voting.d)[2] <- "City"
+colnames(voting.d)[3] <- "PS"
+colnames(voting.d)[4] <- "share.ps"
+
+# Repeat Year
 p_load(dplyr,tidyr)
-voting.d = voting.d %>%  fill(City) 
+voting.d <- voting.d %>%  fill(Year) 
+
+# change Year to numeric
+p_load(readr)
+voting.d$Year = parse_number(voting.d$Year) # numbers had commas. delete that shit.
+voting.d$Year = as.numeric(voting.d$Year)
+
+# change PS to numeric
+p_load(readr)
+voting.d$PS = parse_number(voting.d$PS) # numbers had commas. delete that shit.
+voting.d$PS = as.numeric(voting.d$PS)
+
+# change share.ps to numeric
+p_load(readr)
+voting.d$share.ps = parse_number(voting.d$share.ps) # numbers had commas. delete that shit.
+voting.d$share.ps = as.numeric(voting.d$share.ps)
 
 # Delete numbers from City names (districts?)
 voting.d$City = gsub('[0-9]+', '', voting.d$City)
+voting.d$City = gsub('-', '', voting.d$City)
+voting.d$City = gsub('KU', '', voting.d$City)
 
-# Deleting numbers leaves a whitespace in the city name. Delet that.
-voting.d$City = trimws(voting.d$City)
-
-# Merge both datasets
-dat = merge(voting.d, inequality.d, by.x = c("City", "Year"), all = TRUE)
 
 # Drop "Whole Country"
-dat = dat[!grepl("Whole country", dat$City),]
+voting.d = voting.d[!grepl("Whole country", voting.d$City),]
+voting.d = voting.d[!grepl("constituency", voting.d$City),]
+
+# Deleting numbers leaves a white space in the city name. Delete that.
+voting.d$City = trimws(voting.d$City)
+
+voting.d = voting.d[c(1:5204), ] # delete last rows that contain garbage
+
+p_load(tidyverse,foreign)
+voting.d = voting.d %>%  select(Year, City, PS, share.ps)
+
+
+# Merge both datasets
+dat = merge(voting.d, inequality.d, by = c("City", "Year"), all = TRUE)
 
 # Calculate differenced inequality
 
@@ -62,23 +121,23 @@ dat <- dat %>%
   group_by(City) %>%
   mutate(Gini.lag.2 = dplyr::lag(Gini, n = 2, default = NA))
 
-# Format year
+# Format City and Year
 dat$City = as.factor(dat$City)
 p_load(lubridate); 
 dat$Year = year(as.Date(as.character(dat$Year), format = "%Y"))
 
 # Save a dataset with city, year, and Gini for structural break tests in Stata
-p_load(tidyverse,foreign)
-Gini.structural.break.stata.d = dat %>%  select(Year, City, Gini) %>% drop_na()
-write.dta(Gini.structural.break.stata.d, "gini.dta")
+#p_load(tidyverse,foreign)
+#Gini.structural.break.stata.d = dat %>%  select(Year, City, Gini) %>% drop_na()
+#write.dta(Gini.structural.break.stata.d, "gini.dta")
 
 # Drop
 ## Drop observations for which there were no elections.
-dat <- dat[!(dat$Year==1996 | dat$Year==1997 | dat$Year==1998 | dat$Year==2000 | dat$Year==2001 | dat$Year==2002 | dat$Year==2004 | dat$Year==2005 | dat$Year==2006 | dat$Year==2008 | dat$Year==2009 | dat$Year==2010 | dat$Year==2012 | dat$Year==2013 | dat$Year==2014 | dat$Year==2016 | dat$Year==2017 | dat$Year==2018 | dat$Year==2020),]
+dat <- dat[!(dat$Year==1996 | dat$Year==1997 | dat$Year==1998 | dat$Year==2000 | dat$Year==2001 | dat$Year==2002 | dat$Year==2004 | dat$Year==2005 | dat$Year==2006 | dat$Year==2008 | dat$Year==2009 | dat$Year==2010 | dat$Year==2012 | dat$Year==2013 | dat$Year==2014 | dat$Year==2016 | dat$Year==2017 | dat$Year==2018 | dat$Year==2020 | dat$Year==2021 | dat$Year==2022),]
 ## Drop observations for which there were no Gini coefs
 dat <- dat[!(dat$Year==1983 | dat$Year==1987 | dat$Year==1991),]
 ## Drop obs for which GINIs are missing
-dat <- dat[!is.na(dat$Gini),]
+# dat <- dat[!is.na(dat$Gini),]
 ## Drop obs for which the share of populist party is zero
 # dat <- dat[!(dat$share.ps==0),]
 
@@ -522,7 +581,7 @@ dat <- dat[complete.cases(dat$City), ] # cleaning
 dat <- dat[order(dat$City, dat$Year),] 
 
 # drop if share.ps is NA
-dat <- dat[!is.na(dat$share.ps),]
+# dat <- dat[!is.na(dat$share.ps),]
 
 
 # check for duplicates
@@ -532,7 +591,7 @@ dat <- dat[!is.na(dat$share.ps),]
 # table(dat$duplicated)
 
 # deleting duplicates
-dat = dat[dat$share.ps != 0.0000000000, ] 
+# dat = dat[dat$share.ps != 0.0000000000, ] 
 
 
 # lagged immigration vars
@@ -552,7 +611,7 @@ save(dat, file = "dat.RData")
 
 # export subsetted data to stata
 p_load(tidyverse,foreign)
-dat.stata <- dat %>%  select(Year, City, share.ps, Gini, Gini.diff.1, Gini.lag.1, Gini.lag.2, imm.pop.cum, immigration.yearly, muslim.pop.cum, muslim.imm.yearly, HUM.imm, HUM.imm.lag.1)
+dat.stata <- dat %>%  select(Year, City, Gini, Gini.diff.1, Gini.lag.1, Gini.lag.2, imm.pop.cum, immigration.yearly, muslim.pop.cum, muslim.imm.yearly, HUM.imm, HUM.imm.lag.1)
 write.dta(dat.stata, "dat.dta")
 
 
@@ -790,7 +849,7 @@ share.plot = voting.d %>%
   geom_smooth(method = "loess", se = TRUE, fullrange = F, span=1) +
   labs(title = "Overtime Electoral Perfomance of the Finns Party") +
   theme_bw() +
-  scale_x_discrete(breaks = seq(1983, 2023, by = 4))  +
+  #scale_x_discrete(breaks = seq(1983, 2023, by = 4))  +
   labs(y = "Share of Finns Party (%)", x = "Year") + 
   theme(axis.text.y = element_text(size=7), 
         axis.text.x = element_text(size=7), 
@@ -856,25 +915,27 @@ municipalities = get_municipalities(year = 2020, scale = 4500)
 municipalities <- municipalities %>% rename("City" = "name")
 
 # Merge Gini and Share PS
-municipalities = merge(x = municipalities, y = dat[ , c("City", "Gini", "share.ps", "Year")], by = "City", all.x=TRUE)
+municipalities = merge(x = municipalities, y = dat[ , c("City", "Gini", "Year", "PS", "share.ps")], by = "City", all.x=TRUE)
 
-# Keep 1995 and 2019 years
+
+# Keep years
 p_load("dplyr")
-municipalities = municipalities %>% filter(Year == 1995 | Year == 2019 | Year == 2021)
+# municipalities = municipalities %>% filter(Year == 1995 | Year == 2022 | Year == 2023)
 
 # Adds 2023 elections
-municipalities.2023 = get_municipalities(year = 2020, scale = 4500)
-municipalities.2023 <- municipalities.2023 %>% rename("City" = "name")
-municipalities.2023 = merge(x = municipalities.2023, y = voting.d[ , c("City", "PS", "Year")], by = "City", all.x=TRUE)
-p_load("dplyr")
-municipalities.2023 = municipalities.2023 %>% filter(Year == 1995 | Year == 2019 | Year == 2021)
+#municipalities.2023 = get_municipalities(year = 2020, scale = 4500)
+#municipalities.2023 <- municipalities.2023 %>% rename("City" = "name")
+#municipalities.2023 = merge(x = municipalities.2023, y = voting.d[ , c("City", "PS", "Year")], by = "City", all.x=TRUE)
+#p_load("dplyr")
+#municipalities.2023 = municipalities.2023 %>% filter(Year == 1995 | Year == 2019 | Year == 2021)
 
 # Gini Plot
 p_load("ggplot2")
 
-gini.map.plot = ggplot(municipalities) + 
+gini.map.plot = municipalities %>% filter(Year == 1995 | Year == 2019) %>% 
+  ggplot(.) + 
   geom_sf(aes(fill = Gini)) +
-  scale_fill_gradient(low="blue", high="red") +
+  scale_fill_gradient(low = "blue", high = "red") + # scale_fill_gradient2(midpoint = mean(inequality.d$Gini), low = "blue", high = "red")
   labs(title = "Overtime Evolution of the Gini Coefficient in Finland") +
   facet_wrap(~Year) +
   theme_bw() +
@@ -895,7 +956,9 @@ annotate_figure(gini.map.plot,
 
 # Populist Plot
 p_load("ggplot2")
-populist.map.plot = ggplot(municipalities) + 
+populist.map.plot = 
+  municipalities %>% filter(Year == 1995 | Year == 2019 | Year == 2023 ) %>% 
+  ggplot(.) + 
   geom_sf(aes(fill = share.ps)) +
   scale_fill_gradient(low="blue", high="red") +
   labs(title = "Overtime Electoral Share of the Finns Party") +
@@ -913,30 +976,11 @@ populist.map.plot = ggplot(municipalities) +
         legend.position="bottom")
 
 
-# Populist Plot 2023
-p_load("ggplot2")
-populist.map.plot.2023 = ggplot(municipalities.2023) + 
-  geom_sf(aes(fill = PS)) +
-  scale_fill_gradient(low="blue", high="red") +
-  labs(title = "Overtime Electoral Share of the Finns Party (%)") +
-  guides(fill=guide_legend(title="Electoral Share of the Finns Party (%)", nrow = 1)) +
-  facet_wrap(~Year) +
-  theme_bw() +
-  theme(axis.text.y = element_text(size=7), 
-        axis.text.x = element_text(size=7), 
-        axis.title.y = element_text(size=7), 
-        axis.title.x = element_text(size=7), 
-        legend.text=element_text(size=7), 
-        legend.title=element_text(size=7),
-        plot.title = element_text(size=7),
-        strip.text.x = element_text(size = 7),
-        legend.position="bottom")
-
 # Combine both plots
 p_load(ggpubr)
 theme_set(theme_pubr())
 
-maps.plot = ggarrange(gini.map.plot, populist.map.plot.2023,
+maps.plot = ggarrange(gini.map.plot, populist.map.plot,
                       align = "v",
                       #labels = c("A", "B"),
                       ncol = 2, nrow = 1)
@@ -959,7 +1003,7 @@ ggsave(
 p_load("ggplot2")
 
 # drop if Gini, Year, or share.ps are missing
-dat.plot = dat %>% drop_na(c("Gini", "Year", "share.ps"))
+dat.plot = dat %>% drop_na(c("Gini", "Year"))
 
 gini.dep.var.plot.histogram = ggplot(dat.plot, aes(x=Gini)) + geom_histogram() + facet_wrap(~Year, ncol = length(unique(dat$Year))) +
   theme_bw() +
@@ -973,7 +1017,7 @@ gini.dep.var.plot.histogram = ggplot(dat.plot, aes(x=Gini)) + geom_histogram() +
         plot.title = element_text(size=10),
         strip.text.x = element_text(size = 10))
 
-share.dep.var.plot.histogram = ggplot(dat.plot, aes(x=share.ps)) + geom_histogram() + facet_wrap(~Year, ncol = length(unique(dat$Year))) +
+share.dep.var.plot.histogram = ggplot(dat.plot, aes(x=PS)) + geom_histogram() + facet_wrap(~Year, ncol = length(unique(dat$Year))) +
   theme_bw() +
   labs(y = "Count", x = "Year", title = "Overtime Share of the Populist Party") + 
   theme(axis.text.y = element_text(size=7), 
