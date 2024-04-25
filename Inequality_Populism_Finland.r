@@ -402,9 +402,6 @@ ggsave(
   limitsize = TRUE)
 
 
-# HERE
-
-
 # plot multiple categories
 pdf(file = "/Users/hectorbahamonde/research/Inequality_Populism_Finland/Imm_Econ_Dev.pdf",   # The directory you want to save the file in
     width = 7, # The width of the plot in inches
@@ -724,8 +721,81 @@ m.10 <- lmer(PS ~ Gini *  HUM.imm + immigration.yearly + (1 | City), data = dat)
 
 
 p_load(sjPlot,sjmisc,ggplot2)
-plot_model(m.9, type = "int") + theme_bw() + theme(aspect.ratio=1)
+m.9.p = plot_model(m.9, type = "int") + 
+  theme_bw() +
+  labs(title = "Marginal Effects of Interaction Term (model 9)", y = "Finns Party votes", x = "Gini") + 
+  theme(axis.text.y = element_text(size=7), 
+        axis.text.x = element_text(size=7), 
+        axis.title.y = element_text(size=10), 
+        axis.title.x = element_text(size=10), 
+        legend.text=element_text(size=10), 
+        legend.title=element_text(size=10),
+        plot.title = element_text(size=10),
+        strip.text.x = element_text(size = 10),
+        legend.position = "none",
+        #legend.position = c(0.3, 0.1),
+        aspect.ratio=1) +
+  #guides(colour=guide_legend(title="", nrow = 1)) 
+  #scale_fill_manual(labels = c("T999", "T888"), values = c("blue", "red"))
+  annotate("text", x = 35, y = 10000, label = "Developed (high)") +
+  annotate("text", x = 40, y = -10000, label = "Developed (low)")
+  
 
+p_load(sjPlot,sjmisc,ggplot2)
+m.5.a.p = plot_model(m.5, terms = "Gini.lag.1", type = "pred") + 
+  theme_bw() +
+  labs(title = "Predicted values of Finns Party votes (model 5)") +
+  labs(y = "Finns Party votes", x = "Gini (lag 1)") + 
+  theme(axis.text.y = element_text(size=7), 
+        axis.text.x = element_text(size=7), 
+        axis.title.y = element_text(size=10), 
+        axis.title.x = element_text(size=10), 
+        legend.text=element_text(size=10), 
+        legend.title=element_text(size=10),
+        plot.title = element_text(size=10),
+        strip.text.x = element_text(size = 10),
+        legend.position = "none",
+        aspect.ratio=1)
+
+
+
+
+
+m.5.b.p = plot_model(m.5, terms = "HUM.imm.lag.1", type = "pred") + 
+  theme_bw() +
+  labs(title = "Predicted values of Finns Party votes (model 5)") +
+  labs(y = "Finns Party votes", x = "High and Upper-middle Development\nCountry Immigration") + 
+  theme(axis.text.y = element_text(size=7), 
+        axis.text.x = element_text(size=7), 
+        axis.title.y = element_text(size=10), 
+        axis.title.x = element_text(size=10), 
+        legend.text=element_text(size=10), 
+        legend.title=element_text(size=10),
+        plot.title = element_text(size=10),
+        strip.text.x = element_text(size = 10),
+        legend.position = "none",
+        aspect.ratio=1)
+
+
+# Combine both plots
+p_load(ggpubr)
+theme_set(theme_pubr())
+
+models.plot = ggarrange(m.9.p, m.5.a.p, m.5.b.p, 
+                        labels = c("A", "B", "C"),
+                        align = "v",
+                        ncol = 3, nrow = 1)
+
+ggsave(
+  "models_plot.jpeg",
+  device = "jpeg",
+  plot = models.plot,
+  scale = 1,
+  #width = 10, 
+  #height = 5, 
+  #units = "in",
+  dpi = 1200,
+  limitsize = TRUE)
 
 
 # table
@@ -735,69 +805,6 @@ screenreg( # use "screenreg" or "texreg" // BUT DO KEEP IT IN texreg FOR THE PAP
   list(m.1, m.2, m.3, m.4, m.5, m.6, m.7,m.8,m.9,m.10)#, # list all the saved models here
   #omit.coef = "id"
 )
-
-
-
-#### brms
-# if (!requireNamespace("remotes")) {
-#  install.packages("remotes")
-# }
-# remotes::install_github("paul-buerkner/brms")
-# library("brms")
-
-p_load(brms)
-
-# with our 0 + Intercept solution, we told brm() to suppress the default intercept and replace it with our smartly-named Intercept parameter. This is our fixed effect for the population intercept and, importantly, brms() will assign default priors to it based on the data themselves without assumptions about centering.
-# https://bookdown.org/content/4253/introducing-the-multilevel-model-for-change.html#examining-estimated-fixed-effects
-
-
-#     formula = share.ps ~  0 + Intercept + Gini.lag.1 + (1 + muslim.imm.yearly + Year | City), # (working hyp)
-
-
-fit3.2 <-
-  brm(data = dat,
-      family = gaussian,
-      #       formula = share.ps ~ 0 + Intercept + Gini + (1 + immigration.yearly + muslim.imm.yearly + Year | City),
-      #     formula = share.ps ~  0 + Intercept + Gini.lag.1 + (1 + muslim.imm.yearly + Year | City), # 
-      #.      formula = share.ps ~  Gini + muslim.imm.yearly + (1 + muslim.imm.yearly + Year | City), # 
-      formula = share.ps ~  0 + Intercept + Gini + imm.pop.cum + muslim.pop.cum + (1 | City), #
-      iter = 500, warmup = 100, chains = 1, 
-      cores = 4, # allow you to sample from all four chains simultaneously
-      control = list(adapt_delta = 0.95),
-      seed = 3
-  )
-
-print(fit3.2)
-
-plot(conditional_effects(fit3.2), ask = T)
-plot(fit3.2, ask = T)
-
-conditional_effects(fit3.2)
-
-
-# how to use posterior predictions and interpret multilevel hyperparameters
-# https://www.andrewheiss.com/blog/2021/11/10/ame-bayes-re-guide/#continuous-effect-1
-
-#install.packages("tidyverse")
-p_load(tidyverse)
-
-draws <- as_draws_df(fit3.2)
-
-draws[, 1:10] %>%
-  glimpse()
-
-
-draws <- as_draws_df(fit3.2)
-
-draws %>% 
-  pivot_longer(starts_with("b_")) %>% 
-  
-  ggplot(aes(x = value)) +
-  geom_density(color = "transparent", fill = "grey25") +
-  scale_y_continuous(NULL, breaks = NULL) +
-  theme(panel.grid = element_blank()) +
-  facet_wrap(~ name, scales = "free")
-
 
 
 
@@ -850,7 +857,7 @@ share.plot = voting.d %>%
   labs(title = "Overtime Electoral Perfomance of the Finns Party") +
   theme_bw() +
   #scale_x_discrete(breaks = seq(1983, 2023, by = 4))  +
-  labs(y = "Share of Finns Party (%)", x = "Year") + 
+  labs(y = "Average number of votes at the district level", x = "Year") + 
   theme(axis.text.y = element_text(size=7), 
         axis.text.x = element_text(size=7), 
         axis.title.y = element_text(size=10), 
@@ -862,15 +869,14 @@ share.plot = voting.d %>%
         legend.position = "none",
         aspect.ratio=4/4)
 
-
 # Gini
 gini.plot = dat %>% 
   ggplot(aes(x = Year, y = Gini)) +
   #geom_jitter(width = 0.25, alpha = 1/5) +
   geom_smooth(method = "loess", se = TRUE) +
-  labs(title = "Overtime Evolution of Gini Index in Finland") +
+  labs(title = "Overtime Evolution of Gini Coefficient in Finland") +
   theme_bw() +
-  labs(y = "Gini Index", x = "Year") + 
+  labs(y = "Gini Coefficient (gross income)", x = "Year") + 
   theme(axis.text.y = element_text(size=7), 
         axis.text.x = element_text(size=7), 
         axis.title.y = element_text(size=10), 
@@ -887,7 +893,7 @@ p_load(ggpubr)
 theme_set(theme_pubr())
 
 dependent.var.plot = ggarrange(gini.plot, share.plot, 
-                               #labels = c("A", "B"),
+                               labels = c("A", "B"),
                                ncol = 2, nrow = 1)
 
 ggsave(
@@ -932,7 +938,7 @@ p_load("dplyr")
 # Gini Plot
 p_load("ggplot2")
 
-gini.map.plot = municipalities %>% filter(Year == 1995 | Year == 2019) %>% 
+gini.map.plot = municipalities  %>% filter(Year == 1995 | Year == 2007 | Year == 2019) %>% 
   ggplot(.) + 
   geom_sf(aes(fill = Gini)) +
   scale_fill_gradient(low = "blue", high = "red") + # scale_fill_gradient2(midpoint = mean(inequality.d$Gini), low = "blue", high = "red")
@@ -962,7 +968,7 @@ populist.map.plot =
   geom_sf(aes(fill = share.ps)) +
   scale_fill_gradient(low="blue", high="red") +
   labs(title = "Overtime Electoral Share of the Finns Party") +
-  guides(fill=guide_legend(title="Electoral Share of\nthe Finns Party")) +
+  guides(fill=guide_legend(title="Electoral Share of the Finns Party", nrow = 1)) +
   facet_wrap(~Year) +
   theme_bw() +
   theme(axis.text.y = element_text(size=7), 
@@ -975,14 +981,13 @@ populist.map.plot =
         strip.text.x = element_text(size = 7),
         legend.position="bottom")
 
-
 # Combine both plots
 p_load(ggpubr)
 theme_set(theme_pubr())
 
 maps.plot = ggarrange(gini.map.plot, populist.map.plot,
-                      align = "v",
-                      #labels = c("A", "B"),
+                      align = "h",
+                      labels = c("A", "B"),
                       ncol = 2, nrow = 1)
 
 
@@ -1089,142 +1094,14 @@ maps.plot.legend <- paste(
 # https://blog.stata.com/2016/10/04/estimating-covariate-effects-after-gmm/
 
 
-
-
-## ---- models:d ----
-# Fixed Effects using lm
-m1 = lm(share.ps ~ Gini.diff.1 + factor(City)-1, data=dat) # Fixed Effects (city intercepts)
-m2 = lm(share.ps ~ Gini.lag.1 + factor(City)-1, data=dat) # Fixed Effects (city intercepts)
-m3 = lm(share.ps ~ Gini.lag.2 + factor(City)-1, data=dat) # Fixed Effects (city intercepts)
-
-# Pooling (no FE's and pooled std errors)
-m4 = lm(log(share.ps) ~ Gini.diff.1, data=dat) 
-m5 = lm(log(share.ps) ~ Gini.lag.1, data=dat) 
-m6 = lm(log(share.ps) ~ Gini.lag.2, data=dat)
-
-
-# Fixed Effects using lm LOG OF DV
-m7 = lm(log(share.ps) ~ Gini.diff.1 + factor(City)-1, data=dat) # Fixed Effects
-m8 = lm(log(share.ps) ~ Gini.lag.1 + factor(City)-1, data=dat) # Fixed Effects
-m9 = lm(log(share.ps) ~ Gini.lag.2 + factor(City)-1, data=dat) # Fixed Effects
-
-# Getting Clustered Std Errors by City: ALL MODELS (except for pooled models)
-p_load(multiwayvcov)
-
-
-# Var Covariance Matrix for Clustered Std Error Models
-options(scipen=999)
-# FE and clustered (no logged DV)
-vcov.year.city.m1 <- cluster.vcov(m1, cbind(dat$City))
-vcov.year.city.m2 <- cluster.vcov(m2, cbind(dat$City))
-vcov.year.city.m3 <- cluster.vcov(m3, cbind(dat$City))
-# FE and clustered (logged DV)
-vcov.year.city.m7 <- cluster.vcov(m7, cbind(dat$City))
-vcov.year.city.m8 <- cluster.vcov(m8, cbind(dat$City))
-vcov.year.city.m9 <- cluster.vcov(m9, cbind(dat$City))
-
-# Getting Values:  Std. Error
-# options(scipen=999)
-# FE and clustered (no logged DV)
-# coeftest(m1, vcov.year.city.m1)[1,2] # Std. Error m1
-# coeftest(m2, vcov.year.city.m2)[1,2] # Std. Error m2 
-# coeftest(m3, vcov.year.city.m3)[1,2] # Std. Error m3 
-## pooled
-# coeftest(m4)[1,2] # Std. Error m4 
-# coeftest(m5)[1,2] # Std. Error m5 
-# coeftest(m6)[1,2] # Std. Error m6 
-# FE and clustered (logged DV)
-# coeftest(m7, vcov.year.city.m7)[1,2] # Std. Error m7 
-# coeftest(m8, vcov.year.city.m8)[1,2] # Std. Error m8 
-# coeftest(m9, vcov.year.city.m9)[1,2] # Std. Error m9 
-
-# Getting Values:  P-values
-# options(scipen=999)
-# coeftest(m1, vcov.year.city.m1)[1,4] # pvalue m1
-# coeftest(m2, vcov.year.city.m2)[1,4] # pvalue m2 
-# coeftest(m3, vcov.year.city.m3)[1,4] # pvalue m3 
-## pooled
-# coeftest(m4, vcov.year.city.m4)[1,4] # pvalue m4 
-# coeftest(m5, vcov.year.city.m5)[1,4] # pvalue m5 
-# coeftest(m6, vcov.year.city.m6)[1,4] # pvalue m6 
-# FE and clustered (logged DV)
-# coeftest(m7, vcov.year.city.m7)[1,4] # pvalue m7 
-# coeftest(m8, vcov.year.city.m8)[1,4] # pvalue m8 
-# coeftest(m9, vcov.year.city.m9)[1,4] # pvalue m9 
-
-## All coefficients: Std Errors
-p_load(lmtest)
-m1.clust.std.error = coeftest(m1, vcov.year.city.m1)[,2] # Std. Error m1
-m2.clust.std.error = coeftest(m2, vcov.year.city.m2)[,2] # Std. Error m2 
-m3.clust.std.error = coeftest(m3, vcov.year.city.m3)[,2] # Std. Error m3 
-m4.clust.std.error = coeftest(m4)[,2] # Std. Error m4 
-m5.clust.std.error = coeftest(m5)[,2] # Std. Error m5 
-m6.clust.std.error = coeftest(m6)[,2] # Std. Error m6 
-m7.clust.std.error = coeftest(m7, vcov.year.city.m7)[,2] # Std. Error m7 
-m8.clust.std.error = coeftest(m8, vcov.year.city.m8)[,2] # Std. Error m8 
-m9.clust.std.error = coeftest(m9, vcov.year.city.m9)[,2] # Std. Error m9 
-
-## All coefficients: P Values
-m1.clust.pvalue = coeftest(m1, vcov.year.city.m1)[,4] # pvalue m1
-m2.clust.pvalue = coeftest(m2, vcov.year.city.m2)[,4] # pvalue m2 
-m3.clust.pvalue = coeftest(m3, vcov.year.city.m3)[,4] # pvalue m3 
-m4.clust.pvalue = coeftest(m4)[,4] # pvalue m4 
-m5.clust.pvalue = coeftest(m5)[,4] # pvalue m5 
-m6.clust.pvalue = coeftest(m6)[,4] # pvalue m6 
-m7.clust.pvalue = coeftest(m7, vcov.year.city.m7)[,4] # pvalue m7 
-m8.clust.pvalue = coeftest(m8, vcov.year.city.m8)[,4] # pvalue m8 
-m9.clust.pvalue = coeftest(m9, vcov.year.city.m9)[,4] # pvalue m9 
-## ---- 
-
-## ---- effects:plot:d ----
-# plot
-## https://cran.r-project.org/web/packages/margins/vignettes/Introduction.html
-p_load(margins)
-conditional.effects.plot.d = as.data.frame(cplot(m2, 
-                                                 "Gini.lag.1", 
-                                                 what = "prediction", 
-                                                 draw = FALSE # omits plot
-))
-
-conditional.effects.plot = ggplot(conditional.effects.plot.d, aes(xvals)) + 
-  geom_line(aes(y=yvals), colour="blue") + 
-  geom_ribbon(aes(ymin=lower, ymax=upper), alpha=0.2) +
-  theme_bw() +
-  labs(y = "Predicted Value", x = "Gini (t-1)", title = "Conditional Effect of Gini on the Electoral Share\nof the Populist Party in Finland") + 
-  theme(axis.text.y = element_text(size=7), 
-        axis.text.x = element_text(size=7), 
-        axis.title.y = element_text(size=10), 
-        axis.title.x = element_text(size=10), 
-        legend.text=element_text(size=10), 
-        legend.title=element_text(size=10),
-        plot.title = element_text(size=10),
-        strip.text.x = element_text(size = 10),
-        aspect.ratio=4/4)
-## ---- 
-
-
-## ---- effects:plot ----
-conditional.effects.plot
-conditional.effects.plot.legend <- paste(
-  "{\\bf Evolution of TEST TEST TEST}.",
-  "\\\\\\hspace{\\textwidth}", 
-  "{\\bf Note}: Note here.",
-  "\n")
-## ---- 
-
-
-
-
 ## ---- table ----
 # Table
 p_load(texreg)
 
 # c(noquote(paste('m', 1:9, collapse = ", ", sep = "")))
 
-texreg( # screenreg texreg
-  list(m1, m2, m3, m4, m5, m6, m7, m8, m9
-       #m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13
-  ),
+screenreg( # screenreg texreg
+  list(m.1, m.2, m.3, m.4, m.5, m.6, m.7,m.8,m.9,m.10) ,#, # list all the saved models here
   custom.header = list(
     "1" = 1,
     "2" = 2,
@@ -1234,32 +1111,24 @@ texreg( # screenreg texreg
     "6" = 6, 
     "7" = 7,
     "8" = 8,
-    "9" = 9),
-  custom.model.names = c(
-    #m1, m2, m3
-    "FE", "FE", "FE", 
-    # m4, m5, m6
-    "Pooled","Pooled","Pooled",  
-    # m7, m8, m9
-    "FE+Log", "FE+Log","FE+Log"
-  ),
-  #custom.coef.names = NULL,
-  omit.coef = "(City)",
-  #custom.coef.names = c("Intercept",
-  #"Appearance-Occupation Congruence",
-  #"Middle Class",
-  #"Working Class",
-  #"Age",
-  #"Appearance-Occupation Congruence X Middle Class",
-  #"Appearance-Occupation Congruence X Working Class",
-  #"Attractiveness",
-  #"Masculinity",
+    "9" = 9,
+    "10" = 10),
+  custom.model.names = c(rep("Votes", 10)),
+  # omit.coef = "(City)",
+  custom.coef.names = c("Intercept",
+  "Gini",
+  "High and Upper-medium Country Immigration",
+  "Muslim Immigration",
+  "Immigration Total",
+  "Gini (1 lag)",
+  "High and Upper-medium Country Immigration (1 lag)",
+  "Muslim Immigration (1 lag)",
+  "Immigration Total (1 lag)",
+  "Gini x High and Upper-medium Country Immigration"),
   #"Femininity"),
   # custom.header = list( "Poisson" = 1),
   stars = c(0.001, 0.01, 0.05),
   include.adjrs = FALSE,
-  override.se = list(c(m1.clust.std.error), c(m2.clust.std.error), c(m3.clust.std.error), c(m4.clust.std.error), c(m5.clust.std.error), c(m6.clust.std.error), c(m7.clust.std.error), c(m8.clust.std.error), c(m9.clust.std.error)),
-  override.pvalues = list(c(m1.clust.pvalue), c(m2.clust.pvalue), c(m3.clust.pvalue), c(m4.clust.pvalue), c(m5.clust.pvalue), c(m6.clust.pvalue), c(m7.clust.pvalue), c(m8.clust.pvalue), c(m9.clust.pvalue)),
   #symbol = "\\\\cdot",
   label = "reg:t",
   caption = "Dynamic Panel-Data Models: The Effect of Inequality on the Share of The Populist Party.",
@@ -1268,8 +1137,9 @@ texreg( # screenreg texreg
   float.pos="H",
   use.packages = FALSE,
   threeparttable = TRUE,
-  scalebox = 0.8,
-  custom.note = "\\item %stars. \\item All models have panel-corrected standard errors (at the city level). Dependent variable is the share of the populist party. First three models have city fixed effects. Second set of models do not have city fixed effects. Third set of models have city fixed effects, and the dependent variable is logged.")
+  scalebox = 0.1,
+  #file = "models.doc",
+  custom.note = "\\item %stars. \\item All models have city fixed-effects. Dependent variable is the total votes of the Finns Party.")
 ## ----
 
 ################
