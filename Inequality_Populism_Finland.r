@@ -162,6 +162,8 @@ religion.d = data.frame(Country=religion.d$Country, muslim=religion.d$muslim) # 
 # Population Data: Immigration
 ############
 
+# raw query: https://pxdata.stat.fi:443/PxWeb/sq/ff657d82-f3a8-498c-afe6-94129545ba2f
+
 # import immigration data
 p_load("readxl")
 immigration.d1 <- read_excel("/Users/hectorbahamonde/research/Inequality_Populism_Finland/data/Statistics_Finland/Population/Statistics_Finland_Immigration_TS.xlsx")
@@ -370,7 +372,7 @@ immigration.yearly.p = ggplot(immigration.tot.d, aes(x=Year, y=immigration.yearl
 cat.econ.development.p = ggplot(cat.econ.development.d, aes(x=Year, y=freq, group=Econ.Dev, color=Econ.Dev)) + 
   geom_line(linewidth =1) + 
   theme_bw() +
-  labs(y = "Immigration: Economic Development of Immigrant's Country (N)", x = "Year") + 
+  labs(y = "Level of development (N)", x = "Year") + 
   theme(axis.text.y = element_text(size=7), 
         axis.text.x = element_text(size=7), 
         axis.title.y = element_text(size=12), 
@@ -379,7 +381,7 @@ cat.econ.development.p = ggplot(cat.econ.development.d, aes(x=Year, y=freq, grou
         legend.title=element_text(size=12),
         plot.title = element_text(size=12),
         strip.text.x = element_text(size = 12),
-        legend.position = c(0.11, 0.2),
+        legend.position = c(0.14, 0.227),
         aspect.ratio=4/4) + labs(color="") 
 
 p_load(ggpubr) 
@@ -394,12 +396,12 @@ ggsave(
   "Imm_Mus_EconDev_plot.jpeg",
   device = "jpeg",
   plot = Imm.Mus.EconDev.p,
-  scale = 1,
+  #scale = 1,
   #width = 4, 
   #height = 2, 
   #units = "in",
   dpi = 1200,
-  limitsize = TRUE)
+  limitsize = F)
 
 
 # plot multiple categories
@@ -845,8 +847,6 @@ ggplot(econ.development.d[econ.development.d$Econ.Dev=="L"], aes(x = Year, y = C
 ############
 
 ## ---- plots:d ----
-# Descriptives
-p_load(ggplot2,tidyverse)
 
 # Share
 share.plot = voting.d %>% 
@@ -858,14 +858,14 @@ share.plot = voting.d %>%
   theme_bw() +
   #scale_x_discrete(breaks = seq(1983, 2023, by = 4))  +
   labs(y = "Average number of votes at the district level", x = "Year") + 
-  theme(axis.text.y = element_text(size=7), 
-        axis.text.x = element_text(size=7), 
-        axis.title.y = element_text(size=10), 
-        axis.title.x = element_text(size=10), 
-        legend.text=element_text(size=10), 
-        legend.title=element_text(size=10),
-        plot.title = element_text(size=10),
-        strip.text.x = element_text(size = 10),
+  theme(axis.text.y = element_text(size=14), 
+        axis.text.x = element_text(size=14), 
+        axis.title.y = element_text(size=20), 
+        axis.title.x = element_text(size=20), 
+        legend.text=element_text(size=20), 
+        legend.title=element_text(size=20),
+        plot.title = element_text(size=20),
+        strip.text.x = element_text(size = 20),
         legend.position = "none",
         aspect.ratio=4/4)
 
@@ -877,14 +877,14 @@ gini.plot = dat %>%
   labs(title = "Overtime Evolution of Gini Coefficient in Finland") +
   theme_bw() +
   labs(y = "Gini Coefficient (gross income)", x = "Year") + 
-  theme(axis.text.y = element_text(size=7), 
-        axis.text.x = element_text(size=7), 
-        axis.title.y = element_text(size=10), 
-        axis.title.x = element_text(size=10), 
-        legend.text=element_text(size=10), 
-        legend.title=element_text(size=10),
-        plot.title = element_text(size=10),
-        strip.text.x = element_text(size = 10),
+  theme(axis.text.y = element_text(size=14), 
+        axis.text.x = element_text(size=14), 
+        axis.title.y = element_text(size=20), 
+        axis.title.x = element_text(size=20), 
+        legend.text=element_text(size=20), 
+        legend.title=element_text(size=20),
+        plot.title = element_text(size=20),
+        strip.text.x = element_text(size = 20),
         legend.position = "none",
         aspect.ratio=4/4)
 
@@ -901,10 +901,10 @@ ggsave(
   device = "jpeg",
   plot = dependent.var.plot,
   scale = 1,
-  width = 10, 
-  height = 5, 
-  units = "in",
-  dpi = 600,
+  #width = 10, 
+  #height = 5, 
+  #units = "in",
+  dpi = 1200,
   limitsize = TRUE)
 
 
@@ -945,14 +945,14 @@ gini.map.plot = municipalities  %>% filter(Year == 1995 | Year == 2007 | Year ==
   labs(title = "Overtime Evolution of the Gini Coefficient in Finland") +
   facet_wrap(~Year) +
   theme_bw() +
-  theme(axis.text.y = element_text(size=7), 
-        axis.text.x = element_text(size=7), 
-        axis.title.y = element_text(size=7), 
-        axis.title.x = element_text(size=7), 
-        legend.text=element_text(size=7), 
-        legend.title=element_text(size=7),
-        plot.title = element_text(size=7),
-        strip.text.x = element_text(size = 7),
+  theme(axis.text.y = element_text(size=18), 
+        axis.text.x = element_text(size=18), 
+        axis.title.y = element_text(size=18), 
+        axis.title.x = element_text(size=18), 
+        legend.text=element_text(size=18), 
+        legend.title=element_text(size=18),
+        plot.title = element_text(size=18),
+        strip.text.x = element_text(size=18),
         legend.position="bottom")
 
 annotate_figure(gini.map.plot,
@@ -971,14 +971,14 @@ populist.map.plot =
   guides(fill=guide_legend(title="Electoral Share of the Finns Party", nrow = 1)) +
   facet_wrap(~Year) +
   theme_bw() +
-  theme(axis.text.y = element_text(size=7), 
-        axis.text.x = element_text(size=7), 
-        axis.title.y = element_text(size=7), 
-        axis.title.x = element_text(size=7), 
-        legend.text=element_text(size=7), 
-        legend.title=element_text(size=7),
-        plot.title = element_text(size=7),
-        strip.text.x = element_text(size = 7),
+  theme(axis.text.y = element_text(size=18), 
+        axis.text.x = element_text(size=18), 
+        axis.title.y = element_text(size=18), 
+        axis.title.x = element_text(size=18), 
+        legend.text=element_text(size=18), 
+        legend.title=element_text(size=18),
+        plot.title = element_text(size=18),
+        strip.text.x = element_text(size=18),
         legend.position="bottom")
 
 # Combine both plots
