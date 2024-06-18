@@ -327,7 +327,7 @@ cat.econ.development.d = cat.econ.development.d %>% # 4 categories
   mutate(freq = n / sum(n)*100)
 
 # now combine L and ML into one (sum both %'s), so to have one L%+LM% value per year (to then merge these with the rest of the data)
-library(dplyr)
+p_load(dplyr)
 
 cat.econ.development.LLM.d <- cat.econ.development.d %>% 
   filter(Econ.Dev %in% c("H", "UM")) %>%
@@ -337,8 +337,63 @@ cat.econ.development.LLM.d <- cat.econ.development.d %>%
 # Save rdata
 save(cat.econ.development.d, file = "cat_econ_development_d.RData")
 
-p_load(ggplot2)
+# merge immigration/(foreign)population df with big dataset
+dat = merge(dat, immigration.tot.d, by = "Year", all=T) # merges with yearly immigration tot
+dat = merge(dat, muslim.pop.imm.d, by = "Year", all=T) # merges with yearly muslim immigration tot 
+dat = merge(dat, cat.econ.development.LLM.d, by = "Year", all=T) # merges with difference between High-Low dev country immigration
+#dat = merge(dat, diff.econ.development.d, by = "Year", all=T) # merges with difference between High-Low dev country immigration
 
+# lagged HUM.imm
+dat <- dat %>%
+  group_by(City) %>%
+  mutate(HUM.imm.lag.1 = dplyr::lag(HUM.imm, n = 1, default = NA))
+
+dat <- dat[complete.cases(dat$Year), ] # cleaning
+dat <- dat[complete.cases(dat$City), ] # cleaning
+
+# reordering
+# dat <- dat %>% select(everything(), imm.pop.cum, ) 
+
+# sort again
+dat <- dat[order(dat$City, dat$Year),] 
+
+# drop if share.ps is NA
+# dat <- dat[!is.na(dat$share.ps),]
+
+
+# check for duplicates
+# p_load(dplyr)
+# dat = dat %>% group_by(City,Year) %>%
+#  mutate(duplicated = n() > 1)
+# table(dat$duplicated)
+
+# deleting duplicates
+# dat = dat[dat$share.ps != 0.0000000000, ] 
+
+
+# lagged immigration vars
+
+p_load(dplyr)
+dat <- dat %>%
+  group_by(City) %>%
+  mutate(immigration.yearly.lag.1 = dplyr::lag(immigration.yearly, n = 1, default = NA))
+
+dat <- dat %>%
+  group_by(City) %>%
+  mutate(muslim.imm.yearly.lag.1 = dplyr::lag(muslim.imm.yearly, n = 1, default = NA))
+
+
+# Save rdata
+save(dat, file = "dat.RData")
+
+# export subsetted data to stata
+p_load(tidyverse,foreign)
+dat.stata <- dat %>%  select(Year, City, Gini, Gini.diff.1, Gini.lag.1, Gini.lag.2, imm.pop.cum, immigration.yearly, muslim.pop.cum, muslim.imm.yearly, HUM.imm, HUM.imm.lag.1)
+write.dta(dat.stata, "dat.dta")
+## ----
+
+
+p_load(ggplot2)
 muslim.yearly.p = ggplot(muslim.pop.imm.d, aes(x=Year, y=muslim.imm.yearly)) + 
   geom_line(colour="blue", linewidth =1) + 
   theme_bw() +
@@ -558,67 +613,6 @@ scatterplot(muslim.imm.yearly ~ Year,
             col="red")
 
 dev.off()
-
-# merge immigration/(foreign)population df with big dataset
-dat = merge(dat, immigration.tot.d, by = "Year", all=T) # merges with yearly immigration tot
-dat = merge(dat, muslim.pop.imm.d, by = "Year", all=T) # merges with yearly muslim immigration tot 
-dat = merge(dat, cat.econ.development.LLM.d, by = "Year", all=T) # merges with difference between High-Low dev country immigration
-#dat = merge(dat, diff.econ.development.d, by = "Year", all=T) # merges with difference between High-Low dev country immigration
-
-# lagged HUM.imm
-dat <- dat %>%
-  group_by(City) %>%
-  mutate(HUM.imm.lag.1 = dplyr::lag(HUM.imm, n = 1, default = NA))
-
-dat <- dat[complete.cases(dat$Year), ] # cleaning
-dat <- dat[complete.cases(dat$City), ] # cleaning
-
-# reordering
-# dat <- dat %>% select(everything(), imm.pop.cum, ) 
-
-# sort again
-dat <- dat[order(dat$City, dat$Year),] 
-
-# drop if share.ps is NA
-# dat <- dat[!is.na(dat$share.ps),]
-
-
-# check for duplicates
-# p_load(dplyr)
-# dat = dat %>% group_by(City,Year) %>%
-#  mutate(duplicated = n() > 1)
-# table(dat$duplicated)
-
-# deleting duplicates
-# dat = dat[dat$share.ps != 0.0000000000, ] 
-
-
-# lagged immigration vars
-
-p_load(dplyr)
-dat <- dat %>%
-  group_by(City) %>%
-  mutate(immigration.yearly.lag.1 = dplyr::lag(immigration.yearly, n = 1, default = NA))
-
-dat <- dat %>%
-  group_by(City) %>%
-  mutate(muslim.imm.yearly.lag.1 = dplyr::lag(muslim.imm.yearly, n = 1, default = NA))
-
-
-# Save rdata
-save(dat, file = "dat.RData")
-
-# export subsetted data to stata
-p_load(tidyverse,foreign)
-dat.stata <- dat %>%  select(Year, City, Gini, Gini.diff.1, Gini.lag.1, Gini.lag.2, imm.pop.cum, immigration.yearly, muslim.pop.cum, muslim.imm.yearly, HUM.imm, HUM.imm.lag.1)
-write.dta(dat.stata, "dat.dta")
-
-
-
-## ----
-
-
-
 
 
 
@@ -847,7 +841,7 @@ ggplot(econ.development.d[econ.development.d$Econ.Dev=="L"], aes(x = Year, y = C
 ############
 
 ## ---- plots:d ----
-
+p_load(ggplot2)
 # Share
 share.plot = voting.d %>% 
   group_by(Year) %>% 
@@ -900,6 +894,43 @@ ggsave(
   "gini_finns_historical.jpeg",
   device = "jpeg",
   plot = dependent.var.plot,
+  scale = 1,
+  #width = 10, 
+  #height = 5, 
+  #units = "in",
+  dpi = 1200,
+  limitsize = TRUE)
+
+
+# for presentation
+
+share.plot.beamer = 
+  
+  voting.d %>% 
+  group_by(Year) %>% 
+  ggplot(aes(x = Year, y = PS)) +
+  #geom_jitter(width = 0.25, alpha = 1/5) +
+  geom_smooth(method = "loess", se = TRUE, fullrange = F, span=1) +
+  labs(title = "Overtime Electoral Perfomance\nof the Finns Party") +
+  theme_bw() +
+  #scale_x_discrete(breaks = seq(1983, 2023, by = 4))  +
+  labs(y = "Average number of votes\nat the district level", x = "Year") + 
+  theme(axis.text.y = element_text(size=14), 
+        axis.text.x = element_text(size=14), 
+        axis.title.y = element_text(size=14), 
+        axis.title.x = element_text(size=14), 
+        legend.text=element_text(size=14), 
+        legend.title=element_text(size=14),
+        plot.title = element_text(size=14),
+        strip.text.x = element_text(size = 14),
+        legend.position = "none",
+        aspect.ratio=4/4)
+
+
+ggsave(
+  "finns_historical_presentation.pdf",
+  device = "pdf",
+  plot = share.plot.beamer,
   scale = 1,
   #width = 10, 
   #height = 5, 

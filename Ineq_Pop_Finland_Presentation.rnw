@@ -299,7 +299,7 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 @
 
 
-<<loadings, echo=FALSE, comment=NA, warning=FALSE, message=FALSE, cache=FALSE, eval=TRUE>>=
+<<loadings:d, echo=FALSE, comment=NA, warning=FALSE, message=FALSE, cache=FALSE, eval=TRUE>>=
 
 @
 
@@ -316,29 +316,70 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 \section{Introduction}
 
 
-\subsection{Motivation}
+\subsection{Motivation?}
 
 \miniframeson
-\begin{frame}[c]{Title}
-\begin{columns}[T] % The [T] option aligns column content at the top
+\begin{frame}[c]{A Very \emph{Unmotivating} Motivation}
 
-    \begin{column}{0.5\textwidth} % Left column and width
-        \begin{itemize}
-            \item<1-> Political elites in stable democracies typically accept electoral losses.
-            \item<2-> However, actions by Trump's and Bolsonaro's supporters seriously questioned their acceptance of defeat.
-            \item<3-> Research has looked into ``losers' consent,'' focusing on satisfaction, trust, and efficacy.
-            \item<4-> {\bf We know little about voters' ``systemic support'' when they lose elections} \scriptsize{{\color{gray}(Easton, 1965)}}.
-        \end{itemize}
-    \end{column}
 
-    \begin{column}{0.5\textwidth} % Right column and width
-        % Show the first figure only with the first item
-       % \begin{figure}
-        %    \includegraphics<2,3,4>[scale=0.4]{Brasil_US_storming.jpeg} % Adjust path and size as needed
-       % \end{figure}
-    \end{column}
-    
+
+    \begin{itemize}
+           \item Democracy's status:
+              \begin{itemize}
+                \item Not in trouble. {\scriptsize{\color{gray}(Voeten, 2016).}}
+                \item In trouble. {\scriptsize{\color{gray}(Mounk \& Foa, 2016; Mudde, 2004; Coff\'e et al., 2007).}}
+               \end{itemize}
+
+            \item Far-right populism drivers:
+               \begin{itemize}
+                \item Cultural reasons. {\scriptsize{\color{gray}(Veugelers \& Chiarini, 2002).}}
+                \item Psychological factors. {\scriptsize{\color{gray}(Cohen \& Smith, 2016).}}
+                \item Identity reasons. {\scriptsize{\color{gray}(Sniderman et al., 2004; Oesch, 2008).}}
+               \end{itemize}
+
+            \item Inequality and populism:
+
+               \begin{itemize}
+                 \item High inequality. {\scriptsize{\color{gray}(Han, 2016).}}
+                 \item Low inequality. {\scriptsize{\color{gray}(Patana, 2020).}}
+                 \item And finally, some even  think that ``it's not the economy, stupid!'' {\scriptsize{\color{gray} (Mudde, 2007).}}
+               \end{itemize}
+
+    \end{itemize}
+
+\end{frame}
+
+
+
+\miniframesoff
+\begin{frame}[c]{A Very \emph{Unmotivating} Motivation}
+
+
+
+\begin{columns}
+
+\begin{column}[T]{0.45\textwidth}
+    \begin{minipage}[c][.6\textheight][c]{\linewidth}
+    \begin{itemize}
+        \item[] {\bf Despite the disagreements, the question still stands}: {\color{blue}How can we explain the rapid increase in support for far-right populism in Finland?}
+    \end{itemize} 
+    \end{minipage}
+\end{column}
+
+\begin{column}[T]{0.45\textwidth}
+    \begin{minipage}[c][.6\textheight][c]{\linewidth}
+
+                 \includegraphics[scale=0.45, center]{/Users/hectorbahamonde/research/Inequality_Populism_Finland/finns_historical_presentation.pdf}
+ 
+    \end{minipage}
+\end{column}
+
+
 \end{columns}
+
+
+
+
 \end{frame}
 
 
