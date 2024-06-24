@@ -22,7 +22,7 @@ inequality.d = inequality.d %>%  fill(Year)
 
 inequality.d = inequality.d[c(1:8680), ] # delete last rows that contain garbage
 
-colnames(inequality.d)
+# colnames(inequality.d)
 
 # Gini Coefficient, Factor Income: This measures the distribution of income before any government taxes or transfers. It primarily includes incomes from labor and capital. This index can help you understand the basic inequalities that exist in the market-generated incomes of a society.
 # Gini Coefficient, Gross Income: This includes all pre-tax incomes but before social security and other deductions. It gives a picture of income inequality that includes certain forms of pensions and social incomes but excludes the effects of taxes and most transfers.
