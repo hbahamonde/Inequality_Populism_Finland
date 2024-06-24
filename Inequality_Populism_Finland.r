@@ -459,6 +459,164 @@ ggsave(
   limitsize = F)
 
 
+## ---- plots:presentation ----
+
+# Assuming cat.econ.development.d is your data frame and Econ.Dev is the categorical variable
+cat.econ.development.d$Econ.Dev <- as.factor(cat.econ.development.d$Econ.Dev)
+
+# Define your custom color palette
+custom_colors <- c("H" = "#1f77b4", "L" = "#ff7f0e", "LM" = "#2ca02c", "UM" = "#d62728")
+
+# Check levels of Econ.Dev to ensure they match the custom colors
+# levels(cat.econ.development.d$Econ.Dev)
+
+cat.econ.development.p.present = ggplot(cat.econ.development.d, aes(x=Year, y=freq, group=Econ.Dev, color=Econ.Dev)) + 
+  geom_line(linewidth = 1) + 
+  theme_bw() +
+  labs(y = "Level of development (N)", x = "Year") + 
+  theme(axis.text.y = element_text(size = 20), 
+        axis.text.x = element_text(size = 20), 
+        axis.title.y = element_text(size = 20), 
+        axis.title.x = element_text(size = 20), 
+        legend.text = element_text(size = 20), 
+        legend.title = element_text(size = 20),
+        plot.title = element_text(size = 20),
+        strip.text.x = element_text(size = 20),
+        legend.position = c(0.14, 0.227),
+        aspect.ratio = 1) + 
+  scale_color_manual(values = custom_colors) + 
+  labs(color = "")
+
+muslim.yearly.p.present = ggplot(muslim.pop.imm.d, aes(x=Year, y=muslim.imm.yearly)) + 
+  geom_line(colour="blue", linewidth =1) + 
+  theme_bw() +
+  labs(y = "Muslim Immigration (N)", x = "Year") + 
+  theme(axis.text.y = element_text(size=20), 
+        axis.text.x = element_text(size=20), 
+        axis.title.y = element_text(size=20), 
+        axis.title.x = element_text(size=20), 
+        legend.text=element_text(size=20), 
+        legend.title=element_text(size=20),
+        plot.title = element_text(size=20),
+        strip.text.x = element_text(size = 20),
+        legend.position = "none",
+        aspect.ratio=4/4)
+
+immigration.yearly.p.present = ggplot(immigration.tot.d, aes(x=Year, y=immigration.yearly)) + 
+  geom_line(colour="blue", linewidth =1) + 
+  theme_bw() +
+  labs(y = "Immigration Yearly (N)", x = "Year") + 
+  theme(axis.text.y = element_text(size=20), 
+        axis.text.x = element_text(size=20), 
+        axis.title.y = element_text(size=20), 
+        axis.title.x = element_text(size=20), 
+        legend.text=element_text(size=20), 
+        legend.title=element_text(size=20),
+        plot.title = element_text(size=20),
+        strip.text.x = element_text(size = 20),
+        legend.position = "none",
+        aspect.ratio=4/4)
+
+
+# for presentation
+
+share.plot.beamer = 
+  
+  voting.d %>% 
+  group_by(Year) %>% 
+  ggplot(aes(x = Year, y = PS)) +
+  #geom_jitter(width = 0.25, alpha = 1/5) +
+  geom_smooth(method = "loess", se = TRUE, fullrange = F, span=1) +
+  labs(title = "Overtime Electoral Perfomance\nof the Finns Party") +
+  theme_bw() +
+  #scale_x_discrete(breaks = seq(1983, 2023, by = 4))  +
+  labs(y = "Average number of votes\nat the district level", x = "Year") + 
+  theme(axis.text.y = element_text(size=20), 
+        axis.text.x = element_text(size=20), 
+        axis.title.y = element_text(size=20), 
+        axis.title.x = element_text(size=20), 
+        legend.text=element_text(size=20), 
+        legend.title=element_text(size=20),
+        plot.title = element_text(size=20),
+        strip.text.x = element_text(size = 20),
+        legend.position = "none",
+        aspect.ratio=4/4)
+
+gini.plot.beamer = dat %>% 
+  ggplot(aes(x = Year, y = Gini)) +
+  #geom_jitter(width = 0.25, alpha = 1/5) +
+  geom_smooth(method = "loess", se = TRUE) +
+  labs(title = "Overtime Evolution of Gini Coefficient in Finland") +
+  theme_bw() +
+  labs(y = "Gini Coefficient (gross income)", x = "Year") + 
+  theme(axis.text.y = element_text(size=14), 
+        axis.text.x = element_text(size=14), 
+        axis.title.y = element_text(size=20), 
+        axis.title.x = element_text(size=20), 
+        legend.text=element_text(size=20), 
+        legend.title=element_text(size=20),
+        plot.title = element_text(size=20),
+        strip.text.x = element_text(size = 20),
+        legend.position = "none",
+        aspect.ratio=4/4)
+
+ggsave(
+  "gini_plot_beamer.pdf",
+  device = "pdf",
+  plot = gini.plot.beamer,
+  scale = 1,
+  #width = 10, 
+  #height = 5, 
+  #units = "in",
+  dpi = 1200,
+  limitsize = TRUE)
+
+ggsave(
+  "finns_historical_presentation.pdf",
+  device = "pdf",
+  plot = share.plot.beamer,
+  scale = 1,
+  #width = 10, 
+  #height = 5, 
+  #units = "in",
+  dpi = 1200,
+  limitsize = TRUE)
+
+ggsave(
+  "cat_econ_development_p_present.pdf",
+  device = "pdf",
+  plot = cat.econ.development.p.present,
+  scale = 1,
+  #width = 4, 
+  #height = 2, 
+  #units = "in",
+  dpi = 1200,
+  limitsize = F)
+
+ggsave(
+  "muslim_yearly_p_present.pdf",
+  device = "pdf",
+  plot = muslim.yearly.p.present,
+  scale = 1,
+  #width = 4, 
+  #height = 2, 
+  #units = "in",
+  dpi = 1200,
+  limitsize = F)
+
+ggsave(
+  "immigration_yearly_p_present.pdf",
+  device = "pdf",
+  plot = immigration.yearly.p.present,
+  scale = 1,
+  #width = 4, 
+  #height = 2, 
+  #units = "in",
+  dpi = 1200,
+  limitsize = F)
+## ----
+
+
 # plot multiple categories
 pdf(file = "/Users/hectorbahamonde/research/Inequality_Populism_Finland/Imm_Econ_Dev.pdf",   # The directory you want to save the file in
     width = 7, # The width of the plot in inches
@@ -894,43 +1052,6 @@ ggsave(
   "gini_finns_historical.jpeg",
   device = "jpeg",
   plot = dependent.var.plot,
-  scale = 1,
-  #width = 10, 
-  #height = 5, 
-  #units = "in",
-  dpi = 1200,
-  limitsize = TRUE)
-
-
-# for presentation
-
-share.plot.beamer = 
-  
-  voting.d %>% 
-  group_by(Year) %>% 
-  ggplot(aes(x = Year, y = PS)) +
-  #geom_jitter(width = 0.25, alpha = 1/5) +
-  geom_smooth(method = "loess", se = TRUE, fullrange = F, span=1) +
-  labs(title = "Overtime Electoral Perfomance\nof the Finns Party") +
-  theme_bw() +
-  #scale_x_discrete(breaks = seq(1983, 2023, by = 4))  +
-  labs(y = "Average number of votes\nat the district level", x = "Year") + 
-  theme(axis.text.y = element_text(size=14), 
-        axis.text.x = element_text(size=14), 
-        axis.title.y = element_text(size=14), 
-        axis.title.x = element_text(size=14), 
-        legend.text=element_text(size=14), 
-        legend.title=element_text(size=14),
-        plot.title = element_text(size=14),
-        strip.text.x = element_text(size = 14),
-        legend.position = "none",
-        aspect.ratio=4/4)
-
-
-ggsave(
-  "finns_historical_presentation.pdf",
-  device = "pdf",
-  plot = share.plot.beamer,
   scale = 1,
   #width = 10, 
   #height = 5, 

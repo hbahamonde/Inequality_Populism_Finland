@@ -273,7 +273,7 @@
 
 \author[shortname]{
 Hector Bahamonde \inst{1} \and 
-Aki Koivula \inst{1} \\ \vspace{3mm} \scriptsize{\color{gray}Authors in alphabetical order. All contributed equally to this paper.}
+Aki Koivula \inst{1} \\ \vspace{3mm} \tiny{\color{gray}Authors in alphabetical order. All contributed equally to this paper.}
 }
 
 \institute[shortinst]{\inst{1} University of Turku, Finland}
@@ -303,6 +303,10 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 
 @
 
+<<plots:presentation, echo=FALSE, comment=NA, warning=FALSE, message=FALSE, cache=FALSE, eval=TRUE>>=
+
+@
+
 % % % % % % % % % % % % % % %
 %           CONTENT
 % % % % % % % % % % % % % % %
@@ -326,23 +330,23 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
     \begin{itemize}
            \item Democracy's status:
               \begin{itemize}
-                \item Not in trouble. {\scriptsize{\color{gray}(Voeten, 2016).}}
-                \item In trouble. {\scriptsize{\color{gray}(Mounk \& Foa, 2016; Mudde, 2004; Coff\'e et al., 2007).}}
+                \item[-] Not in trouble. {\tiny{\color{gray}(Voeten, 2016).}}
+                \item[-] In trouble. {\tiny{\color{gray}(Mounk \& Foa, 2016; Mudde, 2004; Coff\'e et al., 2007).}}
                \end{itemize}
 
             \item Far-right populism drivers:
                \begin{itemize}
-                \item Cultural reasons. {\scriptsize{\color{gray}(Veugelers \& Chiarini, 2002).}}
-                \item Psychological factors. {\scriptsize{\color{gray}(Cohen \& Smith, 2016).}}
-                \item Identity reasons. {\scriptsize{\color{gray}(Sniderman et al., 2004; Oesch, 2008).}}
+                \item[-] Cultural reasons. {\tiny{\color{gray}(Veugelers \& Chiarini, 2002).}}
+                \item[-] Psychological factors. {\tiny{\color{gray}(Cohen \& Smith, 2016).}}
+                \item[-] Identity reasons. {\tiny{\color{gray}(Sniderman et al., 2004; Oesch, 2008).}}
                \end{itemize}
 
             \item Inequality and populism:
 
                \begin{itemize}
-                 \item High inequality. {\scriptsize{\color{gray}(Han, 2016).}}
-                 \item Low inequality. {\scriptsize{\color{gray}(Patana, 2020).}}
-                 \item And finally, some even  think that ``it's not the economy, stupid!'' {\scriptsize{\color{gray} (Mudde, 2007).}}
+                 \item[-] High inequality. {\tiny{\color{gray}(Han, 2016).}}
+                 \item[-] Low inequality. {\tiny{\color{gray}(Patana, 2020).}}
+                 \item[-] And finally, some even  think that ``it's not the economy, stupid!'' {\tiny{\color{gray} (Mudde, 2007).}}
                \end{itemize}
 
     \end{itemize}
@@ -353,11 +357,7 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 
 \miniframesoff
 \begin{frame}[c]{A Very \emph{Unmotivating} Motivation}
-
-
-
 \begin{columns}
-
 \begin{column}[T]{0.45\textwidth}
     \begin{minipage}[c][.6\textheight][c]{\linewidth}
     \begin{itemize}
@@ -373,66 +373,94 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
  
     \end{minipage}
 \end{column}
-
-
 \end{columns}
-
-
-
-
 \end{frame}
 
 
 \subsection{Our Paper}
 
 \miniframeson
-\begin{frame}[c]{Title}
-\framesubtitle{Title}
+\begin{frame}[c]{Bringing Income Inequality Back}
+%\framesubtitle{Title}
 
-  \begin{itemize}
-    \item Item.
-      
-    \begin{itemize}
-      \item[H1] Item.
-    \end{itemize}
+ \begin{itemize}
+  \item {\bf Argument}: we ``\emph{bring income inequality back},'' and argue that {\color{blue}high income inequality} and {\color{blue}perceived threats from skilled immigration} primarily fuel voter support for the Finns Party (Finland).
 
-\end{itemize}
+  \item {\bf Theoretical perspective}: we introduce ``{\color{blue}prospect theory}'' {\tiny{\color{gray}(Kahneman \& Tversky, 1979)}} to the study of far-right support.
+
+  \item {\bf Data and methods}: We analyze official {\color{blue}census} and {\color{blue}electoral data} using linear {\color{blue}panel data methods} with city fixed effects {\tiny{\color{gray}(Angrist \& Pischke, 2009; Gelman \&  Hill, 2006)}}.
+
+
+  \item {\bf Findings}:  Voters, influenced by {\color{blue} \emph{past} economic conditions} and driven by the {\color{blue} \emph{fear} of losing} their socio-economic status, support far-right populist parties to aggressively compensate for potential losses. 
+
+  \item {\bf Contribution}: We {\color{blue}\emph{reaffirm} the role of economic inequality} in influencing support for far-right parties in Finland, contrasting Patana's (2020) finding that higher inequality {\bf \emph{decreases}} such support.
+
+
+ \end{itemize}
 
 \end{frame}
 
 \section{Theory}
 
-\subsection{Soc. Movements and Institutional Literature}
+\subsection{Prospect Theory}
+
+\miniframeson
+\begin{frame}[c]{Loss Aversion and Support for Far-right Parties}
+%\framesubtitle{Electoral Losses and Institutional Heterogeneities}
+
+\begin{itemize}
+
+ \item {\bf Prospect Theory}: {\tiny{\color{gray}(Kahneman \& Tversky, 1979)}}
+
+   \begin{enumerate}
+    \item Actors often perceive themselves as facing losses, even when they are not {\tiny{\color{gray}(Lau, 1985; Levy, 1992b, p. 291)}}.
+
+    \item {\color{blue}\emph{Potential} losses} are {\color{blue}weighed \emph{more} heavily} than {\color{blue}equivalent gains} {\tiny{\color{gray}(``endowment effect'' and ``loss aversion'')}}.
+
+    \item Individuals are more focused on preventing decline than achieving gains {\tiny{\color{gray}(Levy, 1997)}}. 
+   \end{enumerate}
+
+\item[] {\bf Populist campaigns:}
+
+  \begin{enumerate}
+    \item[\checkmark] When parties {\color{blue}frame their campaigns as losses} (e.g., ``Make America Great \emph{Again}''), voters' loss aversion drives them to support them to avoid a socio-economic decline.  
+    \end{enumerate}
+ %\item Importantly, supporting such \emph{unexperienced} and \emph{unpredictable} parties represent a {\color{blue}risky gamble}.   
+
+ 
+\end{itemize}
+\end{frame}
+
+
+\subsection{Status Voting}
 
 
 
 \miniframeson
-\begin{frame}[c]{Voters' Commitment:}
-\framesubtitle{Electoral Losses and Institutional Heterogeneities}
+\begin{frame}[c]{Loss Aversion and Support for Far-right Parties}
+%\framesubtitle{Electoral Losses and Institutional Heterogeneities}
 
-  \begin{enumerate}
-    \item Social movements:
+\begin{itemize}
 
-      \begin{itemize}
-        
-        \item \emph{``Angry'' losers} might be more willing to support anti-systemic politicians.\\ {\tiny{\color{gray}(Bowler, Donovan, and Karp 2007)}}
- 
-        \item Winners should oppose politicians supporting anti-systemic actions.
-     
-      \end{itemize}
+ \item {\bf Status Voting theory}: {\tiny{\color{gray}(Lipset, 1981)}}
 
-  \item Institutional literature: institutional setups affect differently the costs of losing an election \tiny{{\color{gray}(Lijphart, 2012)}}.
+   \begin{enumerate}
+    \item When individuals {\color{blue}perceive} that their social status is {\color{blue}threatened}, they are more likely to {\color{blue}engage in} ``{\color{blue}status voting}.''
 
-        \begin{itemize}
-        
-        \item  {\bf Presidential}: losers have little input outside of the electoral cycle. 
+    \item This voting behavior is {\color{blue}defensive}, aimed at protecting their social position from perceived threats (``losers of modernity'').
+   \end{enumerate}
 
-        \item {\bf Parliamentary}: losers’ interests can be represented through a variety of power sharing institutions. 
-     
-      \end{itemize}
+  \item[] {\bf Far-right parties}:
 
-\end{enumerate}
+  \begin{itemize}
+    \item[\checkmark] Capitalize on {\color{blue}fears that immigration threatens} the socio-economic status of native populations.
 
+    \item[\checkmark] Promise to {\color{blue}restore the status} of native-born citizens by opposing immigration.
+
+    %``losers of modernity'': voters who feel disadvantaged by economic and social transformations turn to far-right parties as a reactionary measure to protect their status.
+  \end{itemize}
+
+\end{itemize}
 \end{frame}
 
 
@@ -442,26 +470,98 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 \subsection{Case Selection}
 
 \miniframeson
-\begin{frame}[c]{Losers' Consent and Democratic Stability}
+\begin{frame}[c]{The Finns Party and Its Evolution}
 
 
-\begin{columns}
-
-\onslide<1->{
-\begin{column}[T]{0.45\textwidth}
-    \begin{minipage}[c][.6\textheight][c]{\linewidth}
     \begin{itemize}
-        \item Item.
+       \item The FP emerged in 2011 and has become a major right-wing political force in Finland.
+       \item Historically rooted in rural poor interests, the FP's support base now spans other socioeconomic groups, including blue-collar workers.
+       \item The party's identity is shaped by socio-cultural issues, particularly opposition to immigration, rather than purely economic considerations.
+       \item Economic insecurity and regional disparities play a crucial role in explaining support for the FP, with regional unemployment and social assistance levels correlating with increased support for the party.
     \end{itemize} 
-    \end{minipage}}
-\end{column}
 
-
-\end{columns}
 
 \end{frame}
 
 
+\subsection{Empirics}
+
+\miniframeson
+\begin{frame}[c]{Data}
+\begin{columns}
+\begin{column}[T]{0.45\textwidth}
+    \begin{minipage}[c][.6\textheight][c]{\linewidth}
+    \begin{itemize}
+       \item[${\color{blue}(Y_{it}):}$]<1-6> {\color{blue}Votes for the FP}.
+
+       \item[${\color{red}(X_{it}):}$]<2-6> {\color{red}Gini coefficient} at the city level.
+
+       \item[${\color{cyan}(Z_{it}):}$]<3-6> {\color{cyan}Immigration Data} (city level). Recoded the country of origin's:
+
+        \begin{itemize}
+          \item<4-6> Predominantly Muslim.
+          \item<5-6> Development level.
+          \item[\checkmark]<6> Helps in exploring cultural and economic factors behind far-right support.
+        \end{itemize}
+    \end{itemize} 
+    \end{minipage}
+\end{column}
+
+\begin{column}[T]{0.45\textwidth}
+    \begin{minipage}[c][.6\textheight][c]{\linewidth}
+
+    \only<1>{\includegraphics[scale=0.35]{/Users/hectorbahamonde/research/Inequality_Populism_Finland/finns_historical_presentation.pdf}}
+    \only<2>{\includegraphics[scale=0.35]{/Users/hectorbahamonde/research/Inequality_Populism_Finland/gini_plot_beamer.pdf}}
+    \only<3>{\includegraphics[scale=0.35]{/Users/hectorbahamonde/research/Inequality_Populism_Finland/immigration_yearly_p_present.pdf}}
+    \only<4>{\includegraphics[scale=0.35]{/Users/hectorbahamonde/research/Inequality_Populism_Finland/muslim_yearly_p_present.pdf}}
+    \only<5-6>{\includegraphics[scale=0.35]{/Users/hectorbahamonde/research/Inequality_Populism_Finland/cat_econ_development_p_present.pdf}}
+
+    \end{minipage}
+\end{column}
+\end{columns}
+\end{frame}
+
+\miniframeson
+\begin{frame}[c]{Model}
+\begin{columns}
+\begin{column}[T]{0.45\textwidth}
+    \begin{minipage}[c][.6\textheight][c]{\linewidth}
+    \begin{itemize}
+        \item We regress {\color{blue}votes for the FP} on the {\color{red}Gini coefficient} for city $i$ and time $t$.
+
+        \item We include other {\color{cyan}controls} (immigration) and city fixed effects.
+
+        \item Coverage: $\Sexpr{length(unique(dat$City))}$ cities, between $\Sexpr{min(dat$Year)}-\Sexpr{max(dat$Year)}$ ($N=\Sexpr{nrow(dat)}$).
+
+       \end{itemize} 
+    \end{minipage}
+\end{column}
+
+\begin{column}[T]{0.45\textwidth}
+    \begin{minipage}[c][.6\textheight][c]{\linewidth}
+
+     \begin{equation*}
+     {\color{blue}Y}_{it} = \alpha + \beta {\color{red}X}_{it} + \gamma {\color{cyan}Z}_{it} + \lambda_i + \delta_t + \epsilon_{it}
+     \end{equation*}
+ 
+
+{\tiny where: \begin{align*}
+{\color{blue}Y_{it}} & : \text{{\color{blue}Votes for the FP}} i \text{ at time } t \\
+\alpha & : \text{Intercept} \\
+{\color{red}X_{it}} & : \text{{\color{red}Gini for city} } i \text{ at time } t \\
+%\beta & : \text{Coefficient(s) for the key independent variable(s)} \\
+{\color{cyan}Z_{it}} & : \text{{\color{cyan}Matrix of control variables for city} } i \text{ at time } t \\
+%\gamma & : \text{Vector of coefficients for the control variables} \\
+\lambda_i & : \text{City fixed effects} \\
+\epsilon_{it} & : \text{Error term}
+\end{align*}}
+
+
+
+    \end{minipage}
+\end{column}
+\end{columns}
+\end{frame}
 
 
 
@@ -513,7 +613,7 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
     \item We hypothesized (and pre-registered) that:
       \begin{enumerate}
           \item[H1] \emph{Electoral losers} were \emph{more} willing to support anti-systemic protests. 
-          \item[H2] This effect would be \emph{stronger} in Presidential systems \\ {\scriptsize(because of its zero-sum power sharing structure, {\bf losses are more catastrophic})}.
+          \item[H2] This effect would be \emph{stronger} in Presidential systems \\ {\tiny(because of its zero-sum power sharing structure, {\bf losses are more catastrophic})}.
       \end{enumerate}
     
     \item While we did not find support in favor of our hypotheses, we still found some other interesting results.
