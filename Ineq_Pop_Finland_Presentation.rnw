@@ -354,8 +354,7 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 \end{frame}
 
 
-
-\miniframesoff
+\miniframeson
 \begin{frame}[c]{A Very \emph{Unmotivating} Motivation}
 \begin{columns}
 \begin{column}[T]{0.45\textwidth}
@@ -369,11 +368,27 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 \begin{column}[T]{0.45\textwidth}
     \begin{minipage}[c][.6\textheight][c]{\linewidth}
 
-                 \includegraphics[scale=0.45, center]{/Users/hectorbahamonde/research/Inequality_Populism_Finland/finns_historical_presentation.pdf}
+                 \includegraphics[scale=0.34, center]{/Users/hectorbahamonde/research/Inequality_Populism_Finland/finns_historical_presentation.pdf}
  
     \end{minipage}
 \end{column}
 \end{columns}
+\end{frame}
+
+% HERE
+\miniframesoff
+\begin{frame}[c]{A Very \emph{Unmotivating} Motivation}
+
+        \begin{center}
+          \includegraphics[scale=0.26]{/Users/hectorbahamonde/research/Inequality_Populism_Finland/map_screenshot.png}
+        \end{center}
+
+
+        \begin{itemize}
+            \item[] In this paper we are going to concentrate on the relationship between inequality and far-right support in Finland. 
+        \end{itemize}
+
+
 \end{frame}
 
 
@@ -465,7 +480,7 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 
 
 
-\section{Research Design}
+\section{Empirics}
 
 \subsection{Case Selection}
 
@@ -484,10 +499,10 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 \end{frame}
 
 
-\subsection{Empirics}
+\subsection{Data}
 
 \miniframeson
-\begin{frame}[c]{Data}
+\begin{frame}[c]%{Data}
 \begin{columns}
 \begin{column}[T]{0.45\textwidth}
     \begin{minipage}[c][.6\textheight][c]{\linewidth}
@@ -521,8 +536,10 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 \end{columns}
 \end{frame}
 
+\subsection{Model}
+
 \miniframeson
-\begin{frame}[c]{Model}
+\begin{frame}[c]%{Model}
 \begin{columns}
 \begin{column}[T]{0.45\textwidth}
     \begin{minipage}[c][.6\textheight][c]{\linewidth}
@@ -566,9 +583,8 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 
 
 
-\section{Results}
+\subsection{Results}
 
-\subsection{Subgroup Marginal Means (MM): Boric, Kast}
 
 
 \miniframeson
