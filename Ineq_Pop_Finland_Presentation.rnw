@@ -370,13 +370,12 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
       \begin{centering}
         \begin{itemize}
             %\item Paper (draft) available at {\color{blue}www.HectorBahamonde.com}.
-            \item[] {\huge The literature is not in a good shape.} 
+            \item[] {\huge The literature is {\bf \emph{not}} in a good shape.} 
         \end{itemize}
         \end{centering}
 \end{frame}
 
-
-\miniframeson
+\miniframesoff
 \begin{frame}[c]{A Very \emph{Unmotivating} Motivation}
 \begin{columns}
 \begin{column}[T]{0.45\textwidth}
@@ -397,9 +396,13 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 \end{columns}
 \end{frame}
 
+\subsection{Our Paper}
+
+
+
 % HERE
-\miniframesoff
-\begin{frame}[c]{A Very \emph{Unmotivating} Motivation}
+\miniframeson
+\begin{frame}[c]{Bringing Income Inequality Back}
 
         \begin{center}
           \includegraphics[scale=0.26]{/Users/hectorbahamonde/research/Inequality_Populism_Finland/map_screenshot.png}
@@ -414,9 +417,7 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 \end{frame}
 
 
-\subsection{Our Paper}
-
-\miniframeson
+\miniframesoff
 \begin{frame}[c]{Bringing Income Inequality Back}
 %\framesubtitle{Title}
 
