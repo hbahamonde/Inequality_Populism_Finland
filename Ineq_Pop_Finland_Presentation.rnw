@@ -281,7 +281,7 @@ Aki Koivula \inst{1} \\ \vspace{3mm} \tiny{\color{gray}Authors in alphabetical o
 
 
 
-\date{\today}
+\date{June 26th, 2024}
 
 %to to see shadows of previous blocks
 %\setbeamercovered{dynamic}
@@ -365,6 +365,16 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 
 \end{frame}
 
+\miniframesoff
+\begin{frame}[c]%{Thank you}
+      \begin{centering}
+        \begin{itemize}
+            %\item Paper (draft) available at {\color{blue}www.HectorBahamonde.com}.
+            \item[] {\huge The literature is not in a good shape.} 
+        \end{itemize}
+        \end{centering}
+\end{frame}
+
 
 \miniframeson
 \begin{frame}[c]{A Very \emph{Unmotivating} Motivation}
@@ -411,19 +421,18 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 %\framesubtitle{Title}
 
  \begin{itemize}
-  \item {\bf Argument}: we ``\emph{bring income inequality back},'' and argue that {\color{blue}high income inequality} and {\color{blue}perceived threats from skilled immigration} primarily fuel voter support for the Finns Party (Finland).
+  \item {\bf Argument}: We argue that {\color{blue}high income inequality} and {\color{blue}perceived threats from skilled immigration} drive voter support for the Finns Party in Finland.
+  
+  \item {\bf Theory}: We apply ``{\color{blue}prospect theory}'' {\tiny{\color{gray}(Kahneman \& Tversky, 1979)}} to far-right support.
+  
+  \item {\bf Data and methods}: Using {\color{blue}census} and {\color{blue}electoral data}, we employ linear {\color{blue}panel data methods} with city fixed effects {\tiny{\color{gray}(Angrist \& Pischke, 2009; Gelman \& Hill, 2006)}}.
+  
+  \item {\bf Findings}: Voters influenced by {\color{blue}past economic conditions} and {\color{blue}fear of losing} socio-economic status support far-right parties to prevent potential losses.
+  
+  \item {\bf Contribution}: We {\color{blue}\emph{reaffirm} the role of economic inequality} in supporting far-right parties in Finland, challenging Patana's (2020) finding that higher inequality {\bf \emph{decreases}} such support.
+\end{itemize}
 
-  \item {\bf Theoretical perspective}: we introduce ``{\color{blue}prospect theory}'' {\tiny{\color{gray}(Kahneman \& Tversky, 1979)}} to the study of far-right support.
 
-  \item {\bf Data and methods}: We analyze official {\color{blue}census} and {\color{blue}electoral data} using linear {\color{blue}panel data methods} with city fixed effects {\tiny{\color{gray}(Angrist \& Pischke, 2009; Gelman \&  Hill, 2006)}}.
-
-
-  \item {\bf Findings}:  Voters, influenced by {\color{blue} \emph{past} economic conditions} and driven by the {\color{blue} \emph{fear} of losing} their socio-economic status, support far-right populist parties to aggressively compensate for potential losses. 
-
-  \item {\bf Contribution}: We {\color{blue}\emph{reaffirm} the role of economic inequality} in influencing support for far-right parties in Finland, contrasting Patana's (2020) finding that higher inequality {\bf \emph{decreases}} such support.
-
-
- \end{itemize}
 
 \end{frame}
 
@@ -450,7 +459,7 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 \item[] {\bf Populist campaigns:}
 
   \begin{enumerate}
-    \item[\checkmark] When parties {\color{blue}frame their campaigns as losses} (e.g., ``Make America Great \emph{Again}''), voters' loss aversion drives them to support them to avoid a socio-economic decline.  
+    \item[\checkmark] When parties {\color{blue}frame their campaigns as losses} (e.g., ``Make America Great \emph{Again}''), voters' loss aversion increases support for far-right parties to avoid a socio-economic decline.  
     \end{enumerate}
  %\item Importantly, supporting such \emph{unexperienced} and \emph{unpredictable} parties represent a {\color{blue}risky gamble}.   
 
@@ -501,10 +510,10 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 
 
     \begin{itemize}
-       \item The FP emerged in 2011 and has become a major right-wing political force in Finland.
-       \item Historically rooted in rural poor interests, the FP's support base now spans other socioeconomic groups, including blue-collar workers.
-       \item The party's identity is shaped by socio-cultural issues, particularly opposition to immigration, rather than purely economic considerations.
-       \item Economic insecurity and regional disparities play a crucial role in explaining support for the FP, with regional unemployment and social assistance levels correlating with increased support for the party.
+       \item The FP started in 2011 and has become a major right-wing political force in Finland.
+       \item Historically done well in rural poor areas, but now they have expanded and also represent other socioeconomic groups, such as blue-collar workers.
+       \item The party's identity is shaped by socio-cultural issues, particularly opposition to immigration, rather than purely economic factors.
+       %\item Economic insecurity and regional disparities play a crucial role in explaining support for the FP.
     \end{itemize} 
 
 
@@ -519,15 +528,15 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 \begin{column}[T]{0.45\textwidth}
     \begin{minipage}[c][.6\textheight][c]{\linewidth}
     \begin{itemize}
-       \item[${\color{blue}(Y_{it}):}$]<1-6> {\color{blue}Votes for the FP}.
+       \item[${\color{blue}(Y_{it}):}$]<1-6> {\color{blue}Votes for the FP} at the city level.
 
        \item[${\color{red}(X_{it}):}$]<2-6> {\color{red}Gini coefficient} at the city level.
 
-       \item[${\color{cyan}(Z_{it}):}$]<3-6> {\color{cyan}Immigration Data} (city level). Recoded the country of origin's:
+       \item[${\color{cyan}(Z_{it}):}$]<3-6> {\color{cyan}Immigration Data} (country level). Recoded whether the immigrant comes:
 
         \begin{itemize}
           \item<4-6> Predominantly Muslim.
-          \item<5-6> Development level.
+          \item<5-6> Developed/Underdeveloped.
           \item[\checkmark]<6> Helps in exploring cultural and economic factors behind far-right support.
         \end{itemize}
     \end{itemize} 
@@ -633,15 +642,16 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 \miniframesoff
 \begin{frame}[c]{An Interactive Hypothesis}
 \begin{columns}
-\begin{column}[T]{0.45\textwidth}
+\begin{column}[T]{0.55\textwidth}
     \begin{minipage}[c][.6\textheight][c]{\linewidth}
         \begin{itemize}
-            \item Model 9 interacts the {\color{blue}country of origin} of the immigrant (developed/underdeveloped) with {\color{blue}income inequality}: the FP does better when ``developed immigration'' and immigration are high.
+            \item Model 9 interacts the {\color{blue}country of origin} of the immigrant (developed/underdeveloped) with {\color{blue}income inequality}: the FP does better when ``developed immigration'' and inequality are high.
 
-            \item {\bf Our interpretation}: \emph{Since individuals are more focused on preventing a decline, they see the potential losses of skilled immigrants in contexts of high inequality}.
+            \item {\bf Our interpretation}: \emph{Given that individuals prioritize preventing economic decline, they perceive the potential losses associated with skilled immigrants in contexts characterized by high inequality}.
         \end{itemize} 
     \end{minipage}
 \end{column}
+
 
 \begin{column}[T]{0.45\textwidth}
     \begin{minipage}[c][.6\textheight][c]{\linewidth}
@@ -667,10 +677,10 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 \begin{frame}[c]{Wrapping Up}
   \begin{itemize}
     
-   \item We think the literature is very messy, with different conflicting explanations. 
-   \item What we're trying to do is to revive inequality as one of the most important predictors.
-   \item Also, we contribute to the literature by introducing prospect theory to the study of far-right support.
-   \item Empirically, we also contribute by disaggregating the type of immigration.
+   \item We think the literature is very {\color{blue}messy}, with different conflicting explanations. 
+   \item What we're trying to do is to {\color{blue}revive inequality} as one of the most important predictors.
+   \item Also, we contribute to the literature by introducing {\color{blue}prospect theory} to the study of far-right support.
+   \item Empirically, we also contribute by {\color{blue}disaggregating immigration by type}.
   \end{itemize}
 \end{frame}
 
@@ -678,8 +688,8 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 \miniframesoff
 \begin{frame}[c]{Limitations}
   \begin{itemize}
-       \item We don't have regional-level data on immigration.
-       \item {\bf ``Smoking guns'' problem}: we're trying to improve our identification strategy which might \emph{not} directly match with our loss aversion theory. {\bf Comments on this plz!}
+       \item We don't have {\color{blue}regional-level data on immigration}.
+       \item {\bf ``Smoking guns'' problem}: we're trying to improve our identification strategy which might \emph{not} directly {\color{blue}match} with our loss aversion theory. {\bf Comments on this plz!}
   \end{itemize}
 \end{frame}
 
