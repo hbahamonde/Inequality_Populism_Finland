@@ -342,22 +342,22 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
     \begin{itemize}
            \item Democracy's status:
               \begin{itemize}
-                \item[-] Not in trouble. {\tiny{\color{gray}(Voeten, 2016).}}
-                \item[-] In trouble. {\tiny{\color{gray}(Mounk \& Foa, 2016; Mudde, 2004; Coff\'e et al., 2007).}}
+                \item[-] Not in trouble {\tiny{\color{gray}(Voeten, 2016).}}
+                \item[-] In trouble {\tiny{\color{gray}(Mounk \& Foa, 2016; Mudde, 2004; Coff\'e et al., 2007).}}
                \end{itemize}
 
             \item Far-right populism drivers:
                \begin{itemize}
-                \item[-] Cultural reasons. {\tiny{\color{gray}(Veugelers \& Chiarini, 2002).}}
-                \item[-] Psychological factors. {\tiny{\color{gray}(Cohen \& Smith, 2016).}}
-                \item[-] Identity reasons. {\tiny{\color{gray}(Sniderman et al., 2004; Oesch, 2008).}}
+                \item[-] Cultural reasons {\tiny{\color{gray}(Veugelers \& Chiarini, 2002).}}
+                \item[-] Psychological factors {\tiny{\color{gray}(Cohen \& Smith, 2016).}}
+                \item[-] Identity reasons {\tiny{\color{gray}(Sniderman et al., 2004; Oesch, 2008).}}
                \end{itemize}
 
             \item Inequality and populism:
 
                \begin{itemize}
-                 \item[-] High inequality. {\tiny{\color{gray}(Han, 2016).}}
-                 \item[-] Low inequality. {\tiny{\color{gray}(Patana, 2020).}}
+                 \item[-] High inequality {\tiny{\color{gray}(Han, 2016).}}
+                 \item[-] Low inequality {\tiny{\color{gray}(Patana, 2020).}}
                  \item[-] And finally, some even  think that ``it's not the economy, stupid!'' {\tiny{\color{gray} (Mudde, 2007).}}
                \end{itemize}
 
