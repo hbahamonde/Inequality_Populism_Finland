@@ -916,7 +916,7 @@ screenreg( # use "screenreg" or "texreg" // BUT DO KEEP IT IN texreg FOR THE PAP
 )
 
 
-
+## ---- interactions:d ----
 p_load(sjPlot,sjmisc,ggplot2)
 m.9.p = plot_model(m.9, type = "int") + 
   theme_bw() +
@@ -954,10 +954,6 @@ m.5.a.p = plot_model(m.5, terms = "Gini.lag.1", type = "pred") +
         legend.position = "none",
         aspect.ratio=1)
 
-
-
-
-
 m.5.b.p = plot_model(m.5, terms = "HUM.imm.lag.1", type = "pred") + 
   theme_bw() +
   labs(title = "Predicted values of Finns Party votes (model 5)") +
@@ -984,16 +980,48 @@ models.plot = ggarrange(m.9.p, m.5.a.p, m.5.b.p,
                         ncol = 3, nrow = 1)
 
 ggsave(
-  "models_plot.jpeg",
-  device = "jpeg",
+  "models_plot.pdf",
+  device = "pdf",
   plot = models.plot,
+  scale = 1.5,
+  #width = 10, 
+  #height = 5, 
+  #units = "in",
+  dpi = 1300,
+  limitsize = TRUE)
+
+# for presentation
+m.9.p.present = plot_model(m.9, type = "int") + 
+  theme_bw() +
+  labs(title = "Marginal Effects of Interaction Term", y = "Finns Party votes", x = "Gini") + 
+  theme(axis.text.y = element_text(size=20), 
+        axis.text.x = element_text(size=20), 
+        axis.title.y = element_text(size=20), 
+        axis.title.x = element_text(size=20), 
+        legend.text=element_text(size=20), 
+        legend.title=element_text(size=20),
+        plot.title = element_text(size=20),
+        strip.text.x = element_text(size=20),
+        legend.position = "none",
+        #legend.position = c(0.3, 0.1),
+        aspect.ratio=1) +
+  #guides(colour=guide_legend(title="", nrow = 1)) 
+  #scale_fill_manual(labels = c("T999", "T888"), values = c("blue", "red"))
+  annotate("text", x = 35, y = 10000, label = "Developed (high)", size = unit(8, "pt")) +
+  annotate("text", x = 40, y = -10000, label = "Developed (low)", size = unit(8, "pt"))
+
+
+ggsave(
+  "interact_plot.pdf",
+  device = "pdf",
+  plot = m.9.p.present,
   scale = 1,
   #width = 10, 
   #height = 5, 
   #units = "in",
-  dpi = 1200,
+  dpi = 1300,
   limitsize = TRUE)
-
+## ----
 
 # plot High development immigration in finland
 ggplot(econ.development.d[econ.development.d$Econ.Dev=="H"], aes(x = Year, y = Country, color = Econ.Dev)) +

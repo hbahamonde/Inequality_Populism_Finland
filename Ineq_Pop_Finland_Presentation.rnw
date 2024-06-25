@@ -312,6 +312,12 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 
 @
 
+<<interactions:d, echo=FALSE, comment=NA, warning=FALSE, message=FALSE, cache=FALSE, eval=TRUE>>=
+
+@
+
+
+
 
 % % % % % % % % % % % % % % %
 %           CONTENT
@@ -606,57 +612,74 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 \miniframesoff
 \begin{frame}[c]%{Losers' Consent and Democratic Stability}
 
-Main takeaways:
+\underline{Main takeaways}:
 
 \begin{itemize}
-    \item {\bf Inequality}: While immigration predictors are positive and significant, {\color{blue}income inequality trumps} all of them.
+    \item {\bf Inequality}: While immigration predictors are positive and significant, {\color{blue}income inequality} \emph{trumps} all of them.
 
     \begin{itemize}
-      \item In fact, {\color{blue}loss aversion} (lagged inequality) is the {\bf strongest predictor}.
+      \item In fact, {\color{blue}lagged inequality} ({\bf loss aversion}) is the {\bf strongest predictor}.
     \end{itemize}
     
-    \item {\bf Cultural backlash theories}: Muslim immigration is a stronger predictor than total migration.
+    \item {\bf Cultural backlash theories}: {\color{blue}Muslim immigration} is a \emph{stronger} predictor than {\color{blue}total migration}.
 
-    \item 
+    \item {\bf Status voting theory}: {\color{blue}{\bf immigration from developed countries}} is the \emph{strongest} immigration predictor. 
 
    \end{itemize}
 
 \end{frame}
 
 
+\miniframesoff
+\begin{frame}[c]{An Interactive Hypothesis}
+\begin{columns}
+\begin{column}[T]{0.45\textwidth}
+    \begin{minipage}[c][.6\textheight][c]{\linewidth}
+        \begin{itemize}
+            \item Model 9 interacts the {\color{blue}country of origin} of the immigrant (developed/underdeveloped) with {\color{blue}income inequality}: the FP does better when ``developed immigration'' and immigration are high.
 
+            \item {\bf Our interpretation}: \emph{Since individuals are more focused on preventing a decline, they see the potential losses of skilled immigrants in contexts of high inequality}.
+        \end{itemize} 
+    \end{minipage}
+\end{column}
+
+\begin{column}[T]{0.45\textwidth}
+    \begin{minipage}[c][.6\textheight][c]{\linewidth}
+
+        \begin{center}
+          \includegraphics[scale=0.3]{/Users/hectorbahamonde/research/Inequality_Populism_Finland/interact_plot.pdf}
+        \end{center}
+
+    \end{minipage}
+\end{column}
+\end{columns}
+\end{frame}
 
 
 \section{Discussion}
 
 
-\subsection{Main Takeaways}
+\subsection{Avenues for Discussion}
 
 
 
 \miniframeson
-\begin{frame}[c]{Discussion: More Questions Than Answers}
+\begin{frame}[c]{Wrapping Up}
   \begin{itemize}
-    \item We hypothesized (and pre-registered) that:
-      \begin{enumerate}
-          \item[H1] \emph{Electoral losers} were \emph{more} willing to support anti-systemic protests. 
-          \item[H2] This effect would be \emph{stronger} in Presidential systems \\ {\tiny(because of its zero-sum power sharing structure, {\bf losses are more catastrophic})}.
-      \end{enumerate}
     
-    \item While we did not find support in favor of our hypotheses, we still found some other interesting results.
-
-    \begin{itemize}
-      \item {\bf Chile}: {\color{blue}Extreme-right} supporters are {\color{blue}less} likely to support extreme anti-system protests.
-      \item {\bf Estonia}: the {\color{blue}loser effects} are mainly {\color{blue}driven by extreme-right} supporters.
-    \end{itemize}
-
-    %  \begin{exampleblock}{Motivating Questions for Q\&A}
-    %Did we make a mistake to think that, {\bf in Chile (!)}, right-wing losers were going to {\bf protests} (!)? {\bf Let me know what you think}.
-    %  \end{exampleblock}
+   \item We think the literature is very messy, with different conflicting explanations. 
+   \item What we're trying to do is to revive inequality as one of the most important predictors.
+   \item Also, we contribute to the literature by introducing prospect theory to the study of far-right support.
+   \item Empirically, we also contribute by disaggregating the type of immigration.
+  \end{itemize}
+\end{frame}
 
 
-
-
+\miniframesoff
+\begin{frame}[c]{Limitations}
+  \begin{itemize}
+       \item We don't have regional-level data on immigration.
+       \item {\bf ``Smoking guns'' problem}: we're trying to improve our identification strategy which might \emph{not} directly match with our loss aversion theory. {\bf Comments on this plz!}
   \end{itemize}
 \end{frame}
 
