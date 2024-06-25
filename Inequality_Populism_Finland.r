@@ -773,7 +773,7 @@ scatterplot(muslim.imm.yearly ~ Year,
 dev.off()
 
 
-
+####
 cat("\014")
 rm(list=ls())
 setwd("/Users/hectorbahamonde/research/Inequality_Populism_Finland/")
@@ -782,7 +782,6 @@ setwd("/Users/hectorbahamonde/research/Inequality_Populism_Finland/")
 if (!require("pacman")) install.packages("pacman"); library(pacman) 
 
 load("/Users/hectorbahamonde/research/Inequality_Populism_Finland/dat.RData")
-
 
 # plot municipal trajectories of Finns vote share
 # notice these plots are fitting blue regression lines. Thus, they're estimations.
@@ -823,6 +822,18 @@ ggarrange(panel.finns.p, panel.gini.p,
 # library("Matrix")
 # library("lme4")
 
+
+
+cat("\014")
+rm(list=ls())
+setwd("/Users/hectorbahamonde/research/Inequality_Populism_Finland/")
+
+
+## ---- models:d ----
+# Pacman
+if (!require("pacman")) install.packages("pacman"); library(pacman) 
+
+load("/Users/hectorbahamonde/research/Inequality_Populism_Finland/dat.RData")
 
 # lme4
 # https://rpubs.com/rslbliss/r_mlm_ws
@@ -871,6 +882,38 @@ m.7 <- lmer(PS ~ Gini.lag.1 +  immigration.yearly.lag.1 + (1 | City), data = dat
 m.8 <- lmer(PS ~ Gini.lag.1 +  muslim.imm.yearly.lag.1 + immigration.yearly.lag.1 + (1 | City), data = dat);# summary(m.8);ggpredict(m.8) %>% plot();report(m.8) # working hyp
 m.9 <- lmer(PS ~ Gini *  HUM.imm + muslim.imm.yearly + (1 | City), data = dat);# summary(m.9);ggpredict(m.9) %>% plot();report(m.9) # working hyp
 m.10 <- lmer(PS ~ Gini *  HUM.imm + immigration.yearly + (1 | City), data = dat);# summary(m.10);ggpredict(m.10) %>% plot();report(m.10) # working hyp
+
+p_load(texreg)
+reg.table = texreg( # use "screenreg" or "texreg" // BUT DO KEEP IT IN texreg FOR THE PAPER
+  list(m.1, m.2, m.3, m.4, m.5, m.6, m.7,m.8,m.9,m.10), # list all the saved models here
+  #omit.coef = "id"
+  custom.coef.names = c("Intercept",
+                        "Gini",
+                        "High and Upper-medium Country Immigration",
+                        "Muslim Immigration",
+                        "Immigration Total",
+                        "Gini (1 lag)",
+                        "High and Upper-medium Country Immigration (1 lag)",
+                        "Muslim Immigration (1 lag)",
+                        "Immigration Total (1 lag)",
+                        "Gini x High and Upper-medium Country Immigration"),
+  label = "reg:t",
+  caption = "Linear Panel Models: Inequality and the Finns Party",
+  caption.above = T,
+  center = T,
+  float.pos="H",
+  use.packages = FALSE,
+  threeparttable = TRUE,
+  scalebox = 0.4
+)
+## ----
+
+# table
+p_load(texreg)
+screenreg( # use "screenreg" or "texreg" // BUT DO KEEP IT IN texreg FOR THE PAPER
+  list(m.1, m.2, m.3, m.4, m.5, m.6, m.7,m.8,m.9,m.10)#, # list all the saved models here
+  #omit.coef = "id"
+)
 
 
 
@@ -950,16 +993,6 @@ ggsave(
   #units = "in",
   dpi = 1200,
   limitsize = TRUE)
-
-
-# table
-p_load(texreg)
-
-screenreg( # use "screenreg" or "texreg" // BUT DO KEEP IT IN texreg FOR THE PAPER
-  list(m.1, m.2, m.3, m.4, m.5, m.6, m.7,m.8,m.9,m.10)#, # list all the saved models here
-  #omit.coef = "id"
-)
-
 
 
 # plot High development immigration in finland

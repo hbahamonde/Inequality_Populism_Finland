@@ -307,6 +307,12 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 
 @
 
+
+<<models:d, echo=FALSE, comment=NA, warning=FALSE, message=FALSE, cache=FALSE, eval=TRUE>>=
+
+@
+
+
 % % % % % % % % % % % % % % %
 %           CONTENT
 % % % % % % % % % % % % % % %
@@ -539,14 +545,16 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 \subsection{Model}
 
 \miniframeson
-\begin{frame}[c]%{Model}
+\begin{frame}[c]{Dynamic Linear Panel Regression Model}
 \begin{columns}
 \begin{column}[T]{0.45\textwidth}
     \begin{minipage}[c][.6\textheight][c]{\linewidth}
     \begin{itemize}
         \item We regress {\color{blue}votes for the FP} on the {\color{red}Gini coefficient} for city $i$ and time $t$.
 
-        \item We include other {\color{cyan}controls} (immigration) and city fixed effects.
+        \item To capture levels of {\color{BurntOrange}loss aversion}, we included {\color{BurntOrange}1-year lags}.
+
+        \item We also include other {\color{cyan}controls} (immigration) and {\color{teal}city fixed effects}.
 
         \item Coverage: $\Sexpr{length(unique(dat$City))}$ cities, between $\Sexpr{min(dat$Year)}-\Sexpr{max(dat$Year)}$ ($N=\Sexpr{nrow(dat)}$).
 
@@ -558,7 +566,7 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
     \begin{minipage}[c][.6\textheight][c]{\linewidth}
 
      \begin{equation*}
-     {\color{blue}Y}_{it} = \alpha + \beta {\color{red}X}_{it} + \gamma {\color{cyan}Z}_{it} + \lambda_i + \delta_t + \epsilon_{it}
+     {\color{blue}Y}_{it} = \alpha + \beta {\color{red}X}_{it{\color{BurntOrange}-1}} + \gamma {\color{cyan}Z}_{it{\color{BurntOrange}-1}} + {\color{teal}\lambda}_i + \epsilon_{it{\color{BurntOrange}-1}}
      \end{equation*}
  
 
@@ -569,7 +577,7 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 %\beta & : \text{Coefficient(s) for the key independent variable(s)} \\
 {\color{cyan}Z_{it}} & : \text{{\color{cyan}Matrix of control variables for city} } i \text{ at time } t \\
 %\gamma & : \text{Vector of coefficients for the control variables} \\
-\lambda_i & : \text{City fixed effects} \\
+{\color{teal}\lambda_i} & : \text{{\color{teal}City fixed effects}} \\
 \epsilon_{it} & : \text{Error term}
 \end{align*}}
 
@@ -590,25 +598,28 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
 \miniframeson
 \begin{frame}[c]%{Losers' Consent and Democratic Stability}
 
-\begin{columns}
+\Sexpr{reg.table}
 
-\begin{column}[T]{0.45\textwidth}
-    \begin{minipage}[c][.6\textheight][c]{\linewidth}
+\end{frame}
+
+
+\miniframesoff
+\begin{frame}[c]%{Losers' Consent and Democratic Stability}
+
+Main takeaways:
+
+\begin{itemize}
+    \item {\bf Inequality}: While immigration predictors are positive and significant, {\color{blue}income inequality trumps} all of them.
+
     \begin{itemize}
-        \item {\only<2>{\leavevmode\color{Red}}Candidates favoring anti-systemic protests are systematically {\bf rejected} by {\bf both} winners and losers.}
+      \item In fact, {\color{blue}loss aversion} (lagged inequality) is the {\bf strongest predictor}.
+    \end{itemize}
+    
+    \item {\bf Cultural backlash theories}: Muslim immigration is a stronger predictor than total migration.
 
-        \item {\only<3>{\leavevmode\color{Red}}{\bf Losers (Kast)} show even {\bf stronger disapproval} of such candidates.}
+    \item 
 
-        %\item {\only<4>{\leavevmode\color{Red}}Effects might be driven by the legacies of the 2019-20 protests (\emph{Estallido Social})?}
-
-        \item {\only<4>{\leavevmode\color{Red}}{\bf Estonia}: results support H1}.
-
-
-    \end{itemize} 
-    \end{minipage}
-\end{column}
-
-\end{columns}
+   \end{itemize}
 
 \end{frame}
 
