@@ -473,7 +473,7 @@ custom_colors <- c("H" = "#1f77b4", "L" = "#ff7f0e", "LM" = "#2ca02c", "UM" = "#
 cat.econ.development.p.present = ggplot(cat.econ.development.d, aes(x=Year, y=freq, group=Econ.Dev, color=Econ.Dev)) + 
   geom_line(linewidth = 1) + 
   theme_bw() +
-  labs(y = "Level of development (N)", x = "Year") + 
+  labs(y = "Level of development (%)", x = "Year") + 
   theme(axis.text.y = element_text(size = 20), 
         axis.text.x = element_text(size = 20), 
         axis.title.y = element_text(size = 20), 
@@ -934,8 +934,8 @@ m.9.p = plot_model(m.9, type = "int") +
         aspect.ratio=1) +
   #guides(colour=guide_legend(title="", nrow = 1)) 
   #scale_fill_manual(labels = c("T999", "T888"), values = c("blue", "red"))
-  annotate("text", x = 35, y = 10000, label = "Developed (high)") +
-  annotate("text", x = 40, y = -10000, label = "Developed (low)")
+  annotate("text", x = 35, y = 10000, label = "Developed") +
+  annotate("text", x = 40, y = -10000, label = "Underdeveloped")
   
 
 p_load(sjPlot,sjmisc,ggplot2)
@@ -1007,8 +1007,8 @@ m.9.p.present = plot_model(m.9, type = "int") +
         aspect.ratio=1) +
   #guides(colour=guide_legend(title="", nrow = 1)) 
   #scale_fill_manual(labels = c("T999", "T888"), values = c("blue", "red"))
-  annotate("text", x = 35, y = 10000, label = "Developed (high)", size = unit(8, "pt")) +
-  annotate("text", x = 40, y = -10000, label = "Developed (low)", size = unit(8, "pt"))
+  annotate("text", x = 35, y = 10000, label = "Developed", size = unit(8, "pt")) +
+  annotate("text", x = 40, y = -10000, label = "Underdeveloped", size = unit(8, "pt"))
 
 
 ggsave(

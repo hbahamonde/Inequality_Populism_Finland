@@ -648,7 +648,7 @@ read_chunk('/Users/hectorbahamonde/research/Inequality_Populism_Finland/Inequali
         \begin{itemize}
             \item Model 9 interacts the {\color{blue}country of origin} of the immigrant (developed/underdeveloped) with {\color{blue}income inequality}: the FP does better when ``developed immigration'' and inequality are high.
 
-            \item {\bf Our interpretation}: \emph{Given that individuals prioritize preventing economic decline, they perceive the potential losses associated with skilled immigrants in contexts characterized by high inequality}.
+            \item {\bf Our interpretation}: \emph{Given that individuals prioritize preventing economic decline, they {\bf negatively perceive} the {\color{blue}potential losses} associated with {\color{blue}skilled immigrants} in contexts characterized by {\color{blue}high inequality}}.
         \end{itemize} 
     \end{minipage}
 \end{column}
