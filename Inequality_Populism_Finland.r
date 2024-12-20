@@ -1159,7 +1159,7 @@ gini.map.plot = municipalities  %>% filter(Year == 1995 | Year == 2007 | Year ==
   facet_wrap(~Year) +
   theme_bw() +
   theme(axis.text.y = element_text(size=18), 
-        axis.text.x = element_text(size=18), 
+        axis.text.x = element_text(size=14), 
         axis.title.y = element_text(size=18), 
         axis.title.x = element_text(size=18), 
         legend.text=element_text(size=18), 
@@ -1168,9 +1168,8 @@ gini.map.plot = municipalities  %>% filter(Year == 1995 | Year == 2007 | Year ==
         strip.text.x = element_text(size=18),
         legend.position="bottom")
 
-annotate_figure(gini.map.plot,
-                bottom = text_grob("Note: Figure shows average over all cities", color = "black", size = 10)
-)
+#annotate_figure(gini.map.plot,
+#                bottom = text_grob("Note: Figure shows average over all cities", color = #"black", size = 10))
 
 
 # Populist Plot
@@ -1185,7 +1184,7 @@ populist.map.plot =
   facet_wrap(~Year) +
   theme_bw() +
   theme(axis.text.y = element_text(size=18), 
-        axis.text.x = element_text(size=18), 
+        axis.text.x = element_text(size=14), 
         axis.title.y = element_text(size=18), 
         axis.title.x = element_text(size=18), 
         legend.text=element_text(size=18), 
@@ -1212,7 +1211,7 @@ ggsave(
   #width = 10.4, 
   #height = 4, 
   #units = "in",
-  dpi = 1200,
+  dpi = 200,
   limitsize = TRUE)
 
 
